@@ -129,8 +129,16 @@ node_modules
 # Linux trash folder which might appear on any partition or disk
 .Trash-*
 
-# Generated Documentation
-webout/
+# TanStack Start / Vite build output
+.output/
+.nitro/
+.tanstack/
+dist/
 
-# Generated Documentation
-compiled-schemas/
+# Cloudflare / Wrangler
+.wrangler/
+
+# Generated schema viewer assets
+src/generated/
+src/routeTree.gen.ts
+public/collection/

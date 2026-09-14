@@ -1,0 +1,218 @@
+/*
+ * App chrome styled with Aether design tokens.
+ * The tokens are generated into a plain CSS file (light by default, dark via a
+ * `prefers-color-scheme` media query) by scripts/generate-theme.mjs — so the app
+ * consumes only CSS custom properties and never imports any @postman/* package.
+ */
+@import '../generated/aether-theme.css';
+
+/*
+ * Self-hosted Inter (latin subset) served from public/assets/fonts, so the app
+ * doesn't depend on the @fontsource package at runtime. `font-display: swap`
+ * keeps text visible while the font loads.
+ */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url('/assets/fonts/inter-latin-400-normal.woff2') format('woff2'),
+    url('/assets/fonts/inter-latin-400-normal.woff') format('woff');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 600;
+  src: url('/assets/fonts/inter-latin-600-normal.woff2') format('woff2'),
+    url('/assets/fonts/inter-latin-600-normal.woff') format('woff');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 700;
+  src: url('/assets/fonts/inter-latin-700-normal.woff2') format('woff2'),
+    url('/assets/fonts/inter-latin-700-normal.woff') format('woff');
+}
+
+:root {
+  --app-font-ui: 'Inter', system-ui, -apple-system, BlinkMacSystemFont,
+    'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: var(--app-font-ui);
+  /*
+   * Explicit unitless line-height so line-box height does NOT depend on the
+   * active font's intrinsic `normal` metrics. Without this, text reflows
+   * vertically when swapping between 'Inter' and 'Inter Fallback' (Arial's
+   * `normal` line-height is ~1.15 vs Inter's ~1.5), causing header CLS.
+   */
+  line-height: 1.5;
+  color: var(--content-color-primary);
+  background: var(--background-color-primary);
+}
+
+.layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.layout__aside {
+  width: 280px;
+  flex-shrink: 0;
+  background: var(--background-color-secondary);
+  border-right: var(--border-width-default, 1px) solid var(--border-color-default);
+  position: sticky;
+  top: 0;
+  align-self: flex-start;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.layout__main {
+  flex: 1;
+  min-width: 0;
+  padding: var(--spacing-xxl, 24px) var(--spacing-xxxl, 32px);
+}
+
+/* Sidebar */
+.sidebar {
+  padding: var(--spacing-xl, 16px) var(--spacing-l, 12px);
+}
+
+.sidebar__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spacing-m, 8px);
+  padding-bottom: var(--spacing-l, 12px);
+  border-bottom: var(--border-width-default, 1px) solid var(--border-color-default);
+  margin-bottom: var(--spacing-xl, 16px);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-s, 6px);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--content-color-primary);
+  text-decoration: none;
+  padding: var(--spacing-xs, 4px) var(--spacing-m, 8px);
+}
+
+.brand__logo {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.nav-group {
+  margin-bottom: var(--spacing-xl, 16px);
+}
+
+.nav-group__title {
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  color: var(--content-color-tertiary);
+  padding: 0 var(--spacing-m, 8px);
+  margin-bottom: var(--spacing-s, 6px);
+}
+
+.nav-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-m, 8px);
+  padding: var(--spacing-s, 6px) var(--spacing-m, 8px);
+  border-radius: var(--border-radius-default, 6px);
+  color: var(--content-color-secondary);
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.nav-link:hover {
+  background: var(--highlight-background-color-secondary);
+  color: var(--content-color-primary);
+}
+
+.nav-link--active {
+  background: var(--base-color-brand);
+  color: var(--content-color-constant);
+  font-weight: 600;
+}
+
+/* Schema page */
+.schema-page__header {
+  border-bottom: var(--border-width-default, 1px) solid var(--border-color-default);
+  padding-bottom: var(--spacing-xl, 16px);
+  margin-bottom: var(--spacing-xxl, 24px);
+}
+
+.schema-page__title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-l, 12px);
+}
+
+.schema-page__header h1 {
+  margin: 0 0 var(--spacing-m, 8px);
+  font-size: 1.5rem;
+  /* Fixed line box (24px * 1.5 = 36px) regardless of the active font. */
+  line-height: 1.5;
+  /*
+   * Declare weight + family explicitly. The lazily-loaded Mosaic/Stoplight CSS
+   * ships Tailwind's preflight, which resets bare `h1` to `font-weight: inherit`
+   * (→ 400) and swaps the inherited font stack. Without our own declarations the
+   * header flips between bold/not-bold as that stylesheet loads in.
+   */
+  font-weight: 700;
+  font-family: var(--app-font-ui);
+  color: var(--content-color-primary);
+}
+
+.schema-link {
+  white-space: nowrap;
+  font-size: 0.85rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  color: var(--content-color-link, var(--base-color-brand));
+  text-decoration: none;
+}
+
+.schema-link:hover {
+  text-decoration: underline;
+}
+
+.schema-page__header code {
+  background: var(--background-color-tertiary);
+  padding: 2px var(--spacing-s, 6px);
+  border-radius: var(--border-radius-s, 4px);
+}
+
+.schema-page__viewer {
+  font-size: 0.9rem;
+}
+
+.empty-state,
+.loading {
+  padding: var(--spacing-xxl, 24px) 0;
+  color: var(--content-color-tertiary);
+}

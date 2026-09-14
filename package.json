@@ -1,7 +1,7 @@
 {
   "name": "postman-schemas",
   "version": "0.0.1",
-  "description": "Tools and data related to Postman's JSON-based file formats",
+  "description": "Tools and data related to Postman's JSON-based file formats, with a TanStack Start schema viewer",
   "homepage": "https://github.com/postmanlabs/schemas",
   "bugs": "https://github.com/postmanlabs/schemas/issues",
   "repository": {
@@ -10,52 +10,78 @@
   },
   "author": "Postman Labs <help@getpostman.com> (=)",
   "license": "Apache-2.0",
+  "type": "module",
+  "private": true,
+  "sideEffects": [
+    "**/*.css"
+  ],
   "keywords": [
     "postman",
     "collection",
     "json-schema"
   ],
-  "bin": {
-    "validate": "./bin/validate",
-    "compile": "./bin/compile"
+  "engines": {
+    "node": ">=24"
   },
-  "main": "index.js",
+  "packageManager": "pnpm@10.28.0",
+  "pnpm": {
+    "overrides": {
+      "@types/react": "^18.3.1",
+      "@types/react-dom": "^18.3.1"
+    },
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "workerd"
+    ]
+  },
+  "scripts": {
+    "generate:schemas": "node scripts/generate-schemas.mjs",
+    "generate:theme": "node scripts/generate-theme.mjs",
+    "generate": "pnpm generate:schemas && pnpm generate:theme",
+    "predev": "pnpm generate",
+    "dev": "vite dev",
+    "prebuild": "pnpm generate",
+    "build": "vite build",
+    "build:cf": "pnpm generate && cross-env NITRO_PRESET=cloudflare_pages vite build",
+    "start": "node .output/server/index.mjs",
+    "preview": "vite preview",
+    "preview:cf": "pnpm build:cf && wrangler pages dev",
+    "deploy": "pnpm build:cf && wrangler pages deploy",
+    "typecheck": "tsc --noEmit",
+    "compile": "node bin/compile.js",
+    "validate": "node bin/validate.js"
+  },
   "dependencies": {
+    "@fontsource/inter": "^5.3.0",
+    "@reactuses/core": "^6.5.6",
+    "@stoplight/json-schema-viewer": "^4.16.4",
+    "@stoplight/markdown-viewer": "^5.7.1",
+    "@stoplight/mosaic": "^1.53.5",
+    "@stoplight/mosaic-code-viewer": "^1.53.5",
+    "@tanstack/react-router": "^1.170.36",
+    "@tanstack/react-start": "^1.168.54",
     "ajv": "6.12.4",
     "commander": "6.1.0",
     "fs-extra": "9.0.1",
     "lodash": "4.17.20",
     "mustache": "4.0.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "semver": "7.3.2",
     "strip-json-comments": "3.1.1"
   },
-  "scripts": {
-    "build-docs": "node npm/build-docs.js",
-    "build-schemas": "npm/build-schemas.sh",
-    "test": "node npm/test.js",
-    "test-system": "node npm/test-system.js",
-    "test-lint": "node npm/test-lint.js",
-    "test-integration": "node npm/test-integration.js"
-  },
   "devDependencies": {
-    "async": "3.2.0",
-    "chai": "4.2.0",
-    "colors": "1.4.0",
-    "editorconfig": "0.15.3",
-    "eslint": "7.8.1",
-    "eslint-plugin-jsdoc": "30.3.3",
-    "eslint-plugin-lodash": "7.1.0",
-    "eslint-plugin-mocha": "8.0.0",
-    "eslint-plugin-security": "1.4.0",
-    "js-yaml": "3.14.0",
-    "mocha": "8.1.3",
-    "packity": "0.3.2",
-    "parse-gitignore": "1.0.1",
-    "pretty-ms": "7.0.0",
-    "recursive-readdir": "2.2.2",
-    "shelljs": "0.8.4"
-  },
-  "engines": {
-    "node": "8"
+    "@postman/aether-design-tokens": "^3.0.0",
+    "@types/json-schema": "^7.0.15",
+    "@types/node": "^26.5.1",
+    "@types/react": "^18.3.31",
+    "@types/react-dom": "^18.3.7",
+    "@vitejs/plugin-react": "^6.1.1",
+    "cross-env": "^10.1.0",
+    "nitro": "3.0.260903-beta",
+    "postcss": "^8.5.28",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.0",
+    "wrangler": "^4.131.2"
   }
 }
