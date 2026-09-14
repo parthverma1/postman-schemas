@@ -1,10 +1,10 @@
 /*
  * App chrome styled with Aether design tokens.
- * The tokens are generated into a plain CSS file (light by default, dark via a
- * `prefers-color-scheme` media query) by scripts/generate-theme.mjs — so the app
- * consumes only CSS custom properties and never imports any @postman/* package.
+ * The tokens live in a plain, committed CSS file (light by default, dark via a
+ * `prefers-color-scheme` media query) — so the app consumes only CSS custom
+ * properties and never imports any @postman/* package.
  */
-@import '../generated/aether-theme.css';
+@import './theme.css';
 
 /*
  * Self-hosted Inter (latin subset) served from public/assets/fonts, so the app

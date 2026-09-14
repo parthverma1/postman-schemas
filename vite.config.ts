@@ -10,6 +10,12 @@ export default defineConfig({
   resolve: {
     dedupe: ['react', 'react-dom'],
   },
+  build: {
+    // Always minify CSS (strips comments/whitespace) regardless of the JS
+    // `minify` setting. `cssMinify` otherwise defaults to `build.minify`, so
+    // pinning it keeps our token/theme CSS comment-free in every build.
+    cssMinify: true,
+  },
   plugins: [
     tanstackStart({
       srcDirectory: 'src',

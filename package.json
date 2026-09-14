@@ -31,13 +31,14 @@
     },
     "onlyBuiltDependencies": [
       "esbuild",
+      "sharp",
       "workerd"
     ]
   },
   "scripts": {
     "generate:schemas": "node scripts/generate-schemas.mjs",
-    "generate:theme": "node scripts/generate-theme.mjs",
-    "generate": "pnpm generate:schemas && pnpm generate:theme",
+    "generate:favicon": "node scripts/generate-favicon.mjs",
+    "generate": "pnpm generate:schemas && pnpm generate:favicon",
     "predev": "pnpm generate",
     "dev": "vite dev",
     "prebuild": "pnpm generate",
@@ -71,7 +72,6 @@
     "strip-json-comments": "3.1.1"
   },
   "devDependencies": {
-    "@postman/aether-design-tokens": "^3.0.0",
     "@types/json-schema": "^7.0.15",
     "@types/node": "^26.5.1",
     "@types/react": "^18.3.31",
@@ -79,7 +79,9 @@
     "@vitejs/plugin-react": "^6.1.1",
     "cross-env": "^10.1.0",
     "nitro": "3.0.260903-beta",
+    "png-to-ico": "^3.0.2",
     "postcss": "^8.5.28",
+    "sharp": "^0.35.4",
     "typescript": "^7.0.2",
     "vite": "^8.3.0",
     "wrangler": "^4.131.2"
