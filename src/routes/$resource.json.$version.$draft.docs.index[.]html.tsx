@@ -1,12 +1,10 @@
 import { createFileRoute, notFound } from '@tanstack/react-router';
-import { Suspense, lazy } from 'react';
 import { findSchema } from '../generated/manifest';
-import { ClientOnly } from '../components/ClientOnly';
+import SchemaViewer from '../components/SchemaViewer';
 
-// Loaded lazily and client-side only: the Stoplight viewer (and its Mosaic
-// dependencies) rely on browser APIs and should not run during SSR.
-const SchemaViewer = lazy(() => import('../components/SchemaViewer'));
-
+// The Stoplight viewer is now vendored (src/vendor/json-schema-viewer) and patched
+// to be SSR-safe (see hash.ts / lodashLite.ts).
+//
 // Canonical public host these schemas are served from.
 const SCHEMA_BASE_URL = 'https://schema.postman.com';
 
@@ -63,11 +61,7 @@ function SchemaPage() {
       </header>
 
       <div className="schema-page__viewer">
-        <ClientOnly fallback={<div className="loading">Loading schema viewer…</div>}>
-          <Suspense fallback={<div className="loading">Loading schema viewer…</div>}>
-            <SchemaViewer name={`${label} ${version}`} schema={schema} />
-          </Suspense>
-        </ClientOnly>
+        <SchemaViewer name={`${label} ${version}`} schema={schema} />
       </div>
     </div>
   );

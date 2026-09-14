@@ -16,7 +16,6 @@ export default function SchemaViewer({
     <JsonSchemaViewer
       name={name}
       schema={schema as JSONSchema7}
-      expanded
       defaultExpandedDepth={1}
       emptyText="No schema defined"
     />
