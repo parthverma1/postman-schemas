@@ -1,4 +1,4 @@
-import { JsonSchemaViewer } from '@stoplight/json-schema-viewer';
+import { JsonSchemaViewer } from '../vendor/json-schema-viewer';
 import type { JSONSchema7 } from 'json-schema';
 // Mosaic ships utility classes (styles.css) and the theme tokens they reference
 // (themes/default.css) separately. Both are required or the viewer renders unstyled.
