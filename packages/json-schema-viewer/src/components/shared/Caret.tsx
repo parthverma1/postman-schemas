@@ -1,4 +1,4 @@
-import { Flex, Icon } from '@stoplight/mosaic';
+import { Flex, Icon } from '../../ui';
 import * as React from 'react';
 
 import { CARET_ICON_SIZE } from '../../consts';

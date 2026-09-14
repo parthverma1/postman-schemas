@@ -1,4 +1,4 @@
-import { Box } from '@stoplight/mosaic';
+import { Box } from '../../ui';
 import { Dictionary } from '@stoplight/types';
 import * as React from 'react';
 

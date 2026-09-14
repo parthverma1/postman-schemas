@@ -7,7 +7,7 @@ import {
   SchemaNode,
   SchemaNodeKind,
 } from '@stoplight/json-schema-tree';
-import { Box } from '@stoplight/mosaic';
+import { Box } from '../../ui';
 import * as React from 'react';
 
 import { printName } from '../../utils';

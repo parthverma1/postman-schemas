@@ -2,8 +2,8 @@ import { createFileRoute, notFound } from '@tanstack/react-router';
 import { findSchema } from '../generated/manifest';
 import SchemaViewer from '../components/SchemaViewer';
 
-// The Stoplight viewer is now vendored (src/vendor/json-schema-viewer) and patched
-// to be SSR-safe (see hash.ts / lodashLite.ts).
+// The Stoplight viewer lives in the workspace package `@postman/json-schema-viewer`,
+// an SSR-safe fork (see its hash.ts / lodashLite.ts).
 //
 // Canonical public host these schemas are served from.
 const SCHEMA_BASE_URL = 'https://schema.postman.com';

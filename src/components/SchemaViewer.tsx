@@ -1,9 +1,10 @@
-import { JsonSchemaViewer } from '../vendor/json-schema-viewer';
+import { JsonSchemaViewer } from '@postman/json-schema-viewer';
 import type { JSONSchema7 } from 'json-schema';
-// Mosaic ships utility classes (styles.css) and the theme tokens they reference
-// (themes/default.css) separately. Both are required or the viewer renders unstyled.
-import '@stoplight/mosaic/themes/default.css';
-import '@stoplight/mosaic/styles.css';
+// Static, Aether-token stylesheet shipped by the fork. It replaces Mosaic's runtime
+// styled-components CSS, so the viewer is fully styled in the SSR HTML (no flash /
+// unstyled paint on hydration). Layout/color come from inline styles; this file
+// covers markdown + interactive controls.
+import '@postman/json-schema-viewer/styles.css';
 
 export default function SchemaViewer({
   name,

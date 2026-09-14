@@ -1,4 +1,4 @@
-import { Box, HStack } from '@stoplight/mosaic';
+import { Box, HStack } from '../../ui';
 import { useAtom } from 'jotai';
 import * as React from 'react';
 

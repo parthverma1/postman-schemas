@@ -1,22 +1,5 @@
-// The published `@stoplight/json-schema-viewer` package does not expose its
-// type declarations through its `exports` map, so TypeScript (Bundler
-// resolution) cannot pick them up automatically. Declare the surface we use.
-declare module '@stoplight/json-schema-viewer' {
-  import type { FC } from 'react';
-  import type { JSONSchema7 } from 'json-schema';
-
-  export interface JsonSchemaViewerProps {
-    schema: JSONSchema7;
-    name?: string;
-    expanded?: boolean;
-    hideTopBar?: boolean;
-    emptyText?: string;
-    defaultExpandedDepth?: number;
-    className?: string;
-  }
-
-  export const JsonSchemaViewer: FC<JsonSchemaViewerProps>;
-}
-
-declare module '@stoplight/mosaic/styles.css';
-declare module '@stoplight/mosaic/themes/default.css';
+// Allow importing the viewer's static stylesheet for its side effects. The viewer
+// comes from the workspace package `@postman/json-schema-viewer`, which ships a
+// plain, Aether-token CSS file (no Mosaic / runtime style injection) that the app
+// imports directly (see components/SchemaViewer.tsx).
+declare module '@postman/json-schema-viewer/styles.css';

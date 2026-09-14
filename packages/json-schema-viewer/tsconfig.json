@@ -1,6 +1,4 @@
 {
-  "include": ["**/*.ts", "**/*.tsx", "**/*.d.ts"],
-  "exclude": ["node_modules", "lib", "bin", "scripts", "index.js", "packages"],
   "compilerOptions": {
     "strict": true,
     "esModuleInterop": true,
@@ -12,11 +10,11 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "target": "ES2024",
-    "allowJs": false,
+    "declaration": true,
     "forceConsistentCasingInFileNames": true,
-    "paths": {
-      "~/*": ["./src/*"]
-    },
+    "verbatimModuleSyntax": false,
     "noEmit": true
-  }
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.d.ts"],
+  "exclude": ["node_modules", "dist"]
 }

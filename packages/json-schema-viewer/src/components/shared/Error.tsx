@@ -1,5 +1,5 @@
 import { isReferenceNode, isRegularNode, ReferenceNode, SchemaNode, SchemaNodeKind } from '@stoplight/json-schema-tree';
-import { Box, Icon, Tooltip } from '@stoplight/mosaic';
+import { Box, Icon, Tooltip } from '../../ui';
 import * as React from 'react';
 
 import { isFlattenableNode } from '../../tree';
