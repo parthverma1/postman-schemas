@@ -1,4 +1,4 @@
-import { isReferenceNode, isRegularNode, ReferenceNode, SchemaNode, SchemaNodeKind } from '@stoplight/json-schema-tree';
+import { isReferenceNode, isRegularNode, ReferenceNode, SchemaNode, SchemaNodeKind } from '@postman/json-schema-tree';
 import { Box, Icon, Tooltip } from '../../ui';
 import * as React from 'react';
 

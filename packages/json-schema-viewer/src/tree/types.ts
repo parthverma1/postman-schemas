@@ -3,7 +3,7 @@ import type {
   RegularNode,
   SchemaNodeKind,
   SchemaTreeRefDereferenceFn,
-} from '@stoplight/json-schema-tree';
+} from '@postman/json-schema-tree';
 import type { Optional } from '@stoplight/types';
 
 import type { ViewMode } from '../types';

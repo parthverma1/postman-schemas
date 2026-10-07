@@ -1,4 +1,4 @@
-import { SchemaFragment } from '@stoplight/json-schema-tree';
+import { SchemaFragment } from '@postman/json-schema-tree';
 
 export type VendorExtensionsList = {
   [keyof: string]: unknown;

@@ -1,6 +1,8 @@
+import * as React from 'react';
 import { createFileRoute, notFound } from '@tanstack/react-router';
 import { findSchema } from '../generated/manifest';
 import SchemaViewer from '../components/SchemaViewer';
+import { deserializeSchemaTree, type SerializedSchemaTree } from '../lib/schemaTree';
 
 // The Stoplight viewer lives in the workspace package `@postman/json-schema-viewer`,
 // an SSR-safe fork (see its hash.ts / lodashLite.ts).
@@ -20,8 +22,19 @@ export const Route = createFileRoute(
 
     const schema = await entry.load();
 
+    // Build the tree once on the server so React Query can hydrate with it on the
+    // client instead of rebuilding on the main thread. Skipped on client-side
+    // navigations (import.meta.env.SSR === false), which use the worker/prefetch path.
+    let initialTree: SerializedSchemaTree | undefined;
+    if (import.meta.env.SSR) {
+      const { buildSerializedSchemaTree } = await import('../lib/schemaTree.server');
+      initialTree = buildSerializedSchemaTree(schema as never);
+    }
+
     return {
       schema,
+      id: entry.id,
+      initialTree,
       resource: entry.resource,
       label: entry.label,
       draft: entry.draft,
@@ -38,7 +51,13 @@ export const Route = createFileRoute(
 });
 
 function SchemaPage() {
-  const { schema, resource, label, version, draft } = Route.useLoaderData();
+  const { schema, id, initialTree, resource, label, version, draft } = Route.useLoaderData();
+
+  // Rebuild the SSR-transferred tree (cheap) to seed React Query as initial data.
+  const initialData = React.useMemo(
+    () => (initialTree ? deserializeSchemaTree(initialTree) : undefined),
+    [initialTree],
+  );
 
   const schemaHref = `${SCHEMA_BASE_URL}/${resource}/json/${version}/${draft}/${resource}.json`;
 
@@ -61,7 +80,7 @@ function SchemaPage() {
       </header>
 
       <div className="schema-page__viewer">
-        <SchemaViewer name={`${label} ${version}`} schema={schema} />
+        <SchemaViewer name={`${label} ${version}`} schema={schema} schemaId={id} initialData={initialData} />
       </div>
     </div>
   );

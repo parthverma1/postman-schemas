@@ -1,4 +1,4 @@
-import type { ReferenceNode, SchemaNode } from '@stoplight/json-schema-tree';
+import type { ReferenceNode, SchemaNode } from '@postman/json-schema-tree';
 import { JSONSchema4, JSONSchema6, JSONSchema7 } from 'json-schema';
 import * as React from 'react';
 

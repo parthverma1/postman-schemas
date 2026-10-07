@@ -1,5 +1,5 @@
 import { extractPointerFromRef, pointerToPath } from '@stoplight/json';
-import { isReferenceNode, isRegularNode, SchemaNode } from '@stoplight/json-schema-tree';
+import { isReferenceNode, isRegularNode, SchemaNode } from '@postman/json-schema-tree';
 import { last } from '../../lodashLite';
 import * as React from 'react';
 
@@ -44,12 +44,13 @@ function makeChoice(node: SchemaNode): Choice {
   };
 }
 
-function makeArrayChoice(node: SchemaNode, combiner?: string): Choice {
+function makeArrayChoice(node: SchemaNode): Choice {
   const itemTitle = calculateChoiceTitle(node, true);
-  const title = itemTitle !== 'any' ? `array ${combiner ? `(${combiner})` : null} [${itemTitle}]` : 'array';
+  // The array/combiner is shown once on the dropdown trigger, so each option is
+  // just the item's own title rather than "array (oneOf) [title]" repeated.
   return {
     type: node,
-    title,
+    title: itemTitle !== 'any' ? itemTitle : 'array',
   };
 }
 
@@ -68,9 +69,9 @@ export const useChoices = (schemaNode: SchemaNode) => {
       isNonEmptyParentNode(schemaNode.children[0]) &&
       shouldShowChildSelector(schemaNode.children[0])
     ) {
-      return schemaNode.children[0].children.map(child =>
-        makeArrayChoice(child, schemaNode.children[0].combiners?.[0]),
-      );
+      return schemaNode.children[0].children
+        .map(makeArrayChoice)
+        .sort((a, b) => a.title.localeCompare(b.title));
     }
 
     // if current node is a combiner, offer its children

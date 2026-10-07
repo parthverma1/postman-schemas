@@ -1,7 +1,9 @@
 import { defineConfig } from 'tsup';
 
 export default defineConfig({
-  entry: ['src/index.ts'],
+  // `worker` is a React-free entry meant to run inside a Web Worker; keeping it
+  // separate avoids pulling React into the worker bundle.
+  entry: ['src/index.ts', 'src/worker.ts'],
   format: ['esm'],
   // Emit .d.ts so the package is consumable with full types.
   dts: true,

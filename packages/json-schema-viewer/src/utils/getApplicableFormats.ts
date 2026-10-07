@@ -1,5 +1,5 @@
 import { isPlainObject } from '@stoplight/json';
-import { RegularNode, SchemaNodeKind } from '@stoplight/json-schema-tree';
+import { RegularNode, SchemaNodeKind } from '@postman/json-schema-tree';
 
 import { COMMON_JSON_SCHEMA_AND_OAS_FORMATS } from '../consts';
 

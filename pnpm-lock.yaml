@@ -21,6 +21,9 @@ importers:
       '@reactuses/core':
         specifier: ^6.5.6
         version: 6.5.6(react@18.3.1)
+      '@tanstack/react-query':
+        specifier: ^5.62.7
+        version: 5.102.8(react@18.3.1)
       '@tanstack/react-router':
         specifier: ^1.170.36
         version: 1.170.36(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -95,14 +98,42 @@ importers:
         specifier: ^4.131.2
         version: 4.131.2(@types/node@26.5.1)
 
+  packages/json-schema-tree:
+    dependencies:
+      '@stoplight/json':
+        specifier: ^3.21.0
+        version: 3.21.7
+      '@stoplight/json-schema-merge-allof':
+        specifier: ^0.8.0
+        version: 0.8.0
+      '@stoplight/lifecycle':
+        specifier: ^2.3.3
+        version: 2.3.3
+      '@stoplight/types':
+        specifier: ^14.1.1
+        version: 14.1.1
+      magic-error:
+        specifier: 0.0.1
+        version: 0.0.1
+    devDependencies:
+      '@types/json-schema':
+        specifier: ^7.0.15
+        version: 7.0.15
+      tsup:
+        specifier: ^8.5.0
+        version: 8.5.1(jiti@2.7.0)(postcss@8.5.28)(typescript@5.9.3)
+      typescript:
+        specifier: ^5.7.3
+        version: 5.9.3
+
   packages/json-schema-viewer:
     dependencies:
+      '@postman/json-schema-tree':
+        specifier: workspace:*
+        version: link:../json-schema-tree
       '@stoplight/json':
         specifier: ^3.20.1
         version: 3.21.7
-      '@stoplight/json-schema-tree':
-        specifier: ^4.0.0
-        version: 4.0.0
       '@stoplight/react-error-boundary':
         specifier: ^2.0.0
         version: 2.0.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -1129,10 +1160,6 @@ packages:
   '@stoplight/json-schema-merge-allof@0.8.0':
     resolution: {integrity: sha512-g8e0s43v96Xbzvd8d6KKUuJTO16CS2oJglJrviUi8ASIUxzFvAJqTHWLtGmpTryisQopqg1evXGJfi0+164+Qw==}
 
-  '@stoplight/json-schema-tree@4.0.0':
-    resolution: {integrity: sha512-SAGtof+ihIdPqETR+7XXOaqZJcrbSih/xEahaw5t1nXk5sVW6ss2l5A1WCIuvtvnQiUKnBfanmZU4eoM1ZvItg==}
-    engines: {node: '>=10.18'}
-
   '@stoplight/json@3.21.7':
     resolution: {integrity: sha512-xcJXgKFqv/uCEgtGlPxy3tPA+4I+ZI4vAuMJ885+ThkTHFVkC+0Fm58lA9NlsyjnkpxFh4YiQWpH+KefHdbA0A==}
     engines: {node: '>=8.3.0'}
@@ -1160,9 +1187,21 @@ packages:
     resolution: {integrity: sha512-2FNTv05If7ib79VPDA/r9eUet76jewXFH2y2K5vuge6SXbRHtWBhcaRmu+6QpF4/WRNoJj5XYRSwLGXDxysBGA==}
     engines: {node: ^12.20 || >=14.13}
 
+  '@stoplight/types@14.1.1':
+    resolution: {integrity: sha512-/kjtr+0t0tjKr+heVfviO9FrU/uGLc+QNX3fHJc19xsCNYqU7lVhaXxDmEID9BZTjG+/r9pK9xP/xU02XGg65g==}
+    engines: {node: ^12.20 || >=14.13}
+
   '@tanstack/history@1.162.4':
     resolution: {integrity: sha512-utTS5L2OkeYUzXGohL1Z8sefu1GLNOJcxe8Hd6iIdc/Xo1K1nDB2JEp4iSFhvYh33xKC9V91TxrS8qfrpoKobQ==}
     engines: {node: '>=20.19'}
+
+  '@tanstack/query-core@5.102.8':
+    resolution: {integrity: sha512-ZNjkJ33CqvPNec/6lZBnHqLc3EVGPZ9ySLhYahU9TcuRFdmwXewuj0c4hwSWcGHqEUwcSrKeZ+oGcvPBqXcQcg==}
+
+  '@tanstack/react-query@5.102.8':
+    resolution: {integrity: sha512-TYBea4OuXWD7MhaSHq069TWbFe7rcwWN6kzT7JF0OKi1K6c1gTv2IzD6A6ExJsCMozdkqBWeuIUZmu4KQg0O5A==}
+    peerDependencies:
+      react: ^18 || ^19
 
   '@tanstack/react-router@1.170.36':
     resolution: {integrity: sha512-AbgcI/xO8AJY1r6y5tF7TZyHH0VKm0XcfY3QVIVCrHq8k04Hkj1N4nfLL+1xCGC3VnMI3AYGAVWkatnqE2dxAQ==}
@@ -3249,14 +3288,6 @@ snapshots:
       json-schema-compare: 0.2.2
       lodash: 4.17.20
 
-  '@stoplight/json-schema-tree@4.0.0':
-    dependencies:
-      '@stoplight/json': 3.21.7
-      '@stoplight/json-schema-merge-allof': 0.8.0
-      '@stoplight/lifecycle': 2.3.3
-      '@types/json-schema': 7.0.15
-      magic-error: 0.0.1
-
   '@stoplight/json@3.21.7':
     dependencies:
       '@stoplight/ordered-object-literal': 1.0.5
@@ -3286,7 +3317,19 @@ snapshots:
       '@types/json-schema': 7.0.15
       utility-types: 3.11.0
 
+  '@stoplight/types@14.1.1':
+    dependencies:
+      '@types/json-schema': 7.0.15
+      utility-types: 3.11.0
+
   '@tanstack/history@1.162.4': {}
+
+  '@tanstack/query-core@5.102.8': {}
+
+  '@tanstack/react-query@5.102.8(react@18.3.1)':
+    dependencies:
+      '@tanstack/query-core': 5.102.8
+      react: 18.3.1
 
   '@tanstack/react-router@1.170.36(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:

@@ -3,7 +3,7 @@ import {
   RootNode,
   SchemaTree as JsonSchemaTree,
   SchemaTreeRefDereferenceFn,
-} from '@stoplight/json-schema-tree';
+} from '@postman/json-schema-tree';
 import { Box, Provider as MosaicProvider } from '../ui';
 import { ErrorBoundaryForwardedProps, FallbackProps, withErrorBoundary } from '@stoplight/react-error-boundary';
 import cn from 'classnames';
@@ -18,8 +18,21 @@ import { PathCrumbs } from './PathCrumbs';
 import { TopLevelSchemaRow } from './SchemaRow';
 import { hoveredNodeAtom } from './SchemaRow/state';
 
+/** A tree built ahead of time (e.g. off the main thread in a Web Worker). */
+export interface PrebuiltSchemaTree {
+  root: RootNode;
+  nodeCount: number;
+}
+
 export type JsonSchemaProps = Partial<JSVOptions> & {
   schema: JSONSchema;
+  /**
+   * A pre-populated tree. When provided the viewer renders it directly instead of
+   * building from `schema`, enabling an instant, off-main-thread render. When omitted
+   * the tree is built synchronously from `schema` (used for SSR and as a fallback for
+   * schemas that weren't prefetched).
+   */
+  tree?: PrebuiltSchemaTree;
   /**
    * Optional display name for the schema. Accepted for API compatibility with how the
    * upstream npm package was consumed (the app wrapper passes it); it is not used for
@@ -88,6 +101,7 @@ const JsonSchemaViewerComponent = ({
 
 const JsonSchemaViewerInner = ({
   schema,
+  tree,
   viewMode,
   className,
   resolveRef,
@@ -100,6 +114,7 @@ const JsonSchemaViewerInner = ({
 }: Pick<
   JsonSchemaProps,
   | 'schema'
+  | 'tree'
   | 'viewMode'
   | 'className'
   | 'resolveRef'
@@ -115,29 +130,30 @@ const JsonSchemaViewerInner = ({
     setHoveredNode(null);
   }, [setHoveredNode]);
 
-  const { jsonSchemaTreeRoot, nodeCount } = React.useMemo(() => {
+  // Prefer a pre-populated tree (built off the main thread and cached by React Query).
+  // Otherwise build synchronously from `schema` — this covers SSR and the fallback for
+  // schemas that weren't prefetched. Building the tree ($ref deref + allOf merge) is
+  // the dominant cost, but it's pure and deterministic, so a plain memo suffices; the
+  // React Query cache handles reuse across navigations.
+  const { root: jsonSchemaTreeRoot, nodeCount } = React.useMemo<PrebuiltSchemaTree>(() => {
+    if (tree) return tree;
+
     const jsonSchemaTree = new JsonSchemaTree(schema, {
       mergeAllOf: true,
       refResolver: resolveRef,
       maxRefDepth,
     });
-
-    let nodeCount = 0;
-
+    let count = 0;
     jsonSchemaTree.walker.hookInto('filter', node => {
       if (shouldNodeBeIncluded(node, viewMode)) {
-        nodeCount++;
+        count++;
         return true;
       }
       return false;
     });
     jsonSchemaTree.populate();
-
-    return {
-      jsonSchemaTreeRoot: jsonSchemaTree.root,
-      nodeCount,
-    };
-  }, [schema, resolveRef, maxRefDepth, viewMode]);
+    return { root: jsonSchemaTree.root, nodeCount: count };
+  }, [tree, schema, resolveRef, maxRefDepth, viewMode]);
 
   React.useEffect(() => {
     onTreePopulated?.({
@@ -150,6 +166,7 @@ const JsonSchemaViewerInner = ({
     () => jsonSchemaTreeRoot.children.every(node => !isRegularNode(node) || node.unknown),
     [jsonSchemaTreeRoot],
   );
+
   if (isEmpty) {
     return (
       <Box className={cn(className, 'JsonSchemaViewer')} fontSize="sm" data-test="empty-text">

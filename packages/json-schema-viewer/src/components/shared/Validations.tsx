@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { isRegularNode, RegularNode } from '@stoplight/json-schema-tree';
+import { isRegularNode, RegularNode } from '@postman/json-schema-tree';
 import { Flex, HStack, Text } from '../../ui';
 import { Dictionary } from '@stoplight/types';
 import { capitalize, keys, omit, pick, uniq } from '../../lodashLite';

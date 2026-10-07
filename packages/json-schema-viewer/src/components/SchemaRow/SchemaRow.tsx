@@ -1,4 +1,4 @@
-import { isMirroredNode, isReferenceNode, isRegularNode, SchemaNode } from '@stoplight/json-schema-tree';
+import { isMirroredNode, isReferenceNode, isRegularNode, SchemaNode } from '@postman/json-schema-tree';
 import { Box, Flex, NodeAnnotation, Select, SpaceVals, VStack } from '../../ui';
 import type { ChangeType } from '@stoplight/types';
 import { Atom, useAtomValue, useSetAtom } from 'jotai';
@@ -8,7 +8,7 @@ import * as React from 'react';
 import { COMBINER_NAME_MAP } from '../../consts';
 import { useJSVOptionsContext } from '../../contexts';
 import { getNodeId, getOriginalNodeId } from '../../hash';
-import { isPropertyRequired, visibleChildren } from '../../tree';
+import { isComplexArray, isNonEmptyParentNode, isPropertyRequired, visibleChildren } from '../../tree';
 import { extractVendorExtensions } from '../../utils/extractVendorExtensions';
 import { Caret, Description, getValidationsFromSchema, Types, Validations } from '../shared';
 import { ChildStack } from '../shared/ChildStack';
@@ -57,7 +57,19 @@ export const SchemaRow: React.FunctionComponent<SchemaRowProps> = React.memo(
 
     const rootLevel = renderRootTreeLines ? 1 : 2;
     const childNodes = React.useMemo(() => visibleChildren(typeToShow), [typeToShow]);
-    const combiner = isRegularNode(schemaNode) && schemaNode.combiners?.length ? schemaNode.combiners[0] : null;
+    // An array whose items are a combiner is flattened into per-variant choices
+    // (see useChoices); surface that combiner on the trigger so the options stay
+    // bare titles instead of each repeating "array (oneOf) [...]".
+    const arrayCombinerChild =
+      isComplexArray(schemaNode) &&
+      isNonEmptyParentNode(schemaNode.children[0]) &&
+      schemaNode.children[0].combiners?.length
+        ? schemaNode.children[0]
+        : null;
+    const combiner =
+      isRegularNode(schemaNode) && schemaNode.combiners?.length
+        ? schemaNode.combiners[0]
+        : (arrayCombinerChild?.combiners?.[0] ?? null);
     const isCollapsible = childNodes.length > 0;
     const isRootLevel = nestingLevel < rootLevel;
 
@@ -158,7 +170,11 @@ export const SchemaRow: React.FunctionComponent<SchemaRowProps> = React.memo(
                   <Select
                     aria-label="Pick a type"
                     size="sm"
-                    triggerTextPrefix={combiner ? `${COMBINER_NAME_MAP[combiner]}: ` : undefined}
+                    triggerTextPrefix={
+                      combiner
+                        ? `${arrayCombinerChild ? 'array ' : ''}${COMBINER_NAME_MAP[combiner]}: `
+                        : undefined
+                    }
                     options={choices.map((choice, index) => ({
                       value: String(index),
                       label: choice.title,

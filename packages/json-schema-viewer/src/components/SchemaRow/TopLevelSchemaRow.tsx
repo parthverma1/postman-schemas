@@ -1,5 +1,5 @@
 import { isPlainObject } from '@stoplight/json';
-import { isRegularNode, RegularNode } from '@stoplight/json-schema-tree';
+import { isRegularNode, RegularNode } from '@postman/json-schema-tree';
 import { Box, Flex, HStack, Icon, Menu, Pressable } from '../../ui';
 import { useSetAtom } from 'jotai';
 import { isEmpty } from '../../lodashLite';

@@ -1,4 +1,4 @@
-import { SchemaNode } from '@stoplight/json-schema-tree';
+import { SchemaNode } from '@postman/json-schema-tree';
 import { atom } from 'jotai';
 import { atomFamily } from 'jotai/utils';
 

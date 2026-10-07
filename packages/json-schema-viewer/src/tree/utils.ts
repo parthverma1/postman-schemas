@@ -9,8 +9,8 @@ import {
   isRegularNode,
   isRootNode,
   SchemaNodeKind,
-} from '@stoplight/json-schema-tree';
-import type { BooleanishNode } from '@stoplight/json-schema-tree/nodes/BooleanishNode';
+} from '@postman/json-schema-tree';
+import type { BooleanishNode } from '@postman/json-schema-tree';
 
 import { isNonNullable } from '../guards/isNonNullable';
 import type { ViewMode } from '../types';

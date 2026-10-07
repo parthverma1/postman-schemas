@@ -1,5 +1,5 @@
 import { isPlainObject } from '@stoplight/json';
-import type { SchemaNode } from '@stoplight/json-schema-tree';
+import type { SchemaNode } from '@postman/json-schema-tree';
 
 export function getInternalSchemaError(schemaNode: SchemaNode): string | undefined {
   let errorMessage;

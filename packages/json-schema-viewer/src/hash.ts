@@ -1,5 +1,5 @@
 import { isPlainObject } from '@stoplight/json';
-import type { SchemaNode } from '@stoplight/json-schema-tree';
+import type { SchemaNode } from '@postman/json-schema-tree';
 
 // for easier debugging the values going into hash
 let SKIP_HASHING = false;

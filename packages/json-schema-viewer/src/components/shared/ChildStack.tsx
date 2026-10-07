@@ -1,4 +1,4 @@
-import { SchemaNode } from '@stoplight/json-schema-tree';
+import { SchemaNode } from '@postman/json-schema-tree';
 import { Box, SpaceVals } from '../../ui';
 import type { ChangeType } from '@stoplight/types';
 import * as React from 'react';

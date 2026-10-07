@@ -1,5 +1,5 @@
 import { getLastPathSegment } from '@stoplight/json';
-import { isReferenceNode, isRegularNode, RegularNode, SchemaNodeKind } from '@stoplight/json-schema-tree';
+import { isReferenceNode, isRegularNode, RegularNode, SchemaNodeKind } from '@postman/json-schema-tree';
 import { upperFirst } from '../lodashLite';
 
 import { isNonNullable } from '../guards/isNonNullable';

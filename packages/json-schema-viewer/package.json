@@ -22,6 +22,10 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
+    "./worker": {
+      "types": "./dist/worker.d.ts",
+      "import": "./dist/worker.js"
+    },
     "./styles.css": "./styles.css"
   },
   "scripts": {
@@ -30,8 +34,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@postman/json-schema-tree": "workspace:*",
     "@stoplight/json": "^3.20.1",
-    "@stoplight/json-schema-tree": "^4.0.0",
     "@stoplight/react-error-boundary": "^2.0.0",
     "@stoplight/types": "^13.20.0",
     "classnames": "^2.2.6",

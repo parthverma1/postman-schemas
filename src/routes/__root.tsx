@@ -6,7 +6,10 @@ import {
   createRootRoute,
 } from '@tanstack/react-router';
 import type { ReactNode } from 'react';
+import { QueryClientProvider, useQueryClient } from '@tanstack/react-query';
 import { schemasByResource } from '../generated/manifest';
+import { getQueryClient } from '../lib/queryClient';
+import { prefetchSchemaTree } from '../lib/schemaTree';
 
 // Served from public/ at its literal root URL.
 const postmanLogo = '/assets/postman-logo-orange.svg';
@@ -50,6 +53,7 @@ export const Route = createRootRoute({
 });
 
 function Sidebar() {
+  const queryClient = useQueryClient();
   return (
     <nav className="sidebar">
       <div className="sidebar__head">
@@ -79,6 +83,10 @@ function Sidebar() {
                   }}
                   className="nav-link"
                   activeProps={{ className: 'nav-link nav-link--active' }}
+                  // Build the (expensive) schema tree in a Web Worker as the user is
+                  // about to navigate, so the click renders instantly from cache.
+                  onMouseEnter={() => prefetchSchemaTree(queryClient, entry)}
+                  onFocus={() => prefetchSchemaTree(queryClient, entry)}
                 >
                   <span>{entry.version}</span>
                 </Link>
@@ -99,12 +107,14 @@ function RootDocument({ children }: { children: ReactNode }) {
         <HeadContent />
       </head>
       <body data-theme={theme}>
-        <div className="layout">
-          <aside className="layout__aside">
-            <Sidebar />
-          </aside>
-          <main className="layout__main">{children}</main>
-        </div>
+        <QueryClientProvider client={getQueryClient()}>
+          <div className="layout">
+            <aside className="layout__aside">
+              <Sidebar />
+            </aside>
+            <main className="layout__main">{children}</main>
+          </div>
+        </QueryClientProvider>
         {/* Postman analytics SDK + config (restored from the legacy hosted docs). */}
         <script id="pmtSDK" src={pmtSdkSrc} />
         <script dangerouslySetInnerHTML={{ __html: pmtConfigScript }} />

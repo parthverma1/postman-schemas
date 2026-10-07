@@ -1,4 +1,4 @@
-import { SchemaCombinerName } from '@stoplight/json-schema-tree';
+import { SchemaCombinerName } from '@postman/json-schema-tree';
 import { SpaceVals } from './ui';
 import { Dictionary } from '@stoplight/types';
 

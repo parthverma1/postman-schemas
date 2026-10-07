@@ -6,7 +6,7 @@ import {
   SchemaCombinerName,
   SchemaNode,
   SchemaNodeKind,
-} from '@stoplight/json-schema-tree';
+} from '@postman/json-schema-tree';
 import { Box } from '../../ui';
 import * as React from 'react';
 
