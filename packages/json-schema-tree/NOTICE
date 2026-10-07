@@ -1,0 +1,22 @@
+@postman/json-schema-tree
+Copyright 2026 Postman, Inc.
+
+This product is a fork of and includes software developed by Stoplight, Inc.
+(now part of SmartBear Software), originally released under the Apache License,
+Version 2.0.
+
+The upstream project below was used as the basis for this fork. The compiled
+distribution is vendored under src/vendor and modified. The modifications include:
+replacing an internal CommonJS `require('@stoplight/json-schema-merge-allof')`
+with a static ESM import so the module bundles cleanly for native ESM and Web
+Workers, and adding `serializeTree` / `deserializeTree` ("serde") helpers so a
+populated tree can be built in a Web Worker and transferred to the main thread
+over `postMessage`.
+
+  - @stoplight/json-schema-tree
+    Copyright Stoplight, Inc.
+    https://github.com/stoplightio/json-schema-tree
+    Licensed under the Apache License, Version 2.0.
+
+A copy of the Apache License, Version 2.0 is provided in the LICENSE file
+alongside this NOTICE.

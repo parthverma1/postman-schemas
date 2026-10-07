@@ -1,0 +1,177 @@
+/*
+ * Static styles for @postman/json-schema-viewer.
+ *
+ * All values reference Aether design tokens (CSS custom properties provided by the
+ * host app's theme). This file is plain, static CSS — it ships with the SSR HTML,
+ * so there is no runtime style injection and no unstyled flash on hydration.
+ *
+ * The bulk of layout/spacing/color is applied via inline styles from the viewer's
+ * UI primitives; this file covers the base container, markdown content, and the
+ * interactive controls (links, select, menu, pressable).
+ */
+
+/* Base container ---------------------------------------------------------- */
+.JsonSchemaViewer {
+  font-family: var(--app-font-ui, 'Inter', system-ui, -apple-system, sans-serif);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--content-color-primary);
+}
+
+/* Links ------------------------------------------------------------------- */
+.jsv-link {
+  color: var(--content-color-link);
+  text-decoration: none;
+  cursor: pointer;
+}
+.jsv-link:hover {
+  text-decoration: underline;
+}
+
+/* Pressable (button reset) ------------------------------------------------ */
+.jsv-pressable {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+
+/* Select ------------------------------------------------------------------ */
+.jsv-select {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.25rem;
+}
+.jsv-select__prefix {
+  color: var(--content-color-tertiary);
+}
+.jsv-select__control {
+  font: inherit;
+  font-size: 0.75rem;
+  color: var(--content-color-primary);
+  background: var(--background-color-secondary);
+  border: 1px solid var(--border-color-default);
+  border-radius: 3px;
+  padding: 0.0625rem 0.25rem;
+  cursor: pointer;
+}
+.jsv-select__control:hover {
+  border-color: var(--border-color-strong);
+}
+
+/* Menu (disclosure dropdown) --------------------------------------------- */
+.jsv-menu {
+  position: relative;
+  display: inline-flex;
+}
+.jsv-menu__list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 20;
+  min-width: 8rem;
+  margin: 0.25rem 0 0;
+  padding: 0.25rem;
+  list-style: none;
+  background: var(--background-color-primary);
+  border: 1px solid var(--border-color-default);
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+.jsv-menu__item {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0.25rem 0.5rem;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: var(--content-color-primary);
+  text-align: left;
+  border-radius: 3px;
+  cursor: pointer;
+}
+.jsv-menu__item:hover {
+  background: var(--background-color-secondary);
+}
+
+/* Tooltip ----------------------------------------------------------------- */
+.jsv-tooltip {
+  display: inline-flex;
+}
+
+/* Markdown description ---------------------------------------------------- */
+.jsv-description {
+  color: var(--content-color-secondary);
+  font-size: 12px;
+  line-height: 1.5;
+}
+.jsv-description p {
+  margin: 0 0 0.5em;
+}
+.jsv-description p:last-child {
+  margin-bottom: 0;
+}
+.jsv-description a {
+  color: var(--content-color-link);
+  text-decoration: none;
+}
+.jsv-description a:hover {
+  text-decoration: underline;
+}
+.jsv-description code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+  font-size: 0.85em;
+  background: var(--background-color-secondary);
+  border: 1px solid var(--border-color-subdued);
+  border-radius: 3px;
+  padding: 0.1em 0.3em;
+}
+.jsv-description pre {
+  background: var(--background-color-secondary);
+  border: 1px solid var(--border-color-subdued);
+  border-radius: 4px;
+  padding: 0.75em;
+  overflow: auto;
+}
+.jsv-description pre code {
+  background: none;
+  border: 0;
+  padding: 0;
+}
+.jsv-description ul,
+.jsv-description ol {
+  margin: 0 0 0.5em;
+  padding-left: 1.25em;
+}
+.jsv-description h1,
+.jsv-description h2,
+.jsv-description h3,
+.jsv-description h4 {
+  margin: 0.5em 0 0.25em;
+  font-weight: 600;
+}
+.jsv-description blockquote {
+  margin: 0 0 0.5em;
+  padding-left: 0.75em;
+  border-left: 3px solid var(--border-color-default);
+  color: var(--content-color-tertiary);
+}
+
+/* Show-all toggle inside a truncated description */
+.jsv-description__more {
+  margin-left: 0.25rem;
+  color: var(--content-color-link);
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+}
+.jsv-description__more:hover {
+  text-decoration: underline;
+}
