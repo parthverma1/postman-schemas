@@ -158,14 +158,16 @@ export const SchemaRow: React.FunctionComponent<SchemaRowProps> = React.memo(
                     aria-label={hasLabel ? undefined : isExpanded ? 'Collapse' : 'Expand'}
                     onClick={() => setExpanded(!isExpanded)}
                     onKeyDown={e => {
+                      // Modified arrows (Alt+← Back, Shift+← selection, ...) stay with the browser.
+                      const modified = e.altKey || e.ctrlKey || e.metaKey || e.shiftKey;
                       if (e.key === 'Enter' || e.key === ' ') {
                         e.preventDefault();
                         // Holding the key must not keep flipping the row.
                         if (!e.repeat) setExpanded(!isExpanded);
-                      } else if (e.key === 'ArrowRight' && !isExpanded) {
+                      } else if (e.key === 'ArrowRight' && !modified && !isExpanded) {
                         e.preventDefault();
                         setExpanded(true);
-                      } else if (e.key === 'ArrowLeft' && isExpanded) {
+                      } else if (e.key === 'ArrowLeft' && !modified && isExpanded) {
                         e.preventDefault();
                         setExpanded(false);
                       }
