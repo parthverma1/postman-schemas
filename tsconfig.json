@@ -1,5 +1,6 @@
 {
   "include": ["**/*.ts", "**/*.tsx", "**/*.d.ts"],
+  "files": ["scripts/legacy-urls.ts"],
   "exclude": ["node_modules", "lib", "bin", "scripts", "index.js", "packages"],
   "compilerOptions": {
     "strict": true,

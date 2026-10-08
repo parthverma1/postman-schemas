@@ -11,13 +11,18 @@
  *     (e.g. v3), so it is emitted verbatim.
  *
  * Output layout (per resource kind, e.g. "collection"):
- *   src/generated/schemas/{resource}/{draft}/{version}.json   (viewer bundle)
- *   public/{resource}/json/{version}/{draft}/{resource}.json  (raw download)
+ *   src/generated/schemas/{resource}/{draft}/{version}.json   (viewer bundle, INCLUDED_DRAFTS only)
+ *   public/{resource}/json/{version}/{draft}/{resource}.json  (raw download, every draft)
+ *   public/json/...                                           (legacy raw URLs, see legacy-urls.ts)
+ *
+ * Run as a script to regenerate everything; import `writeSchemas` to write the
+ * schema files elsewhere (used by tests).
  */
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import fs from 'node:fs';
+import { VIEWER_DRAFT, legacyUrls } from './legacy-urls.ts';
 
 const require = createRequire(import.meta.url);
 const semver = require('semver');
@@ -26,7 +31,7 @@ const tools = require('../lib'); // { compile, validate, versions }
 const DEFAULT_DRAFT = 'draft-07';
 
 // Only these JSON Schema drafts are surfaced in the viewer.
-const INCLUDED_DRAFTS = ['draft-07'];
+const INCLUDED_DRAFTS = [VIEWER_DRAFT];
 
 // Human-readable labels and ordering for the resource kinds we surface.
 const RESOURCE_LABELS = { collection: 'Collection' };
@@ -52,36 +57,102 @@ function isStable(version) {
   return /v\d+\.\d+\.\d+$/i.test(version);
 }
 
+/** @param {string} file @param {string} content */
+function writeFile(file, content) {
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  fs.writeFileSync(file, content);
+}
+
+/** @returns {Record<string, string[]>} every schemas/{draft}/{version} with a collection.json, newest first. */
+function listVersions() {
+  /** @type {Record<string, string[]>} */
+  const versionsByDraft = {};
+
+  for (const draft of fs.readdirSync(SCHEMA_DIR).filter((d) => isDir(path.join(SCHEMA_DIR, d)))) {
+    const draftPath = path.join(SCHEMA_DIR, draft);
+
+    versionsByDraft[draft] = fs
+      .readdirSync(draftPath)
+      .filter((v) => isDir(path.join(draftPath, v)))
+      .filter((v) => {
+        const exists = fs.existsSync(path.join(draftPath, v, 'collection.json'));
+
+        if (!exists) {
+          console.warn('Skipping %s/%s (no collection.json)', draft, v);
+        }
+
+        return exists;
+      })
+      .sort(semver.rcompare);
+  }
+
+  return versionsByDraft;
+}
+
+/** Compiled collection schema for schemas/{draft}/{version}. */
+function loadSchema(draft, version) {
+  const versionSchemaDir = path.join(SCHEMA_DIR, draft, version);
+  const schemaFile = path.join(versionSchemaDir, 'collection.json');
+  const raw = JSON.parse(fs.readFileSync(schemaFile, 'utf8'));
+
+  if (raw.definitions && Object.keys(raw.definitions).length > 0) {
+    // Self-contained: `definitions` are already inline, emit as-is.
+    console.info('Bundling collection %s/%s (self-contained) ...', draft, version);
+
+    return raw;
+  }
+
+  // Legacy: `definitions` live in sibling files, merged by compile().
+  console.info('Compiling collection %s/%s ...', draft, version);
+
+  return tools.compile(schemaFile, versionSchemaDir, draft);
+}
+
 /**
- * Writes a schema to both the viewer bundle and the public download path, and
- * records a manifest entry.
+ * Writes the viewer bundle (INCLUDED_DRAFTS only) into `schemaOutDir` and every
+ * raw download (current + legacy URLs, all drafts) into `publicDir`. Does not
+ * clean either directory.
  *
- * @param {{resource: string, draft: string, version: string, status: string}} meta
- * @param {object} schema
- * @param {Array} entries
+ * @param {{publicDir?: string, schemaOutDir?: string}} [dirs]
+ * @returns {{entries: import('./generate-schemas.d.mts').SchemaEntry[], rawPaths: string[]}}
  */
-function emitSchema(meta, schema, entries) {
-  const { resource, draft, version, status } = meta;
-  const serialized = JSON.stringify(schema, null, 2);
+export function writeSchemas({ publicDir = PUBLIC_DIR, schemaOutDir = SCHEMA_OUT_DIR } = {}) {
+  const versionsByDraft = listVersions();
+  /** @type {Map<string, string>} `${draft}/${version}` → serialized schema */
+  const serialized = new Map();
+  const entries = [];
 
-  // Bundled copy consumed by the viewer via the manifest.
-  const outFile = path.join(SCHEMA_OUT_DIR, resource, draft, `${version}.json`);
-  fs.mkdirSync(path.dirname(outFile), { recursive: true });
-  fs.writeFileSync(outFile, serialized);
+  for (const [draft, versions] of Object.entries(versionsByDraft)) {
+    for (const version of versions) {
+      const content = JSON.stringify(loadSchema(draft, version), null, 2);
 
-  // Static copy at the hosted URL: /{resource}/json/{version}/{draft}/{resource}.json
-  const publicFile = path.join(PUBLIC_DIR, resource, 'json', version, draft, `${resource}.json`);
-  fs.mkdirSync(path.dirname(publicFile), { recursive: true });
-  fs.writeFileSync(publicFile, serialized);
+      serialized.set(`${draft}/${version}`, content);
 
-  entries.push({
-    resource,
-    label: RESOURCE_LABELS[resource] || resource,
-    draft,
-    version,
-    status,
-    id: `${resource}/${draft}/${version}`
-  });
+      if (!INCLUDED_DRAFTS.includes(draft)) {
+        continue;
+      }
+
+      // Bundled copy consumed by the viewer via the manifest.
+      writeFile(path.join(schemaOutDir, 'collection', draft, `${version}.json`), content);
+      entries.push({
+        resource: 'collection',
+        label: RESOURCE_LABELS.collection,
+        draft,
+        version,
+        status: statusForVersion(version),
+        id: `collection/${draft}/${version}`
+      });
+    }
+  }
+
+  // Static copies at every hosted URL, incl. /collection/json/{version}/{draft}/collection.json.
+  const { raw } = legacyUrls(versionsByDraft);
+
+  for (const file of raw) {
+    writeFile(path.join(publicDir, file.path), serialized.get(`${file.draft}/${file.version}`));
+  }
+
+  return { entries, rawPaths: raw.map((f) => f.path) };
 }
 
 function main() {
@@ -91,48 +162,10 @@ function main() {
   for (const resource of RESOURCE_ORDER) {
     fs.rmSync(path.join(PUBLIC_DIR, resource, 'json'), { recursive: true, force: true });
   }
+  // Legacy /json/... layout.
+  fs.rmSync(path.join(PUBLIC_DIR, 'json'), { recursive: true, force: true });
 
-  /** @type {{resource: string, label: string, draft: string, version: string, status: string, id: string}[]} */
-  const entries = [];
-
-  // Collection schemas from the local `schemas/` tree.
-  const drafts = fs
-    .readdirSync(SCHEMA_DIR)
-    .filter((d) => isDir(path.join(SCHEMA_DIR, d)))
-    .filter((d) => INCLUDED_DRAFTS.includes(d));
-
-  for (const draft of drafts) {
-    const draftPath = path.join(SCHEMA_DIR, draft);
-    const versions = fs
-      .readdirSync(draftPath)
-      .filter((v) => isDir(path.join(draftPath, v)))
-      .sort(semver.rcompare); // newest first
-
-    for (const version of versions) {
-      const versionSchemaDir = path.join(draftPath, version);
-      const schemaFile = path.join(versionSchemaDir, 'collection.json');
-
-      if (!fs.existsSync(schemaFile)) {
-        console.warn('Skipping %s/%s (no collection.json)', draft, version);
-        continue;
-      }
-
-      const raw = JSON.parse(fs.readFileSync(schemaFile, 'utf8'));
-      let schema;
-
-      if (raw.definitions && Object.keys(raw.definitions).length > 0) {
-        // Self-contained: `definitions` are already inline, emit as-is.
-        console.info('Bundling collection %s/%s (self-contained) ...', draft, version);
-        schema = raw;
-      } else {
-        // Legacy: `definitions` live in sibling files, merged by compile().
-        console.info('Compiling collection %s/%s ...', draft, version);
-        schema = tools.compile(schemaFile, versionSchemaDir, draft);
-      }
-
-      emitSchema({ resource: 'collection', draft, version, status: statusForVersion(version) }, schema, entries);
-    }
-  }
+  const { entries, rawPaths } = writeSchemas();
 
   // Order by resource kind, then newest version first.
   entries.sort((a, b) => {
@@ -155,6 +188,7 @@ function main() {
   writeManifest(entries, defaultEntry);
 
   console.info('\nGenerated %d schema(s) into %s', entries.length, path.relative(ROOT, SCHEMA_OUT_DIR));
+  console.info('Wrote %d raw schema file(s) into %s', rawPaths.length, path.relative(ROOT, PUBLIC_DIR));
   console.info('Default schema: %s', defaultEntry ? defaultEntry.id : '(none)');
 }
 
@@ -232,4 +266,7 @@ function writeManifest(entries, defaultEntry) {
   fs.writeFileSync(path.join(OUT_DIR, 'manifest.ts'), lines.join('\n'));
 }
 
-main();
+// Only generate when run as a script, not when imported (e.g. by tests).
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  main();
+}
