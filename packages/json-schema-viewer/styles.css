@@ -33,11 +33,58 @@
   margin: 0;
   padding: 0;
   border: 0;
+  border-radius: var(--border-radius-s);
   background: none;
   font: inherit;
   color: inherit;
   cursor: pointer;
   text-align: left;
+}
+.jsv-pressable:hover {
+  background: var(--highlight-background-color-primary);
+}
+
+/* Row expand/collapse toggle (caret + property name/type) ----------------- */
+/*
+ * Only this element toggles a row. The caret sits in the gutter left of the
+ * name; the negative margin + matching padding pulls the toggle box over it so
+ * the caret is inside the hover/focus area without shifting the layout (same
+ * trick on the right for a little breathing room).
+ */
+.jsv-row-toggle {
+  display: inline-flex;
+  align-items: baseline;
+  margin: 0 -0.25rem 0 -1.5rem;
+  padding: 0 0.25rem 0 1.5rem;
+  border-radius: var(--border-radius-s);
+  cursor: pointer;
+}
+.jsv-caret {
+  display: inline-flex;
+  align-self: stretch;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  margin-left: -1.5rem;
+  color: var(--content-color-tertiary);
+}
+.jsv-row-toggle:hover {
+  background: var(--highlight-background-color-primary);
+}
+.jsv-row-toggle:hover .jsv-caret {
+  color: var(--content-color-primary);
+}
+
+/* Keyboard focus ring for every interactive control ----------------------- */
+.jsv-row-toggle:focus-visible,
+.jsv-pressable:focus-visible,
+.jsv-link:focus-visible,
+.jsv-select__control:focus-visible,
+.jsv-menu__item:focus-visible,
+.jsv-description a:focus-visible,
+.jsv-description__more:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
 }
 
 /* Select ------------------------------------------------------------------ */

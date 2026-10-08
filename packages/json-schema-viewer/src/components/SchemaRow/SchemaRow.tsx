@@ -96,6 +96,26 @@ export const SchemaRow: React.FunctionComponent<SchemaRowProps> = React.memo(
       }
     }
 
+    const showName = schemaNode.subpath.length > 0 && shouldShowPropertyName(schemaNode);
+    const hasLabel = showName || choices.length === 1;
+    const label = (
+      <>
+        {showName && (
+          <Box
+            as="span"
+            mr={2}
+            fontFamily="mono"
+            fontWeight="semibold"
+            data-test={`property-name-${last(schemaNode.subpath)}`}
+          >
+            {last(schemaNode.subpath)}
+          </Box>
+        )}
+
+        {choices.length === 1 && <Types schemaNode={typeToShow} />}
+      </>
+    );
+
     if (parentChangeType === 'added' && hasChanged && hasChanged.type === 'removed') {
       return null;
     }
@@ -123,26 +143,32 @@ export const SchemaRow: React.FunctionComponent<SchemaRowProps> = React.memo(
             <NodeAnnotation change={hasChanged} style={{ left: annotationLeftOffset }} />
           ) : null}
           <VStack spacing={1} maxW="full" flex={1} ml={isCollapsible && !isRootLevel ? 2 : undefined}>
-            <Flex
-              alignItems="center"
-              maxW="full"
-              onClick={isCollapsible ? () => setExpanded(!isExpanded) : undefined}
-              cursor={isCollapsible ? 'pointer' : undefined}
-            >
-              {isCollapsible ? <Caret isExpanded={isExpanded} /> : null}
+            <Flex alignItems="center" maxW="full">
               <Flex alignItems="baseline" fontSize="base">
-                {schemaNode.subpath.length > 0 && shouldShowPropertyName(schemaNode) && (
-                  <Box
-                    mr={2}
-                    fontFamily="mono"
-                    fontWeight="semibold"
-                    data-test={`property-name-${last(schemaNode.subpath)}`}
+                {isCollapsible ? (
+                  // Only the caret + name/type label toggles the row; the rest of the
+                  // row (type select, divider, validations) is not a click target.
+                  <span
+                    className="jsv-row-toggle"
+                    role="button"
+                    tabIndex={0}
+                    aria-expanded={isExpanded}
+                    // Caret-only toggle (no name, type picked via the Select): give it a name.
+                    aria-label={hasLabel ? undefined : isExpanded ? 'Collapse' : 'Expand'}
+                    onClick={() => setExpanded(!isExpanded)}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        setExpanded(!isExpanded);
+                      }
+                    }}
                   >
-                    {last(schemaNode.subpath)}
-                  </Box>
+                    <Caret isExpanded={isExpanded} />
+                    {label}
+                  </span>
+                ) : (
+                  label
                 )}
-
-                {choices.length === 1 && <Types schemaNode={typeToShow} />}
 
                 {onGoToRef && isReferenceNode(schemaNode) && schemaNode.external ? (
                   <Box
