@@ -160,7 +160,14 @@ export const SchemaRow: React.FunctionComponent<SchemaRowProps> = React.memo(
                     onKeyDown={e => {
                       if (e.key === 'Enter' || e.key === ' ') {
                         e.preventDefault();
-                        setExpanded(!isExpanded);
+                        // Holding the key must not keep flipping the row.
+                        if (!e.repeat) setExpanded(!isExpanded);
+                      } else if (e.key === 'ArrowRight' && !isExpanded) {
+                        e.preventDefault();
+                        setExpanded(true);
+                      } else if (e.key === 'ArrowLeft' && isExpanded) {
+                        e.preventDefault();
+                        setExpanded(false);
                       }
                     }}
                   >

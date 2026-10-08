@@ -98,8 +98,6 @@
 .jsv-row-toggle:focus-visible,
 .jsv-pressable:focus-visible,
 .jsv-link:focus-visible,
-.jsv-select__control:focus-visible,
-.jsv-menu__item:focus-visible,
 .jsv-description a:focus-visible,
 .jsv-description__more:focus-visible {
   outline: none;
