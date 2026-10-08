@@ -160,6 +160,16 @@ body {
 }
 
 /* Schema page */
+/*
+ * Cap the content column at a readable width so descriptions stay ~100
+ * characters per line and the 'required' label (pushed right by the viewer's
+ * flex divider) stays near its property name. Left-aligned so the content
+ * keeps a fixed distance from the sidebar at every viewport width.
+ */
+.schema-page {
+  max-width: 960px;
+}
+
 .schema-page__header {
   border-bottom: var(--border-width-default, 1px) solid var(--border-color-default);
   padding-bottom: var(--spacing-xl, 16px);
@@ -170,7 +180,9 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--spacing-l, 12px);
+  /* Stack the schema link under the title when both don't fit on one line. */
+  flex-wrap: wrap;
+  column-gap: var(--spacing-l, 12px);
 }
 
 .schema-page__header h1 {
@@ -190,7 +202,9 @@ body {
 }
 
 .schema-link {
-  white-space: nowrap;
+  /* Long URLs break anywhere instead of widening the page at tablet widths. */
+  min-width: 0;
+  overflow-wrap: anywhere;
   font-size: 0.85rem;
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   color: var(--content-color-link, var(--base-color-brand));
@@ -202,6 +216,7 @@ body {
 }
 
 .schema-page__header code {
+  white-space: nowrap;
   background: var(--background-color-tertiary);
   padding: 2px var(--spacing-s, 6px);
   border-radius: var(--border-radius-s, 4px);
