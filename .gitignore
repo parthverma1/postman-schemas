@@ -145,6 +145,7 @@ dist/
 src/generated/
 src/routeTree.gen.ts
 public/collection/
+public/json/
 
 # Generated favicon assets (from public/assets/postman-logo-orange.svg)
 public/favicon.ico

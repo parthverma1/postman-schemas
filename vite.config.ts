@@ -2,6 +2,20 @@ import { tanstackStart } from '@tanstack/react-start/plugin/vite';
 import { defineConfig } from 'vite';
 import viteReact from '@vitejs/plugin-react';
 import { nitro } from 'nitro/vite';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { legacyRouteRules } from './scripts/legacy-urls';
+
+// Legacy docs URLs → 301. Computed from schemas/ directly so `vite dev` works
+// without a prior generate.
+const listDirs = (dir: string) =>
+  fs.readdirSync(dir, { withFileTypes: true }).filter((e) => e.isDirectory()).map((e) => e.name);
+const SCHEMA_DIR = fileURLToPath(new URL('./schemas', import.meta.url));
+const versionsByDraft = Object.fromEntries(
+  listDirs(SCHEMA_DIR).map((draft) => [draft, listDirs(path.join(SCHEMA_DIR, draft))]),
+);
+const routeRules = legacyRouteRules(versionsByDraft);
 
 export default defineConfig({
   server: {
@@ -28,6 +42,7 @@ export default defineConfig({
       preset: process.env.NITRO_PRESET,
       // Required by the Cloudflare (workerd) runtime; also enables nodejs_compat.
       compatibilityDate: '2025-09-14',
+      routeRules,
     }),
   ],
 });
