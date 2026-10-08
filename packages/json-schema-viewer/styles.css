@@ -16,6 +16,8 @@
   font-size: 0.875rem;
   line-height: 1.5;
   color: var(--content-color-primary);
+  /* Space between a property name and whatever follows it, on every row kind. */
+  --jsv-name-gap: 0.75rem;
 }
 
 /* Links ------------------------------------------------------------------- */
@@ -49,16 +51,23 @@
  * Only this element toggles a row. The caret sits in the gutter left of the
  * name; the negative margin + matching padding pulls the toggle box over it so
  * the caret is inside the hover/focus area without shifting the layout. On the
- * right, a little padding past the last glyph plus a positive margin keeps the
- * hover background clear of whatever follows (type select, ref link, ...).
+ * right, padding + margin add up to --jsv-name-gap, so the hover background
+ * hugs the label and stays clear of whatever follows (type select, ref link).
  */
 .jsv-row-toggle {
   display: inline-flex;
   align-items: baseline;
-  margin: 0 0.5rem 0 -1.5rem;
+  margin: 0 calc(var(--jsv-name-gap) - 0.25rem) 0 -1.5rem;
   padding: 0 0.25rem 0 1.5rem;
   border-radius: var(--border-radius-s);
   cursor: pointer;
+}
+.jsv-property-name {
+  margin-right: var(--jsv-name-gap);
+}
+/* Last thing in the toggle: the toggle's own padding + margin provide the gap. */
+.jsv-row-toggle > .jsv-property-name:last-child {
+  margin-right: 0;
 }
 .jsv-caret {
   display: inline-flex;
