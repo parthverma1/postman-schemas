@@ -103,7 +103,9 @@ export const SchemaRow: React.FunctionComponent<SchemaRowProps> = React.memo(
         {showName && (
           <Box
             as="span"
-            mr={2}
+            // Inside the row toggle the trailing gap comes from the toggle's own
+            // margin (styles.css) so its hover background ends at the label.
+            mr={isCollapsible && choices.length !== 1 ? undefined : 2}
             fontFamily="mono"
             fontWeight="semibold"
             data-test={`property-name-${last(schemaNode.subpath)}`}
