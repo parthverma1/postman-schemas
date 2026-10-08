@@ -116,12 +116,20 @@
 .jsv-description p:last-child {
   margin-bottom: 0;
 }
+/* Always underlined: the link colour alone is too close to the description
+ * text colour (axe link-in-text-block), so the underline is the cue. */
 .jsv-description a {
   color: var(--content-color-link);
-  text-decoration: none;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
 }
 .jsv-description a:hover {
-  text-decoration: underline;
+  text-decoration-thickness: 2px;
+}
+.jsv-description a:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
 }
 .jsv-description code {
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
