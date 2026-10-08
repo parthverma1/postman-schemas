@@ -53,7 +53,12 @@ export const SchemaRow: React.FunctionComponent<SchemaRowProps> = React.memo(
 
     const { selectedChoice, setSelectedChoice, choices } = useChoices(schemaNode);
     const typeToShow = selectedChoice.type;
-    const description = isRegularNode(typeToShow) ? typeToShow.annotations.description : null;
+    // A oneOf/anyOf choice (incl. a flattened array-of-oneOf) replaces the node
+    // shown, so keep the property's own description and add the selected
+    // variant's only when it says something different.
+    const ownDescription = isRegularNode(schemaNode) ? schemaNode.annotations.description : null;
+    const choiceDescription =
+      typeToShow !== schemaNode && isRegularNode(typeToShow) ? typeToShow.annotations.description : null;
 
     const rootLevel = renderRootTreeLines ? 1 : 2;
     const childNodes = React.useMemo(() => visibleChildren(typeToShow), [typeToShow]);
@@ -190,9 +195,12 @@ export const SchemaRow: React.FunctionComponent<SchemaRowProps> = React.memo(
               {hasProperties && <Divider atom={isNodeHoveredAtom(schemaNode)} />}
               <Properties required={required} deprecated={deprecated} validations={validations} />
             </Flex>
-            {typeof description === 'string' &&
-              (!combiner || schemaNode.parent?.fragment.description !== description) &&
-              description.length > 0 && <Description value={description} />}
+            {[ownDescription, choiceDescription !== ownDescription ? choiceDescription : null].map(
+              (description, index) =>
+                typeof description === 'string' &&
+                (!combiner || schemaNode.parent?.fragment.description !== description) &&
+                description.length > 0 && <Description key={index} value={description} />,
+            )}
             <Validations
               validations={isRegularNode(schemaNode) ? getValidationsFromSchema(schemaNode) : {}}
               hideExamples={hideExamples}
