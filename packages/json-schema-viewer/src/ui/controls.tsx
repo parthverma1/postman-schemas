@@ -34,6 +34,37 @@ export const Pressable = React.forwardRef<HTMLButtonElement, Record<string, unkn
 });
 
 /* -------------------------------------------------------------------------- */
+/* Outside-click dismissal                                                     */
+/* -------------------------------------------------------------------------- */
+// A press outside an open dropdown should only close it. Without this, the click
+// that ends that press still reaches whatever is underneath (e.g. a row's
+// expand/collapse handler), so closing a dropdown toggles a row. Call this from
+// the dismissing primary-button `mousedown`: it swallows the matching `click` in
+// the capture phase on window, before React's root listener sees it. It disarms
+// right after that press's `mouseup` (or on the next `mousedown`), so a press
+// that produces no click (scrollbar, drag-out) can't eat a later one, and it
+// never touches keyboard/programmatic clicks (`detail === 0`).
+function swallowNextClick() {
+  const swallow = (e: MouseEvent) => {
+    cleanup();
+    if (e.detail === 0) return;
+    e.stopPropagation();
+    e.preventDefault();
+  };
+  // `click` is dispatched right after `mouseup` in the same task, so a 0ms timeout
+  // runs after it.
+  const onMouseUp = () => setTimeout(cleanup, 0);
+  const cleanup = () => {
+    window.removeEventListener('click', swallow, true);
+    window.removeEventListener('mousedown', cleanup, true);
+    window.removeEventListener('mouseup', onMouseUp, true);
+  };
+  window.addEventListener('click', swallow, true);
+  window.addEventListener('mousedown', cleanup, true);
+  window.addEventListener('mouseup', onMouseUp, true);
+}
+
+/* -------------------------------------------------------------------------- */
 /* Select — native select with an optional text prefix.                        */
 /* -------------------------------------------------------------------------- */
 export interface SelectOption {
@@ -51,12 +82,27 @@ export interface SelectProps {
   'aria-label'?: string;
 }
 export function Select({ options, value, onChange, triggerTextPrefix, ...rest }: SelectProps) {
+  const ref = React.useRef<HTMLSelectElement>(null);
+
+  // Chrome and Safari on macOS eat the press that closes a native picker, but
+  // other engines (e.g. Firefox) pass it to the page. A press outside while the
+  // picker is `:open` is a dismissal, so drop its click.
+  React.useEffect(() => {
+    const onMouseDown = (e: MouseEvent) => {
+      const el = ref.current;
+      if (e.button === 0 && el && !el.contains(e.target as Node) && isOpen(el)) swallowNextClick();
+    };
+    window.addEventListener('mousedown', onMouseDown, true);
+    return () => window.removeEventListener('mousedown', onMouseDown, true);
+  }, []);
+
   return (
     // Stop propagation so interacting with the select doesn't trigger the row's
     // expand/collapse onClick handler (which wraps this control).
     <span className="jsv-select" onClick={e => e.stopPropagation()}>
       {triggerTextPrefix ? <span className="jsv-select__prefix">{triggerTextPrefix}</span> : null}
       <select
+        ref={ref}
         className="jsv-select__control"
         value={value}
         onChange={e => onChange?.(e.target.value)}
@@ -72,6 +118,20 @@ export function Select({ options, value, onChange, triggerTextPrefix, ...rest }:
       </select>
     </span>
   );
+}
+
+// `:open` matches a select whose picker is showing. Browsers without it get no
+// swallowing (old behaviour). Support is checked once, lazily (not at module
+// scope, which also runs during SSR).
+let supportsOpen: boolean | undefined;
+function isOpen(el: Element) {
+  supportsOpen ??= typeof CSS !== 'undefined' && !!CSS.supports?.('selector(:open)');
+  if (!supportsOpen) return false;
+  try {
+    return el.matches(':open');
+  } catch {
+    return false;
+  }
 }
 
 /* -------------------------------------------------------------------------- */
@@ -100,7 +160,10 @@ export function Menu({ items, renderTrigger, closeOnPress = true }: MenuProps) {
   React.useEffect(() => {
     if (!open) return;
     const onDocClick = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false);
+        if (e.button === 0) swallowNextClick();
+      }
     };
     document.addEventListener('mousedown', onDocClick);
     return () => document.removeEventListener('mousedown', onDocClick);
