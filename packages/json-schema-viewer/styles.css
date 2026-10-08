@@ -65,38 +65,7 @@
 
 /* Menu (disclosure dropdown) --------------------------------------------- */
 .jsv-menu {
-  position: relative;
   display: inline-flex;
-}
-.jsv-menu__list {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  z-index: 20;
-  min-width: 8rem;
-  margin: 0.25rem 0 0;
-  padding: 0.25rem;
-  list-style: none;
-  background: var(--background-color-primary);
-  border: 1px solid var(--border-color-default);
-  border-radius: 4px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-}
-.jsv-menu__item {
-  display: block;
-  width: 100%;
-  margin: 0;
-  padding: 0.25rem 0.5rem;
-  border: 0;
-  background: none;
-  font: inherit;
-  color: var(--content-color-primary);
-  text-align: left;
-  border-radius: 3px;
-  cursor: pointer;
-}
-.jsv-menu__item:hover {
-  background: var(--background-color-secondary);
 }
 
 /* Tooltip ----------------------------------------------------------------- */
@@ -174,4 +143,94 @@
 }
 .jsv-description__more:hover {
   text-decoration: underline;
+}
+
+/* Select + Menu dropdowns (Base UI) --------------------------------------- */
+/*
+ * Select/Menu popups are portaled to <body>, outside .JsonSchemaViewer, so they
+ * set their own font. Tokens live on :root (light + dark via
+ * prefers-color-scheme), so they still apply. No exit animations: the popup (and
+ * its modal backdrop) would stay mounted while one runs.
+ */
+.jsv-select__control {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  line-height: inherit;
+  text-align: left;
+}
+.jsv-select__control:focus-visible,
+.jsv-select__control[data-popup-open] {
+  outline: none;
+  border-color: var(--border-color-strong);
+}
+.jsv-select__control:focus-visible {
+  box-shadow: var(--shadow-focus);
+}
+.jsv-select__icon {
+  display: inline-flex;
+  color: var(--content-color-tertiary);
+}
+
+/*
+ * The portal holds Base UI's modal backdrop (fixed, no z-index) and the
+ * positioner. Its own stacking context lifts both above sticky page chrome such
+ * as PathCrumbs (z-index 10), so an outside press there only dismisses. Fixed
+ * at the viewport top with zero height (not `relative`): as a relative box at the
+ * end of <body> it became the positioner's containing block, so the popup was
+ * first placed at the page bottom and focusing it scrolled the page.
+ */
+.jsv-dropdown-portal {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0; /* full width so the popup isn't shrink-wrapped; zero height */
+  z-index: 1000;
+}
+.jsv-dropdown-positioner {
+  z-index: 1000;
+}
+.jsv-dropdown {
+  min-width: 8rem;
+  padding: 0.25rem;
+  font-family: var(--app-font-ui, 'Inter', system-ui, -apple-system, sans-serif);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--content-color-primary);
+  background: var(--background-color-primary);
+  border: 1px solid var(--border-color-default);
+  border-radius: var(--border-radius-default);
+  box-shadow: var(--shadow-elevation-20);
+}
+.jsv-dropdown--select {
+  min-width: var(--anchor-width);
+  max-height: min(var(--available-height), 20rem);
+  overflow-y: auto;
+  font-size: 0.75rem;
+}
+.jsv-dropdown__item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 0.25rem 0.5rem 0.25rem 1.5rem;
+  border-radius: var(--border-radius-s);
+  cursor: pointer;
+  outline: none;
+  user-select: none;
+}
+.jsv-dropdown__item[data-highlighted] {
+  background: var(--highlight-background-color-primary);
+}
+.jsv-dropdown__item[data-selected] {
+  font-weight: var(--text-weight-medium);
+}
+.jsv-dropdown__item[data-disabled] {
+  color: var(--content-color-tertiary);
+  cursor: default;
+}
+.jsv-dropdown__indicator {
+  position: absolute;
+  left: 0.5rem;
+  display: inline-flex;
+  color: var(--content-color-brand);
 }

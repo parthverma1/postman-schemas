@@ -168,7 +168,7 @@ export const SchemaRow: React.FunctionComponent<SchemaRowProps> = React.memo(
 
                 {choices.length > 1 && (
                   <Select
-                    aria-label="Pick a type"
+                    label={shouldShowPropertyName(schemaNode) ? last(schemaNode.subpath) : undefined}
                     size="sm"
                     triggerTextPrefix={
                       combiner
