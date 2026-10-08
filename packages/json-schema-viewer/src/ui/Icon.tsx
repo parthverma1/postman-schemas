@@ -28,26 +28,39 @@ function resolveSize(size: string | number | undefined): string {
 }
 
 /**
- * One chevron for both row states so toggling never shifts anything: a
- * right-pointing chevron whose stroked box is square (6x6 path + 1.5 stroke)
- * and centred on (8, 8), so rotating it 90deg about the centre for the open
- * state keeps the exact same visible box.
+ * `square` glyphs always render in a square box (ignoring `fixedWidth`). The
+ * chevrons need it: chevron-down is chevron-right rotated 90deg about the
+ * viewBox centre, so in a square box both states have the same layout box.
  */
-const chevron = (rotate: number) => (
-  <path
-    d="M5 5l6 3-6 3"
-    transform={rotate ? `rotate(${rotate} 8 8)` : undefined}
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.5"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  />
-);
-
-const GLYPHS: Record<string, { viewBox: string; node: React.ReactNode }> = {
-  'chevron-down': { viewBox: '0 0 16 16', node: chevron(90) },
-  'chevron-right': { viewBox: '0 0 16 16', node: chevron(0) },
+const GLYPHS: Record<string, { viewBox: string; node: React.ReactNode; square?: boolean }> = {
+  'chevron-down': {
+    viewBox: '0 0 16 16',
+    square: true,
+    node: (
+      <path
+        d="M4 6l4 4 4-4"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    ),
+  },
+  'chevron-right': {
+    viewBox: '0 0 16 16',
+    square: true,
+    node: (
+      <path
+        d="M6 4l4 4-4 4"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    ),
+  },
   'caret-down': {
     viewBox: '0 0 16 16',
     node: <path d="M4 6h8l-4 5z" fill="currentColor" />,
@@ -83,7 +96,7 @@ export function Icon({ icon, size, fixedWidth, color, className, style, ...rest 
     <svg
       className={className}
       viewBox={glyph.viewBox}
-      width={fixedWidth ? '1.25em' : dim}
+      width={fixedWidth && !glyph.square ? '1.25em' : dim}
       height={dim}
       role="img"
       aria-hidden={rest['aria-label'] ? undefined : true}

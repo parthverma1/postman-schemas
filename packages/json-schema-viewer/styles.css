@@ -59,9 +59,10 @@
  * stays clear of whatever follows (type select, ref link).
  */
 .jsv-row-toggle {
-  /* Centred 0.75rem icon; the chevron's stroke starts at x=4.25 of 16 in both
-     states (one square-box glyph, rotated when open; see ui/Icon.tsx). */
-  --jsv-caret-inset: calc((1.5rem - 0.75rem) / 2 + 0.75rem * 4.25 / 16);
+  /* Centred square 0.75rem icon. The open chevron's stroke starts at x=3.25
+     of 16; the closed one, at 5.25, so collapsed rows get 1.5px more left
+     padding, but the pill edge stays put on toggle. */
+  --jsv-caret-inset: calc((1.5rem - 0.75rem) / 2 + 0.75rem * 3.25 / 16);
   --jsv-toggle-left: calc(1.5rem - var(--jsv-caret-inset) + var(--jsv-toggle-pad));
   display: inline-flex;
   align-items: baseline;
