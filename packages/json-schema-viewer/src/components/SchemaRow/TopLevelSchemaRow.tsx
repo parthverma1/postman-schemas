@@ -79,8 +79,8 @@ export const TopLevelSchemaRow = ({
               title: choice.title,
               onPress: () => setSelectedChoice(choice),
             }))}
-            renderTrigger={props => (
-              <Pressable {...props}>
+            renderTrigger={() => (
+              <Pressable>
                 <Flex fontFamily="mono" fontWeight="semibold" cursor="pointer" fontSize="base">
                   {selectedChoice.title}
                   <Box ml={1}>
