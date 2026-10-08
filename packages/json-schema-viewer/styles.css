@@ -59,8 +59,9 @@
  * stays clear of whatever follows (type select, ref link).
  */
 .jsv-row-toggle {
-  /* Centred 0.75rem icon; chevron-down's stroke starts at x=3.25 of 16. */
-  --jsv-caret-inset: calc((1.5rem - 0.75rem) / 2 + 0.75rem * 3.25 / 16);
+  /* Centred 0.75rem icon; the chevron's stroke starts at x=4.25 of 16 in both
+     states (one square-box glyph, rotated when open; see ui/Icon.tsx). */
+  --jsv-caret-inset: calc((1.5rem - 0.75rem) / 2 + 0.75rem * 4.25 / 16);
   --jsv-toggle-left: calc(1.5rem - var(--jsv-caret-inset) + var(--jsv-toggle-pad));
   display: inline-flex;
   align-items: baseline;
@@ -68,10 +69,6 @@
   padding: 0 var(--jsv-toggle-pad) 0 var(--jsv-toggle-left);
   border-radius: var(--border-radius-s);
   cursor: pointer;
-}
-/* Collapsed: chevron-right's stroke starts at x=5.25 of 16. */
-.jsv-row-toggle[aria-expanded='false'] {
-  --jsv-caret-inset: calc((1.5rem - 0.75rem) / 2 + 0.75rem * 5.25 / 16);
 }
 .jsv-property-name {
   margin-right: var(--jsv-name-gap);
