@@ -4,13 +4,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { compiledSchema, schemaVersions } from './helpers';
 import { transformForViewer, type JsonObject } from '../scripts/schema-transforms/index';
-import {
-  DESCRIPTION_OVERRIDES,
-  overrideDescriptions,
-  resolvePointer,
-  unwrapTitledRefs,
-  unwrappedRef,
-} from '../scripts/schema-transforms/collection-draft-07-v3.0.0';
+import { unwrapTitledRefs, unwrappedRef } from '../scripts/schema-transforms/collection-draft-07-v3.0.0';
 import { writeSchemas } from '../scripts/generate-schemas.mjs';
 import { VIEWER_DRAFT } from '../scripts/legacy-urls';
 
@@ -64,10 +58,10 @@ function diff(
 }
 
 describe('unwrappedRef', () => {
-  const definitions = { auth: { title: 'Auth', type: 'object' } };
+  const titles = { auth: 'Auth' };
 
   it('unwraps {title, allOf: [{$ref}]} when the title matches the referenced definition', () => {
-    expect(unwrappedRef({ title: 'Auth', allOf: [{ $ref: '#/definitions/auth' }] }, definitions)).toEqual({
+    expect(unwrappedRef({ title: 'Auth', allOf: [{ $ref: '#/definitions/auth' }] }, titles)).toEqual({
       $ref: '#/definitions/auth',
     });
   });
@@ -75,7 +69,7 @@ describe('unwrappedRef', () => {
   it('keeps the wrapper when the title differs', () => {
     const node = { title: 'Request auth', allOf: [{ $ref: '#/definitions/auth' }] };
 
-    expect(unwrappedRef(node, definitions)).toBeUndefined();
+    expect(unwrappedRef(node, titles)).toBeUndefined();
   });
 
   it('keeps the wrapper when there are other keys', () => {
@@ -85,20 +79,20 @@ describe('unwrappedRef', () => {
       { title: 'Auth', allOf: [{ $ref: '#/definitions/auth' }, { type: 'object' }] },
       { allOf: [{ $ref: '#/definitions/auth' }], type: 'object' },
     ]) {
-      expect(unwrappedRef(node, definitions)).toBeUndefined();
+      expect(unwrappedRef(node, titles)).toBeUndefined();
     }
   });
 
   it('keeps the wrapper when the $ref is missing or not a local definition', () => {
     for (const $ref of ['#/definitions/missing', 'other.json#/definitions/auth']) {
-      expect(unwrappedRef({ title: 'Auth', allOf: [{ $ref }] }, definitions)).toBeUndefined();
+      expect(unwrappedRef({ title: 'Auth', allOf: [{ $ref }] }, titles)).toBeUndefined();
     }
   });
 
   it('unwraps nested sites and skips value keys', () => {
     const wrapper = { title: 'Auth', allOf: [{ $ref: '#/definitions/auth' }] };
     const schema = {
-      definitions,
+      definitions: { auth: { title: 'Auth', type: 'object' } },
       properties: { a: wrapper, b: { items: wrapper }, c: { anyOf: [wrapper] }, d: { default: wrapper } },
     };
 
@@ -109,14 +103,27 @@ describe('unwrappedRef', () => {
       d: { default: wrapper },
     });
   });
+
+  it('matches against the definition titles from before the walk', () => {
+    // `a` is itself an unwrappable wrapper; the walk reaches it before properties.x.
+    const schema = {
+      definitions: { a: { title: 'A', allOf: [{ $ref: '#/definitions/b' }] }, b: { title: 'A' } },
+      properties: { x: { title: 'A', allOf: [{ $ref: '#/definitions/a' }] } },
+    };
+
+    expect(unwrapTitledRefs(schema)).toEqual({
+      definitions: { a: { $ref: '#/definitions/b' }, b: { title: 'A' } },
+      properties: { x: { $ref: '#/definitions/a' } },
+    });
+  });
 });
 
 describe('collection/draft-07/v3.0.0 viewer transform', () => {
-  it('makes exactly 35 unwraps and 13 description changes, nothing else', () => {
+  it('makes exactly 35 unwraps and nothing else', () => {
     const changes = diff(v3Source(), transformForViewer(v3Source(), V3_ID));
 
     expect(changes.unwraps).toHaveLength(35);
-    expect(changes.descriptions.sort()).toEqual(DESCRIPTION_OVERRIDES.map((o) => o.pointer).sort());
+    expect(changes.descriptions).toEqual([]);
     expect(changes.other).toEqual([]);
   });
 
@@ -126,28 +133,6 @@ describe('collection/draft-07/v3.0.0 viewer transform', () => {
     for (const name of ['graphql', 'grpc', 'kafka', 'kafka-message', 'kafka-topic']) {
       expect(definitions[`v3-${name}-schema`].allOf).toEqual([{ $ref: '#/definitions/v3-schema' }]);
     }
-  });
-
-  it('has an override `from` matching every source description, and applies `to`', () => {
-    const source = v3Source();
-    const viewer = transformForViewer(source, V3_ID);
-    const at = (root: JsonObject, pointer: string) => resolvePointer(root, pointer) as JsonObject;
-
-    expect(DESCRIPTION_OVERRIDES).toHaveLength(13);
-
-    for (const { pointer, from, to } of DESCRIPTION_OVERRIDES) {
-      expect(at(source, pointer).description, pointer).toBe(from);
-      expect(at(viewer, pointer).description, pointer).toBe(to);
-    }
-  });
-
-  it('throws when a source description no longer matches `from`', () => {
-    const source = v3Source();
-    const [{ pointer }] = DESCRIPTION_OVERRIDES;
-
-    (source.properties as Record<string, JsonObject>)[pointer.split('/')[2]].description = 'Edited upstream.';
-
-    expect(() => overrideDescriptions(source)).toThrow(pointer);
   });
 
   it('does not mutate its input', () => {

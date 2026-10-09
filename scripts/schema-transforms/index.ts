@@ -4,8 +4,8 @@
  * compiled original, and files under schemas/ are never edited for display.
  *
  * Order: global transforms (every schema), then the transforms registered for
- * that exact schema id (`${resource}/${draft}/${version}`). Each transform gets
- * a private deep clone, so it may mutate and return it.
+ * that exact schema id (`${resource}/${draft}/${version}`). The transforms share
+ * one private deep clone of the input, so each may mutate it and return it.
  *
  * Kept free of TS-only runtime syntax so Node can run it with type stripping.
  */
