@@ -232,6 +232,36 @@ function getRequired(required) {
     return required.filter(isStringOrNumber).map(String);
 }
 
+// Fork addition: for an `anyOf` whose every branch is just `{ required: [...] }`,
+// returns the keys every branch requires (merged with the fragment's own
+// `required`) and the minimal alternative key sets left over; otherwise null.
+function getConstraintOnlyAnyOf(fragment) {
+    const branches = fragment.anyOf;
+    if (SchemaCombinerName.OneOf in fragment || !Array.isArray(branches) || branches.length === 0) {
+        return null;
+    }
+    const isRequiredOnly = (branch) => isObjectLiteral(branch) &&
+        Object.keys(branch).length === 1 &&
+        Array.isArray(branch.required) &&
+        branch.required.every((key) => typeof key === 'string');
+    if (!branches.every(isRequiredOnly)) {
+        return null;
+    }
+    const sets = branches.map((branch) => [...new Set(branch.required)]);
+    const common = sets[0].filter((key) => sets.every((set) => set.includes(key)));
+    const required = [...new Set([...(getRequired(fragment.required) ?? []), ...common])];
+    const remaining = sets.map((set) => set.filter((key) => !required.includes(key)));
+    // An emptied branch is already satisfied by `required`, so nothing else is needed.
+    if (remaining.some((set) => set.length === 0)) {
+        return { required, alternatives: [] };
+    }
+    const isSubset = (a, b) => a.every((key) => b.includes(key));
+    const alternatives = remaining.filter((set, i) => !remaining.some((other, j) => j !== i &&
+        isSubset(other, set) &&
+        (other.length < set.length || j < i)));
+    return { required, alternatives };
+}
+
 const VALID_TYPES = Object.values(SchemaNodeKind);
 const isValidType = (maybeType) => typeof maybeType === 'string' && VALID_TYPES.includes(maybeType);
 
@@ -790,6 +820,21 @@ class Walker extends EventEmitter {
             catch (ex) {
                 initialFragment = fragment;
                 super.emit('error', createMagicError(new MergingError((_b = ex === null || ex === void 0 ? void 0 : ex.message) !== null && _b !== void 0 ? _b : 'Unknown merging error')));
+            }
+        }
+        // Fork patch: an anyOf whose branches only list `required` keys (e.g.
+        // `anyOf: [{required:[id]}, {required:[key]}]`) constrains which properties
+        // must be present; it isn't a set of alternative types. Fold it into the node
+        // instead of building a combiner: keys required by every branch join
+        // `required`, and the remaining minimal sets are kept under `requiredAnyOf`
+        // (not an `x-` key, so it isn't shown as a vendor extension). oneOf is left
+        // alone: there the same branches mean "exactly one", not "at least one".
+        const requiredAnyOf = getConstraintOnlyAnyOf(fragment);
+        if (requiredAnyOf !== null) {
+            const { anyOf: _anyOf, ...rest } = fragment;
+            fragment = { ...rest, required: requiredAnyOf.required };
+            if (requiredAnyOf.alternatives.length > 0) {
+                fragment.requiredAnyOf = requiredAnyOf.alternatives;
             }
         }
         if (SchemaCombinerName.OneOf in fragment || SchemaCombinerName.AnyOf in fragment) {

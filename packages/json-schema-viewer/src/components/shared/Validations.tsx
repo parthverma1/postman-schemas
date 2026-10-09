@@ -1,8 +1,9 @@
 /* eslint-disable prettier/prettier */
-import { isRegularNode, RegularNode } from '@postman/json-schema-tree';
+import { isRegularNode, RegularNode, type SchemaNode } from '@postman/json-schema-tree';
 import { Flex, HStack, Text } from '../../ui';
 import { Dictionary } from '@stoplight/types';
 import { capitalize, keys, omit, pick, uniq } from '../../lodashLite';
+import { isComplexArray } from '../../tree';
 import * as React from 'react';
 
 export interface IValidations {
@@ -177,6 +178,39 @@ const KeyValueValidation = ({ name, values }: { name: string; values: string[] }
     </HStack>
   );
 };
+
+/**
+ * The `requiredAnyOf` key sets (a constraint-only anyOf, folded into the node by
+ * json-schema-tree) for the type a row shows: pass the selected choice, so e.g. a
+ * `oneOf: [variable-list, null]` row shows the note only while the list is picked.
+ * An array row shows its flattened items node, so the sets are read from there.
+ */
+export function requiredAnyOfFor(shownType: SchemaNode): string[][] | null {
+  const node = isComplexArray(shownType) ? shownType.children[0] : shownType;
+  const sets = isRegularNode(node) ? (node.fragment as { requiredAnyOf?: unknown }).requiredAnyOf : undefined;
+  return Array.isArray(sets) && sets.length > 0 ? (sets as string[][]) : null;
+}
+
+/** "Requires `id` or `key`": keys within a set are joined with "and", sets with "or". */
+export const RequiredAnyOf = ({ sets }: { sets: string[][] }) => (
+  <HStack color="muted" spacing={2} alignItems="baseline" data-test="property-validation">
+    <Text>Requires</Text>
+
+    <Flex flexWrap flex={1} alignItems="baseline" style={{ gap: 4 }}>
+      {sets.map((set, i) => (
+        <React.Fragment key={set.join()}>
+          {i > 0 && <Text>or</Text>}
+          {set.map((key, j) => (
+            <React.Fragment key={key}>
+              {j > 0 && <Text>and</Text>}
+              <Value name={key} />
+            </React.Fragment>
+          ))}
+        </React.Fragment>
+      ))}
+    </Flex>
+  </HStack>
+);
 
 const Value = ({ name }: { name: string }) => (
   <Text px={1} bg="canvas-tint" color="muted" border rounded wordBreak="all" maxW="full">
