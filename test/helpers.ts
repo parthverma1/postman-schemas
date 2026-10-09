@@ -102,3 +102,12 @@ export function createAjv(draft: Draft): AjvInstance {
 
   return ajv;
 }
+
+/** The compiled schema, same rule as scripts/generate-schemas.mjs: self-contained as-is, else lib.compile. */
+export function compiledSchema({ draft, schemaDir, schemaPath }: SchemaVersion): JsonSchema {
+  const schema = utils.removeCommentsAndLoadJSON(schemaPath);
+
+  return schema.definitions && Object.keys(schema.definitions).length > 0
+    ? schema
+    : lib.compile(schemaPath, schemaDir, draft);
+}

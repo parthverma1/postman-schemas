@@ -18,7 +18,7 @@ pnpm build         # production build
 pnpm start         # serve the production build
 ```
 
-Each schema under `schemas/<draft>/<version>/` is compiled into a single dereferenced document by `pnpm generate:schemas` (run automatically before `dev`/`build`), which reuses the tooling in `lib/`. The compiled output and a manifest are written to `src/generated/` (git-ignored).
+Each schema under `schemas/<draft>/<version>/` is compiled into a single document (sibling definitions merged, `$ref`s kept) by `pnpm generate:schemas` (run automatically before `dev`/`build`), which reuses the tooling in `lib/`. The viewer's copy then goes through the display-only transforms in `scripts/schema-transforms/`; raw downloads stay the compiled original. The viewer copy and a manifest are written to `src/generated/` (git-ignored).
 
 The underlying schema tooling is still available directly:
 

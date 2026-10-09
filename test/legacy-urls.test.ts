@@ -2,7 +2,7 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { lib, utils, schemaVersions } from './helpers';
+import { compiledSchema, schemaVersions } from './helpers';
 import { legacyRouteRules, legacyUrls, latestStable, viewerPage, VIEWER_DRAFT } from '../scripts/legacy-urls';
 import { writeSchemas } from '../scripts/generate-schemas.mjs';
 
@@ -17,7 +17,6 @@ const { raw, redirects } = legacyUrls(versionsByDraft);
 const routeRules = legacyRouteRules(versionsByDraft);
 const viewerPages = new Set(versionsByDraft[VIEWER_DRAFT].map(viewerPage));
 
-/** Same rule as generate-schemas.mjs: self-contained schemas as-is, else lib.compile. */
 function expectedSchema(draft: string, version: string): unknown {
   const v = versions.find((s) => s.draft === draft && s.version === version);
 
@@ -25,11 +24,7 @@ function expectedSchema(draft: string, version: string): unknown {
     throw new Error(`unknown schema ${draft}/${version}`);
   }
 
-  const schema = utils.removeCommentsAndLoadJSON(v.schemaPath);
-
-  return schema.definitions && Object.keys(schema.definitions).length > 0
-    ? schema
-    : lib.compile(v.schemaPath, v.schemaDir, v.draft);
+  return compiledSchema(v);
 }
 
 let tmp: string;
