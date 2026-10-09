@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {
+  Link,
   createFileRoute,
   notFound,
   useRouter,
@@ -8,6 +9,7 @@ import {
 } from '@tanstack/react-router';
 import { findSchema } from '../generated/manifest';
 import SchemaViewer from '../components/SchemaViewer';
+import VersionMenu from '../components/VersionMenu';
 import { deserializeSchemaTree, type SerializedSchemaTree } from '../lib/schemaTree';
 
 // The Stoplight viewer lives in the workspace package `@postman/json-schema-viewer`,
@@ -56,7 +58,11 @@ export const Route = createFileRoute(
   notFoundComponent: () => (
     <div className="empty-state">
       <h1>Schema not found</h1>
-      <p>Pick a schema from the sidebar.</p>
+      <p>
+        <Link to="/" className="schema-link">
+          View latest schema
+        </Link>
+      </p>
     </div>
   ),
 });
@@ -77,7 +83,7 @@ function SchemaPage() {
       <header className="schema-page__header">
         <div className="schema-page__title">
           <h1>
-            {label} <code>{version}</code>
+            {label} <VersionMenu resource={resource} draft={draft} version={version} />
           </h1>
           <a
             className="schema-link"
@@ -97,7 +103,7 @@ function SchemaPage() {
   );
 }
 
-// Rendered inside the app layout (sidebar stays) when the loader or the page
+// Rendered inside the app layout (top bar stays) when the loader or the page
 // throws — typically a schema chunk that failed to load (e.g. hashed files
 // replaced by a redeploy) — instead of TanStack's unstyled default.
 // Chunk/dynamic-import failures (Chrome, Firefox, Safari wording). Firefox and
@@ -147,6 +153,9 @@ function SchemaError({ error }: ErrorComponentProps) {
         <a className="schema-link" href={schemaHref} target="_blank" rel="noopener">
           View raw JSON
         </a>
+        <Link to="/" className="schema-link">
+          View latest schema
+        </Link>
       </div>
       <details className="error-state__details">
         <summary>Technical details</summary>

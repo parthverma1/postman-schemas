@@ -150,7 +150,8 @@ export const SchemaRow: React.FunctionComponent<SchemaRowProps> = React.memo(
           ) : null}
           <VStack spacing={1} maxW="full" flex={1} ml={isCollapsible && !isRootLevel ? 2 : undefined}>
             <Flex alignItems="center" maxW="full">
-              <Flex alignItems="baseline" fontSize="base">
+              {/* minW 0 lets a long type title ellipsize instead of widening the page on phones. */}
+              <Flex alignItems="baseline" fontSize="base" minW={0}>
                 {isCollapsible ? (
                   // Only the caret + name/type label toggles the row; the rest of the
                   // row (type select, divider, validations) is not a click target.

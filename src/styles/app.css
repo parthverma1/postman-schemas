@@ -62,53 +62,45 @@ body {
   background: var(--background-color-primary);
 }
 
-.layout {
-  display: flex;
-  min-height: 100vh;
-}
-
-.layout__aside {
-  width: 280px;
-  flex-shrink: 0;
-  background: var(--background-color-secondary);
-  border-right: var(--border-width-default, 1px) solid var(--border-color-default);
-  position: sticky;
-  top: 0;
-  align-self: flex-start;
-  height: 100vh;
-  overflow-y: auto;
-}
-
 .layout__main {
-  flex: 1;
-  min-width: 0;
-  padding: var(--spacing-xxl, 24px) var(--spacing-xxxl, 32px);
+  padding-block: var(--spacing-xxl, 24px);
 }
 
-/* Sidebar */
-.sidebar {
-  padding: var(--spacing-xl, 16px) var(--spacing-l, 12px);
+/*
+ * One centered column shared by the top bar and the page content. The max width
+ * adds the side padding so the content itself is exactly 1440px wide.
+ */
+:root {
+  --layout-pad: var(--spacing-xxxl, 32px);
 }
 
-.sidebar__head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--spacing-m, 8px);
-  padding-bottom: var(--spacing-l, 12px);
+@media (max-width: 768px) {
+  :root {
+    --layout-pad: var(--spacing-xl, 16px);
+  }
+}
+
+.layout__content {
+  max-width: calc(1440px + 2 * var(--layout-pad));
+  margin-inline: auto;
+  padding-inline: var(--layout-pad);
+}
+
+/* Top bar (static, not sticky) */
+.topbar {
+  background: var(--background-color-secondary);
   border-bottom: var(--border-width-default, 1px) solid var(--border-color-default);
-  margin-bottom: var(--spacing-xl, 16px);
 }
 
-.brand {
+.topbar__inner {
   display: flex;
   align-items: center;
   gap: var(--spacing-s, 6px);
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: var(--content-color-primary);
-  text-decoration: none;
-  padding: var(--spacing-xs, 4px) var(--spacing-m, 8px);
+  padding-block: var(--spacing-m, 8px);
+}
+
+.brand__logo-link {
+  display: inline-flex;
 }
 
 .brand__logo {
@@ -117,59 +109,14 @@ body {
   flex-shrink: 0;
 }
 
-.nav-group {
-  margin-bottom: var(--spacing-xl, 16px);
-}
-
-.nav-group__title {
-  text-transform: uppercase;
-  font-size: 0.7rem;
-  letter-spacing: 0.08em;
-  color: var(--content-color-tertiary);
-  padding: 0 var(--spacing-m, 8px);
-  margin-bottom: var(--spacing-s, 6px);
-}
-
-.nav-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.nav-link {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--spacing-m, 8px);
-  padding: var(--spacing-s, 6px) var(--spacing-m, 8px);
-  border-radius: var(--border-radius-default, 6px);
-  color: var(--content-color-secondary);
-  text-decoration: none;
-  font-size: 0.9rem;
-}
-
-.nav-link:hover {
-  background: var(--highlight-background-color-secondary);
+.brand {
+  font-size: 1.15rem;
+  font-weight: 700;
   color: var(--content-color-primary);
-}
-
-.nav-link--active {
-  background: var(--base-color-brand);
-  color: var(--content-color-constant);
-  font-weight: 600;
+  text-decoration: none;
 }
 
 /* Schema page */
-/*
- * Cap the content column at a readable width so descriptions stay ~100
- * characters per line and the 'required' label (pushed right by the viewer's
- * flex divider) stays near its property name. Left-aligned so the content
- * keeps a fixed distance from the sidebar at every viewport width.
- */
-.schema-page {
-  max-width: 960px;
-}
-
 .schema-page__header {
   border-bottom: var(--border-width-default, 1px) solid var(--border-color-default);
   padding-bottom: var(--spacing-xl, 16px);
@@ -220,6 +167,87 @@ body {
   background: var(--background-color-tertiary);
   padding: 2px var(--spacing-s, 6px);
   border-radius: var(--border-radius-s, 4px);
+}
+
+/* Version menu: a button around the same <code> badge. */
+.version-trigger {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  border-radius: var(--border-radius-s, 4px);
+  cursor: pointer;
+}
+
+.version-trigger code {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs, 4px);
+}
+
+.version-trigger:hover code,
+.version-trigger[data-popup-open] code {
+  background: var(--highlight-background-color-secondary, var(--background-color-tertiary));
+}
+
+.version-trigger:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.version-trigger__icon {
+  color: var(--content-color-secondary);
+}
+
+/* Fixed, zero-height portal above sticky page chrome (same idea as the viewer's). */
+.version-menu-portal {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 1000;
+}
+
+.version-menu-positioner {
+  z-index: 1000;
+}
+
+.version-menu {
+  min-width: 8rem;
+  padding: var(--spacing-xs, 4px);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--content-color-primary);
+  background: var(--background-color-primary);
+  border: var(--border-width-default, 1px) solid var(--border-color-default);
+  border-radius: var(--border-radius-default, 6px);
+  box-shadow: var(--shadow-elevation-20);
+}
+
+.version-menu__item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-s, 6px);
+  padding: var(--spacing-xs, 4px) var(--spacing-m, 8px);
+  border-radius: var(--border-radius-s, 4px);
+  color: inherit;
+  text-decoration: none;
+  outline: none;
+}
+
+.version-menu__item[data-highlighted] {
+  background: var(--highlight-background-color-primary);
+}
+
+.version-menu__item[aria-current='page'] {
+  font-weight: 600;
+}
+
+.version-menu__check {
+  width: 1em;
+  color: var(--content-color-brand, var(--base-color-brand));
 }
 
 .schema-page__viewer {
