@@ -16,6 +16,10 @@
   font-size: 0.875rem;
   line-height: 1.5;
   color: var(--content-color-primary);
+  /* Space between a property name and whatever follows it, on every row kind. */
+  --jsv-name-gap: 0.75rem;
+  /* Hover/focus pill padding, glyph to edge, on both sides of the row toggle. */
+  --jsv-toggle-pad: 0.25rem;
 }
 
 /* Links ------------------------------------------------------------------- */
@@ -33,11 +37,71 @@
   margin: 0;
   padding: 0;
   border: 0;
+  border-radius: var(--border-radius-s);
   background: none;
   font: inherit;
   color: inherit;
   cursor: pointer;
   text-align: left;
+}
+.jsv-pressable:hover {
+  background: var(--highlight-background-color-primary);
+}
+
+/* Row expand/collapse toggle (caret + property name/type) ----------------- */
+/*
+ * Only this element toggles a row. The caret is a 1.5rem box in the gutter left
+ * of the name; the negative margin + matching padding pulls the toggle box over
+ * it, without shifting the layout, up to --jsv-toggle-pad before the chevron's
+ * visible stroke (--jsv-caret-inset into the caret box). The rest of the caret
+ * box still overhangs the pill and stays clickable. On the right, padding +
+ * margin add up to --jsv-name-gap, so the hover background hugs the label and
+ * stays clear of whatever follows (type select, ref link).
+ */
+.jsv-row-toggle {
+  /* Centred square 0.75rem icon. The open chevron's stroke starts at x=3.25
+     of 16; the closed one, at 5.25, so collapsed rows get 1.5px more left
+     padding, but the pill edge stays put on toggle. */
+  --jsv-caret-inset: calc((1.5rem - 0.75rem) / 2 + 0.75rem * 3.25 / 16);
+  --jsv-toggle-left: calc(1.5rem - var(--jsv-caret-inset) + var(--jsv-toggle-pad));
+  display: inline-flex;
+  align-items: baseline;
+  margin: 0 calc(var(--jsv-name-gap) - var(--jsv-toggle-pad)) 0 calc(-1 * var(--jsv-toggle-left));
+  padding: 0 var(--jsv-toggle-pad) 0 var(--jsv-toggle-left);
+  border-radius: var(--border-radius-s);
+  cursor: pointer;
+}
+.jsv-property-name {
+  margin-right: var(--jsv-name-gap);
+}
+/* Last thing in the toggle: the toggle's own padding + margin provide the gap. */
+.jsv-row-toggle > .jsv-property-name:last-child {
+  margin-right: 0;
+}
+.jsv-caret {
+  display: inline-flex;
+  align-self: stretch;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  margin-left: -1.5rem;
+  color: var(--content-color-tertiary);
+}
+.jsv-row-toggle:hover {
+  background: var(--highlight-background-color-primary);
+}
+.jsv-row-toggle:hover .jsv-caret {
+  color: var(--content-color-primary);
+}
+
+/* Keyboard focus ring for every interactive control ----------------------- */
+.jsv-row-toggle:focus-visible,
+.jsv-pressable:focus-visible,
+.jsv-link:focus-visible,
+.jsv-description a:focus-visible,
+.jsv-description__more:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
 }
 
 /* Select ------------------------------------------------------------------ */

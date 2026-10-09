@@ -86,6 +86,6 @@ export const Types: React.FunctionComponent<{ schemaNode: SchemaNode }> = ({ sch
     );
   });
 
-  return rendered.length > 1 ? <Box textOverflow="truncate">{rendered}</Box> : <>{rendered}</>;
+  return rendered.length > 1 ? <Box as="span" textOverflow="truncate">{rendered}</Box> : <>{rendered}</>;
 };
 Types.displayName = 'JsonSchemaViewer.Types';
