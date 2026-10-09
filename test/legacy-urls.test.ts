@@ -61,7 +61,7 @@ it('resolves latest to the highest semver-stable version per draft', () => {
   expect(raw.find((f) => f.path === '/json/draft-07/collection/latest/collection.json')?.version).toBe('v3.0.0');
 });
 
-it('includes the URLs reported missing in TASK-40', () => {
+it("includes the legacy URLs that 404'd after the rebuild", () => {
   const paths = raw.map((f) => f.path);
 
   for (const p of [
