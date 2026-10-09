@@ -186,9 +186,20 @@ body {
   gap: var(--spacing-xs, 4px);
 }
 
+/*
+ * Hover and open: a darker fill plus a 1px edge, like the viewer's select border
+ * change. Inset box-shadow so the badge doesn't change size; the focus ring sits
+ * outside it on the button.
+ */
 .version-trigger:hover code,
 .version-trigger[data-popup-open] code {
-  background: var(--highlight-background-color-secondary, var(--background-color-tertiary));
+  background: var(--highlight-background-color-tertiary);
+  box-shadow: inset 0 0 0 1px var(--content-color-tertiary);
+}
+
+.version-trigger:hover .version-trigger__icon,
+.version-trigger[data-popup-open] .version-trigger__icon {
+  color: var(--content-color-primary);
 }
 
 .version-trigger:focus-visible {
