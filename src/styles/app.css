@@ -231,3 +231,81 @@ body {
   padding: var(--spacing-xxl, 24px) 0;
   color: var(--content-color-tertiary);
 }
+
+/* Docs route error boundary (failed schema load) */
+.error-state {
+  padding: var(--spacing-xxl, 24px) 0;
+  max-width: 640px;
+}
+
+.error-state h1 {
+  margin: 0 0 var(--spacing-m, 8px);
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.error-state p {
+  margin: 0 0 var(--spacing-xl, 16px);
+  color: var(--content-color-secondary);
+}
+
+.error-state code {
+  background: var(--background-color-tertiary);
+  padding: 2px var(--spacing-s, 6px);
+  border-radius: var(--border-radius-s, 4px);
+}
+
+.error-state__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xl, 16px);
+  margin-bottom: var(--spacing-xl, 16px);
+}
+
+.error-state__retry {
+  font: inherit;
+  font-weight: 600;
+  padding: var(--spacing-s, 6px) var(--spacing-l, 12px);
+  border: 0;
+  border-radius: var(--border-radius-default, 6px);
+  background: var(--button-primary-background-color, var(--base-color-brand));
+  color: var(--content-color-constant);
+  cursor: pointer;
+}
+
+.error-state__retry:hover {
+  background: var(--button-primary-hover-background-color);
+}
+
+.error-state__retry:active {
+  background: var(--button-primary-active-background-color);
+}
+
+.error-state__retry:focus-visible {
+  outline: none;
+  box-shadow: var(--button-focus-border-color);
+}
+
+.error-state__details {
+  color: var(--content-color-tertiary);
+  font-size: 0.85rem;
+}
+
+.error-state__details summary {
+  cursor: pointer;
+}
+
+.error-state__details pre {
+  margin: var(--spacing-m, 8px) 0 0;
+  padding: var(--spacing-m, 8px) var(--spacing-l, 12px);
+  background: var(--background-color-secondary);
+  border: var(--border-width-default, 1px) solid var(--border-color-default);
+  border-radius: var(--border-radius-default, 6px);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.error-state__retry:disabled {
+  background: var(--button-primary-disabled-background-color);
+  cursor: default;
+}

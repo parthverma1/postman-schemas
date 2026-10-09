@@ -16,6 +16,10 @@
   font-size: 0.875rem;
   line-height: 1.5;
   color: var(--content-color-primary);
+  /* Space between a property name and whatever follows it, on every row kind. */
+  --jsv-name-gap: 0.75rem;
+  /* Hover/focus pill padding, glyph to edge, on both sides of the row toggle. */
+  --jsv-toggle-pad: 0.25rem;
 }
 
 /* Links ------------------------------------------------------------------- */
@@ -33,11 +37,71 @@
   margin: 0;
   padding: 0;
   border: 0;
+  border-radius: var(--border-radius-s);
   background: none;
   font: inherit;
   color: inherit;
   cursor: pointer;
   text-align: left;
+}
+.jsv-pressable:hover {
+  background: var(--highlight-background-color-primary);
+}
+
+/* Row expand/collapse toggle (caret + property name/type) ----------------- */
+/*
+ * Only this element toggles a row. The caret is a 1.5rem box in the gutter left
+ * of the name; the negative margin + matching padding pulls the toggle box over
+ * it, without shifting the layout, up to --jsv-toggle-pad before the chevron's
+ * visible stroke (--jsv-caret-inset into the caret box). The rest of the caret
+ * box still overhangs the pill and stays clickable. On the right, padding +
+ * margin add up to --jsv-name-gap, so the hover background hugs the label and
+ * stays clear of whatever follows (type select, ref link).
+ */
+.jsv-row-toggle {
+  /* Centred square 0.75rem icon. The open chevron's stroke starts at x=3.25
+     of 16; the closed one, at 5.25, so collapsed rows get 1.5px more left
+     padding, but the pill edge stays put on toggle. */
+  --jsv-caret-inset: calc((1.5rem - 0.75rem) / 2 + 0.75rem * 3.25 / 16);
+  --jsv-toggle-left: calc(1.5rem - var(--jsv-caret-inset) + var(--jsv-toggle-pad));
+  display: inline-flex;
+  align-items: baseline;
+  margin: 0 calc(var(--jsv-name-gap) - var(--jsv-toggle-pad)) 0 calc(-1 * var(--jsv-toggle-left));
+  padding: 0 var(--jsv-toggle-pad) 0 var(--jsv-toggle-left);
+  border-radius: var(--border-radius-s);
+  cursor: pointer;
+}
+.jsv-property-name {
+  margin-right: var(--jsv-name-gap);
+}
+/* Last thing in the toggle: the toggle's own padding + margin provide the gap. */
+.jsv-row-toggle > .jsv-property-name:last-child {
+  margin-right: 0;
+}
+.jsv-caret {
+  display: inline-flex;
+  align-self: stretch;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  margin-left: -1.5rem;
+  color: var(--content-color-tertiary);
+}
+.jsv-row-toggle:hover {
+  background: var(--highlight-background-color-primary);
+}
+.jsv-row-toggle:hover .jsv-caret {
+  color: var(--content-color-primary);
+}
+
+/* Keyboard focus ring for every interactive control ----------------------- */
+.jsv-row-toggle:focus-visible,
+.jsv-pressable:focus-visible,
+.jsv-link:focus-visible,
+.jsv-description a:focus-visible,
+.jsv-description__more:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
 }
 
 /* Select ------------------------------------------------------------------ */
@@ -65,38 +129,7 @@
 
 /* Menu (disclosure dropdown) --------------------------------------------- */
 .jsv-menu {
-  position: relative;
   display: inline-flex;
-}
-.jsv-menu__list {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  z-index: 20;
-  min-width: 8rem;
-  margin: 0.25rem 0 0;
-  padding: 0.25rem;
-  list-style: none;
-  background: var(--background-color-primary);
-  border: 1px solid var(--border-color-default);
-  border-radius: 4px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-}
-.jsv-menu__item {
-  display: block;
-  width: 100%;
-  margin: 0;
-  padding: 0.25rem 0.5rem;
-  border: 0;
-  background: none;
-  font: inherit;
-  color: var(--content-color-primary);
-  text-align: left;
-  border-radius: 3px;
-  cursor: pointer;
-}
-.jsv-menu__item:hover {
-  background: var(--background-color-secondary);
 }
 
 /* Tooltip ----------------------------------------------------------------- */
@@ -116,12 +149,20 @@
 .jsv-description p:last-child {
   margin-bottom: 0;
 }
+/* Always underlined: the link colour alone is too close to the description
+ * text colour (axe link-in-text-block), so the underline is the cue. */
 .jsv-description a {
   color: var(--content-color-link);
-  text-decoration: none;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
 }
 .jsv-description a:hover {
-  text-decoration: underline;
+  text-decoration-thickness: 2px;
+}
+.jsv-description a:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
 }
 .jsv-description code {
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
@@ -174,4 +215,94 @@
 }
 .jsv-description__more:hover {
   text-decoration: underline;
+}
+
+/* Select + Menu dropdowns (Base UI) --------------------------------------- */
+/*
+ * Select/Menu popups are portaled to <body>, outside .JsonSchemaViewer, so they
+ * set their own font. Tokens live on :root (light + dark via
+ * prefers-color-scheme), so they still apply. No exit animations: the popup (and
+ * its modal backdrop) would stay mounted while one runs.
+ */
+.jsv-select__control {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  line-height: inherit;
+  text-align: left;
+}
+.jsv-select__control:focus-visible,
+.jsv-select__control[data-popup-open] {
+  outline: none;
+  border-color: var(--border-color-strong);
+}
+.jsv-select__control:focus-visible {
+  box-shadow: var(--shadow-focus);
+}
+.jsv-select__icon {
+  display: inline-flex;
+  color: var(--content-color-tertiary);
+}
+
+/*
+ * The portal holds Base UI's modal backdrop (fixed, no z-index) and the
+ * positioner. Its own stacking context lifts both above sticky page chrome such
+ * as PathCrumbs (z-index 10), so an outside press there only dismisses. Fixed
+ * at the viewport top with zero height (not `relative`): as a relative box at the
+ * end of <body> it became the positioner's containing block, so the popup was
+ * first placed at the page bottom and focusing it scrolled the page.
+ */
+.jsv-dropdown-portal {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0; /* full width so the popup isn't shrink-wrapped; zero height */
+  z-index: 1000;
+}
+.jsv-dropdown-positioner {
+  z-index: 1000;
+}
+.jsv-dropdown {
+  min-width: 8rem;
+  padding: 0.25rem;
+  font-family: var(--app-font-ui, 'Inter', system-ui, -apple-system, sans-serif);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--content-color-primary);
+  background: var(--background-color-primary);
+  border: 1px solid var(--border-color-default);
+  border-radius: var(--border-radius-default);
+  box-shadow: var(--shadow-elevation-20);
+}
+.jsv-dropdown--select {
+  min-width: var(--anchor-width);
+  max-height: min(var(--available-height), 20rem);
+  overflow-y: auto;
+  font-size: 0.75rem;
+}
+.jsv-dropdown__item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 0.25rem 0.5rem 0.25rem 1.5rem;
+  border-radius: var(--border-radius-s);
+  cursor: pointer;
+  outline: none;
+  user-select: none;
+}
+.jsv-dropdown__item[data-highlighted] {
+  background: var(--highlight-background-color-primary);
+}
+.jsv-dropdown__item[data-selected] {
+  font-weight: var(--text-weight-medium);
+}
+.jsv-dropdown__item[data-disabled] {
+  color: var(--content-color-tertiary);
+  cursor: default;
+}
+.jsv-dropdown__indicator {
+  position: absolute;
+  left: 0.5rem;
+  display: inline-flex;
+  color: var(--content-color-brand);
 }

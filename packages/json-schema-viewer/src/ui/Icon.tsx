@@ -27,9 +27,15 @@ function resolveSize(size: string | number | undefined): string {
   return SIZE[size] ?? size;
 }
 
-const GLYPHS: Record<string, { viewBox: string; node: React.ReactNode }> = {
+/**
+ * `square` glyphs always render in a square box (ignoring `fixedWidth`). The
+ * chevrons need it: chevron-down is chevron-right rotated 90deg about the
+ * viewBox centre, so in a square box both states have the same layout box.
+ */
+const GLYPHS: Record<string, { viewBox: string; node: React.ReactNode; square?: boolean }> = {
   'chevron-down': {
     viewBox: '0 0 16 16',
+    square: true,
     node: (
       <path
         d="M4 6l4 4 4-4"
@@ -43,6 +49,7 @@ const GLYPHS: Record<string, { viewBox: string; node: React.ReactNode }> = {
   },
   'chevron-right': {
     viewBox: '0 0 16 16',
+    square: true,
     node: (
       <path
         d="M6 4l4 4-4 4"
@@ -89,7 +96,7 @@ export function Icon({ icon, size, fixedWidth, color, className, style, ...rest 
     <svg
       className={className}
       viewBox={glyph.viewBox}
-      width={fixedWidth ? '1.25em' : dim}
+      width={fixedWidth && !glyph.square ? '1.25em' : dim}
       height={dim}
       role="img"
       aria-hidden={rest['aria-label'] ? undefined : true}

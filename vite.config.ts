@@ -24,6 +24,14 @@ export default defineConfig({
   resolve: {
     dedupe: ['react', 'react-dom'],
   },
+  ssr: {
+    // Base UI imports the CJS `use-sync-external-store/shim`. Bundled in the SSR
+    // pass, its `require('react')` (react is external there) survives as a
+    // runtime `__require("react")`, which workerd can't resolve ("No such module
+    // react"). Externalized here, Nitro's final bundle handles it like React
+    // itself. Needs the package as a direct dependency so it can be externalized.
+    external: ['use-sync-external-store'],
+  },
   build: {
     // Always minify CSS (strips comments/whitespace) regardless of the JS
     // `minify` setting. `cssMinify` otherwise defaults to `build.minify`, so
