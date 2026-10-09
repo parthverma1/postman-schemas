@@ -252,24 +252,6 @@ function writeManifest(entries, defaultEntry) {
   lines.push('  );');
   lines.push('}');
   lines.push('');
-  lines.push('/** Schemas grouped by resource kind, preserving ordering. */');
-  lines.push('export function schemasByResource(): { resource: string; label: string; entries: SchemaEntry[] }[] {');
-  lines.push('  const groups: { resource: string; label: string; entries: SchemaEntry[] }[] = [];');
-  lines.push('');
-  lines.push('  for (const s of schemas) {');
-  lines.push('    let group = groups.find((g) => g.resource === s.resource);');
-  lines.push('');
-  lines.push('    if (!group) {');
-  lines.push('      group = { resource: s.resource, label: s.label, entries: [] };');
-  lines.push('      groups.push(group);');
-  lines.push('    }');
-  lines.push('');
-  lines.push('    group.entries.push(s);');
-  lines.push('  }');
-  lines.push('');
-  lines.push('  return groups;');
-  lines.push('}');
-  lines.push('');
 
   fs.writeFileSync(path.join(OUT_DIR, 'manifest.ts'), lines.join('\n'));
 }

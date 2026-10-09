@@ -6,10 +6,8 @@ import {
   createRootRoute,
 } from '@tanstack/react-router';
 import type { ReactNode } from 'react';
-import { QueryClientProvider, useQueryClient } from '@tanstack/react-query';
-import { schemasByResource } from '../generated/manifest';
+import { QueryClientProvider } from '@tanstack/react-query';
 import { getQueryClient } from '../lib/queryClient';
-import { prefetchSchemaTree } from '../lib/schemaTree';
 
 // Served from public/ at its literal root URL.
 const postmanLogo = '/assets/postman-logo-orange.svg';
@@ -50,52 +48,36 @@ export const Route = createRootRoute({
     ],
   }),
   shellComponent: RootDocument,
+  notFoundComponent: NotFound,
 });
 
-function Sidebar() {
-  const queryClient = useQueryClient();
+// Static (not sticky) so it never stacks over the viewer's dropdown portals.
+function TopBar() {
   return (
-    <nav className="sidebar">
-      <div className="sidebar__head">
-        <a
-          href="https://www.getpostman.com"
-          className="brand"
-          target="_blank"
-          rel="noopener"
-        >
+    <header className="topbar">
+      <div className="layout__content topbar__inner">
+        <a href="https://www.getpostman.com" className="brand__logo-link" target="_blank" rel="noopener">
           <img className="brand__logo" src={postmanLogo} alt="Postman" />
-          <span>Postman Schemas</span>
         </a>
+        {/* `/` redirects to the latest schema. */}
+        <Link to="/" className="brand">
+          Postman Schemas
+        </Link>
       </div>
+    </header>
+  );
+}
 
-      {schemasByResource().map((group) => (
-        <div className="nav-group" key={group.resource}>
-          <div className="nav-group__title">{group.label}</div>
-          <ul className="nav-list">
-            {group.entries.map((entry) => (
-              <li key={entry.id}>
-                <Link
-                  to="/$resource/json/$version/$draft/docs/index.html"
-                  params={{
-                    resource: entry.resource,
-                    version: entry.version,
-                    draft: entry.draft,
-                  }}
-                  className="nav-link"
-                  activeProps={{ className: 'nav-link nav-link--active' }}
-                  // Build the (expensive) schema tree in a Web Worker as the user is
-                  // about to navigate, so the click renders instantly from cache.
-                  onMouseEnter={() => prefetchSchemaTree(queryClient, entry)}
-                  onFocus={() => prefetchSchemaTree(queryClient, entry)}
-                >
-                  <span>{entry.version}</span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
-    </nav>
+function NotFound() {
+  return (
+    <div className="empty-state">
+      <h1>Page not found</h1>
+      <p>
+        <Link to="/" className="schema-link">
+          View latest schema
+        </Link>
+      </p>
+    </div>
   );
 }
 
@@ -108,12 +90,10 @@ function RootDocument({ children }: { children: ReactNode }) {
       </head>
       <body data-theme={theme}>
         <QueryClientProvider client={getQueryClient()}>
-          <div className="layout">
-            <aside className="layout__aside">
-              <Sidebar />
-            </aside>
-            <main className="layout__main">{children}</main>
-          </div>
+          <TopBar />
+          <main className="layout__main">
+            <div className="layout__content">{children}</div>
+          </main>
         </QueryClientProvider>
         {/* Postman analytics SDK + config (restored from the legacy hosted docs). */}
         <script id="pmtSDK" src={pmtSdkSrc} />
