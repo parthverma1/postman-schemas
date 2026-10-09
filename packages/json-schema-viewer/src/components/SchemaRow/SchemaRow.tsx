@@ -13,9 +13,9 @@ import { extractVendorExtensions } from '../../utils/extractVendorExtensions';
 import {
   Caret,
   Description,
-  getRequiredAnyOf,
   getValidationsFromSchema,
   RequiredAnyOf,
+  requiredAnyOfFor,
   Types,
   Validations,
 } from '../shared';
@@ -87,9 +87,8 @@ export const SchemaRow: React.FunctionComponent<SchemaRowProps> = React.memo(
     const isRootLevel = nestingLevel < rootLevel;
 
     const required = isPropertyRequired(schemaNode);
-    // A constraint-only anyOf ("id or key must be present"), folded into the node by
-    // json-schema-tree; an array row shows its flattened items node, so read it there.
-    const requiredAnyOf = getRequiredAnyOf(isComplexArray(schemaNode) ? schemaNode.children[0] : schemaNode);
+    // "Requires `id` or `key`", read from the selected choice so it follows the dropdown.
+    const requiredAnyOf = requiredAnyOfFor(typeToShow);
     const deprecated = isRegularNode(schemaNode) && schemaNode.deprecated;
     const validations = isRegularNode(schemaNode) ? schemaNode.validations : {};
     const hasProperties = useHasProperties({ required, deprecated, validations });

@@ -3,6 +3,7 @@ import { isRegularNode, RegularNode, type SchemaNode } from '@postman/json-schem
 import { Flex, HStack, Text } from '../../ui';
 import { Dictionary } from '@stoplight/types';
 import { capitalize, keys, omit, pick, uniq } from '../../lodashLite';
+import { isComplexArray } from '../../tree';
 import * as React from 'react';
 
 export interface IValidations {
@@ -178,9 +179,15 @@ const KeyValueValidation = ({ name, values }: { name: string; values: string[] }
   );
 };
 
-/** Reads the `requiredAnyOf` key sets that json-schema-tree folds a constraint-only anyOf into. */
-export function getRequiredAnyOf(schemaNode: SchemaNode): string[][] | null {
-  const sets = isRegularNode(schemaNode) ? (schemaNode.fragment as { requiredAnyOf?: unknown }).requiredAnyOf : undefined;
+/**
+ * The `requiredAnyOf` key sets (a constraint-only anyOf, folded into the node by
+ * json-schema-tree) for the type a row shows: pass the selected choice, so e.g. a
+ * `oneOf: [variable-list, null]` row shows the note only while the list is picked.
+ * An array row shows its flattened items node, so the sets are read from there.
+ */
+export function requiredAnyOfFor(shownType: SchemaNode): string[][] | null {
+  const node = isComplexArray(shownType) ? shownType.children[0] : shownType;
+  const sets = isRegularNode(node) ? (node.fragment as { requiredAnyOf?: unknown }).requiredAnyOf : undefined;
   return Array.isArray(sets) && sets.length > 0 ? (sets as string[][]) : null;
 }
 

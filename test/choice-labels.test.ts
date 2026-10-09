@@ -5,6 +5,7 @@ import path from 'node:path';
 import { writeSchemas } from '../scripts/generate-schemas.mjs';
 import { buildSerializedTree, deserializeTree } from '../packages/json-schema-viewer/src/worker';
 import { buildChoices } from '../packages/json-schema-viewer/src/components/SchemaRow/useChoices';
+import { requiredAnyOfFor } from '../packages/json-schema-viewer/src/components/shared/Validations';
 import type { JSONSchema } from '../packages/json-schema-viewer/src/types';
 
 type SchemaNode = Parameters<typeof buildChoices>[0];
@@ -29,7 +30,8 @@ beforeAll(() => {
     const schema = JSON.parse(fs.readFileSync(file, 'utf8')) as JSONSchema;
     trees[version] = deserializeTree(buildSerializedTree(schema).tree);
   }
-});
+  // Compiling every schema and building 4 trees can pass the 10s default on a busy machine.
+}, 60_000);
 
 afterAll(() => {
   fs.rmSync(tmp, { recursive: true, force: true });
@@ -121,6 +123,26 @@ describe('constraint-only anyOf (required keys only) is folded into the node', (
     }
   });
 
+  it('v1.0.0 variables (oneOf list or null): the note follows the selected choice', () => {
+    for (const node of nodesAt('v1.0.0', 'properties/variables')) {
+      const [list, nullChoice] = buildChoices(node);
+      expect(list.title).toBe('array[Variable]');
+      expect(requiredAnyOfFor(list.type)).toEqual([['id'], ['key']]);
+      expect(nullChoice.title).toBe('null');
+      expect(requiredAnyOfFor(nullChoice.type)).toBeNull();
+      expect(requiredAnyOfFor(node)).toBeNull();
+    }
+  });
+
+  it('shows the note on single-choice rows (v2.1.0 variable, v1.0.0 requests)', () => {
+    for (const node of nodesAt('v2.1.0', 'properties/item/items/oneOf/0/properties/variable')) {
+      expect(requiredAnyOfFor(buildChoices(node)[0].type)).toEqual([['id'], ['key']]);
+    }
+    for (const node of nodesAt('v1.0.0', 'properties/requests')) {
+      expect(requiredAnyOfFor(buildChoices(node)[0].type)).toEqual([['collectionId'], ['collection']]);
+    }
+  });
+
   it('leaves no requiredAnyOf on v3.0.0 (it has no constraint-only anyOf)', () => {
     expect(nodes(trees['v3.0.0']).some(node => 'requiredAnyOf' in (node.fragment as object))).toBe(false);
   });
@@ -150,6 +172,16 @@ describe('colliding labels get distinct, meaningful names', () => {
   ] as const)('%s …%s', (version, at, expected) => {
     for (const titles of titlesAt(version, at)) {
       expect(titles).toEqual(expected);
+    }
+  });
+
+  it('keeps the default choice for renamed variants (formdata still defaults to text)', () => {
+    for (const version of ['v2.0.0', 'v2.1.0']) {
+      for (const node of nodesAt(version, 'properties/body/oneOf/0/properties/formdata')) {
+        const [first] = buildChoices(node);
+        expect(first.title).toBe('type: text');
+        expect((first.type.fragment as { properties: { type: { const: string } } }).properties.type.const).toBe('text');
+      }
     }
   });
 

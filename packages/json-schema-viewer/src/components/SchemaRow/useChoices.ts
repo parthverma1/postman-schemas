@@ -80,11 +80,11 @@ const TITLE_RULES: TitleRule[] = [
     choices.map(({ type }) =>
       isRegularNode(type) && type.title !== null && parentTitles.includes(type.title) ? typeName(type, isPlural) : null,
     ),
-  // 2. A const variant → its JSON value; an enum variant → "<type> (enum)".
+  // 2. A const variant → its value; an enum variant → "<type> (enum)".
   (choices, _parentTitles, isPlural) =>
     choices.map(({ type }) => {
       if (!isRegularNode(type)) return null;
-      if ('const' in type.fragment) return JSON.stringify(type.fragment.const);
+      if ('const' in type.fragment) return printConst(type.fragment.const);
       if (Array.isArray(type.fragment.enum)) return `${typeName(type, isPlural) ?? 'any'} (enum)`;
       return null;
     }),
