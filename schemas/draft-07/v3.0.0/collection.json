@@ -29,7 +29,7 @@
 			]
 		},
 		"scripts": {
-			"description": "Scripts that run around every request in the collection.",
+			"description": "Scripts that run on events in the request execution lifecycle.",
 			"allOf": [
 				{
 					"$ref": "#/definitions/v3-collection-scripts"
@@ -40,12 +40,7 @@
 			"description": "Credentials inherited by every request in the collection.",
 			"allOf": [
 				{
-					"title": "Collection auth",
-					"allOf": [
-						{
-							"$ref": "#/definitions/v3-collection-auth"
-						}
-					]
+					"$ref": "#/definitions/v3-collection-auth"
 				}
 			]
 		},
@@ -72,20 +67,10 @@
 						"$ref": "#/definitions/v3-http-request"
 					},
 					{
-						"title": "Kafka request",
-						"allOf": [
-							{
-								"$ref": "#/definitions/v3-kafka-request"
-							}
-						]
+						"$ref": "#/definitions/v3-kafka-request"
 					},
 					{
-						"title": "MCP request",
-						"allOf": [
-							{
-								"$ref": "#/definitions/v3-mcp-request"
-							}
-						]
+						"$ref": "#/definitions/v3-mcp-request"
 					},
 					{
 						"$ref": "#/definitions/v3-llm-request"
@@ -100,12 +85,7 @@
 						"$ref": "#/definitions/v3-socketio-request"
 					},
 					{
-						"title": "Data request",
-						"allOf": [
-							{
-								"$ref": "#/definitions/v3-data-request"
-							}
-						]
+						"$ref": "#/definitions/v3-data-request"
 					},
 					{
 						"$ref": "#/definitions/v3-folder"
@@ -149,12 +129,7 @@
 								"description": "Vault the value is read from at run time.",
 								"allOf": [
 									{
-										"title": "Secret source",
-										"allOf": [
-											{
-												"$ref": "#/definitions/secret-source"
-											}
-										]
+										"$ref": "#/definitions/secret-source"
 									}
 								]
 							}
@@ -219,7 +194,7 @@
 										"type": {
 											"type": "string",
 											"const": "local",
-											"description": "Whether the vault is local or in the cloud."
+											"description": "Whether the Postman vault is stored locally or in the cloud."
 										},
 										"secretId": {
 											"type": "string",
@@ -243,7 +218,7 @@
 										"type": {
 											"type": "string",
 											"const": "cloud",
-											"description": "Whether the vault is local or in the cloud."
+											"description": "Whether the Postman vault is stored locally or in the cloud."
 										},
 										"secretId": {
 											"type": "string",
@@ -286,7 +261,7 @@
 							"properties": {
 								"secretId": {
 									"type": "string",
-									"description": "Identifier of the secret in Azure Key Vault."
+									"description": "Identifier of the secret."
 								}
 							},
 							"required": [
@@ -486,7 +461,7 @@
 							"http:beforeRequest",
 							"http:afterResponse"
 						],
-						"description": "Lifecycle point the script runs at, such as `beforeRequest` or `afterResponse`."
+						"description": "Lifecycle point the script runs at."
 					},
 					"code": {
 						"type": "string",
@@ -842,12 +817,7 @@
 					"description": "Credentials applied to the request.",
 					"allOf": [
 						{
-							"title": "GraphQL auth",
-							"allOf": [
-								{
-									"$ref": "#/definitions/v3-graphql-auth"
-								}
-							]
+							"$ref": "#/definitions/v3-graphql-auth"
 						}
 					]
 				},
@@ -875,7 +845,7 @@
 					}
 				},
 				"scripts": {
-					"description": "Scripts that run around the request.",
+					"description": "Scripts that run on events in the request execution lifecycle.",
 					"allOf": [
 						{
 							"$ref": "#/definitions/v3-graphql-scripts"
@@ -1123,12 +1093,7 @@
 				{
 					"type": "array",
 					"items": {
-						"title": "Credential set with rules",
-						"allOf": [
-							{
-								"$ref": "#/definitions/v3-multi-auth-entry"
-							}
-						]
+						"$ref": "#/definitions/v3-multi-auth-entry"
 					},
 					"title": "Credential sets, selected by rule"
 				}
@@ -1401,12 +1366,7 @@
 							"description": "Credentials used to fetch the schema.",
 							"allOf": [
 								{
-									"title": "Auth",
-									"allOf": [
-										{
-											"$ref": "#/definitions/v3-auth"
-										}
-									]
+									"$ref": "#/definitions/v3-auth"
 								}
 							]
 						}
@@ -1455,12 +1415,7 @@
 					"description": "Credentials applied to the request.",
 					"allOf": [
 						{
-							"title": "GraphQL auth",
-							"allOf": [
-								{
-									"$ref": "#/definitions/v3-graphql-auth"
-								}
-							]
+							"$ref": "#/definitions/v3-graphql-auth"
 						}
 					]
 				},
@@ -1619,7 +1574,7 @@
 							"beforeQuery",
 							"afterResponse"
 						],
-						"description": "Lifecycle point the script runs at, such as `beforeRequest` or `afterResponse`."
+						"description": "Lifecycle point the script runs at."
 					},
 					"code": {
 						"type": "string",
@@ -1738,12 +1693,7 @@
 					"description": "Credentials applied to the call.",
 					"allOf": [
 						{
-							"title": "gRPC auth",
-							"allOf": [
-								{
-									"$ref": "#/definitions/v3-grpc-auth"
-								}
-							]
+							"$ref": "#/definitions/v3-grpc-auth"
 						}
 					]
 				},
@@ -1760,7 +1710,7 @@
 					"const": "grpc-request"
 				},
 				"scripts": {
-					"description": "Scripts that run around the call.",
+					"description": "Scripts that run on events in the request execution lifecycle.",
 					"allOf": [
 						{
 							"$ref": "#/definitions/v3-grpc-scripts"
@@ -1889,7 +1839,7 @@
 							"onIncomingMessage",
 							"afterResponse"
 						],
-						"description": "Lifecycle point the script runs at, such as `beforeRequest` or `afterResponse`."
+						"description": "Lifecycle point the script runs at."
 					},
 					"code": {
 						"type": "string",
@@ -1978,12 +1928,7 @@
 					"description": "Credentials applied to the call.",
 					"allOf": [
 						{
-							"title": "gRPC auth",
-							"allOf": [
-								{
-									"$ref": "#/definitions/v3-grpc-auth"
-								}
-							]
+							"$ref": "#/definitions/v3-grpc-auth"
 						}
 					]
 				},
@@ -2194,12 +2139,7 @@
 					"description": "Payload sent with the request.",
 					"allOf": [
 						{
-							"title": "HTTP request body",
-							"allOf": [
-								{
-									"$ref": "#/definitions/v3-http-request-body"
-								}
-							]
+							"$ref": "#/definitions/v3-http-request-body"
 						}
 					]
 				},
@@ -2207,12 +2147,7 @@
 					"description": "Credentials applied to the request.",
 					"allOf": [
 						{
-							"title": "HTTP auth",
-							"allOf": [
-								{
-									"$ref": "#/definitions/v3-http-auth"
-								}
-							]
+							"$ref": "#/definitions/v3-http-auth"
 						}
 					]
 				},
@@ -2346,7 +2281,7 @@
 					"additionalProperties": false
 				},
 				"scripts": {
-					"description": "Scripts that run around the request.",
+					"description": "Scripts that run on events in the request execution lifecycle.",
 					"allOf": [
 						{
 							"$ref": "#/definitions/v3-http-scripts"
@@ -2794,12 +2729,7 @@
 					"description": "Credentials applied to the request.",
 					"allOf": [
 						{
-							"title": "HTTP auth",
-							"allOf": [
-								{
-									"$ref": "#/definitions/v3-http-auth"
-								}
-							]
+							"$ref": "#/definitions/v3-http-auth"
 						}
 					]
 				},
@@ -2877,12 +2807,7 @@
 							"description": "Payload sent with the request.",
 							"allOf": [
 								{
-									"title": "HTTP request body",
-									"allOf": [
-										{
-											"$ref": "#/definitions/v3-http-request-body"
-										}
-									]
+									"$ref": "#/definitions/v3-http-request-body"
 								}
 							]
 						}
@@ -2967,7 +2892,7 @@
 							"beforeRequest",
 							"afterResponse"
 						],
-						"description": "Lifecycle point the script runs at, such as `beforeRequest` or `afterResponse`."
+						"description": "Lifecycle point the script runs at."
 					},
 					"code": {
 						"type": "string",
@@ -3038,12 +2963,7 @@
 							"description": "Credentials applied to the connection.",
 							"allOf": [
 								{
-									"title": "Kafka auth",
-									"allOf": [
-										{
-											"$ref": "#/definitions/v3-kafka-auth"
-										}
-									]
+									"$ref": "#/definitions/v3-kafka-auth"
 								}
 							]
 						},
@@ -3142,12 +3062,7 @@
 							"description": "Credentials applied to the connection.",
 							"allOf": [
 								{
-									"title": "Kafka auth",
-									"allOf": [
-										{
-											"$ref": "#/definitions/v3-kafka-auth"
-										}
-									]
+									"$ref": "#/definitions/v3-kafka-auth"
 								}
 							]
 						},
@@ -3606,12 +3521,7 @@
 							"description": "Credentials applied to the connection.",
 							"allOf": [
 								{
-									"title": "MCP auth",
-									"allOf": [
-										{
-											"$ref": "#/definitions/v3-mcp-auth"
-										}
-									]
+									"$ref": "#/definitions/v3-mcp-auth"
 								}
 							]
 						},
@@ -3696,12 +3606,7 @@
 							"description": "Credentials applied to the connection.",
 							"allOf": [
 								{
-									"title": "MCP auth",
-									"allOf": [
-										{
-											"$ref": "#/definitions/v3-mcp-auth"
-										}
-									]
+									"$ref": "#/definitions/v3-mcp-auth"
 								}
 							]
 						},
@@ -4083,12 +3988,7 @@
 					"description": "Credentials applied to the request.",
 					"allOf": [
 						{
-							"title": "LLM auth",
-							"allOf": [
-								{
-									"$ref": "#/definitions/v3-llm-auth"
-								}
-							]
+							"$ref": "#/definitions/v3-llm-auth"
 						}
 					]
 				}
@@ -4247,12 +4147,7 @@
 					"description": "Credentials applied to the connection.",
 					"allOf": [
 						{
-							"title": "MQTT auth",
-							"allOf": [
-								{
-									"$ref": "#/definitions/v3-mqtt-auth"
-								}
-							]
+							"$ref": "#/definitions/v3-mqtt-auth"
 						}
 					]
 				},
@@ -4736,12 +4631,7 @@
 					"description": "Credentials applied to the connection.",
 					"allOf": [
 						{
-							"title": "MQTT auth",
-							"allOf": [
-								{
-									"$ref": "#/definitions/v3-mqtt-auth"
-								}
-							]
+							"$ref": "#/definitions/v3-mqtt-auth"
 						}
 					]
 				},
@@ -5010,12 +4900,7 @@
 					"description": "Credentials applied to the handshake request.",
 					"allOf": [
 						{
-							"title": "WebSocket auth",
-							"allOf": [
-								{
-									"$ref": "#/definitions/v3-websocket-auth"
-								}
-							]
+							"$ref": "#/definitions/v3-websocket-auth"
 						}
 					]
 				},
@@ -5294,12 +5179,7 @@
 							"description": "Credentials applied to the handshake request.",
 							"allOf": [
 								{
-									"title": "WebSocket auth",
-									"allOf": [
-										{
-											"$ref": "#/definitions/v3-websocket-auth"
-										}
-									]
+									"$ref": "#/definitions/v3-websocket-auth"
 								}
 							]
 						}
@@ -5927,12 +5807,7 @@
 							"description": "Credentials applied to the connection.",
 							"allOf": [
 								{
-									"title": "Data auth",
-									"allOf": [
-										{
-											"$ref": "#/definitions/v3-data-auth"
-										}
-									]
+									"$ref": "#/definitions/v3-data-auth"
 								}
 							]
 						},
@@ -6009,12 +5884,7 @@
 							"description": "Credentials applied to the connection.",
 							"allOf": [
 								{
-									"title": "Data auth",
-									"allOf": [
-										{
-											"$ref": "#/definitions/v3-data-auth"
-										}
-									]
+									"$ref": "#/definitions/v3-data-auth"
 								}
 							]
 						},
@@ -6087,12 +5957,7 @@
 							"description": "Credentials applied to the connection.",
 							"allOf": [
 								{
-									"title": "Data auth",
-									"allOf": [
-										{
-											"$ref": "#/definitions/v3-data-auth"
-										}
-									]
+									"$ref": "#/definitions/v3-data-auth"
 								}
 							]
 						},
@@ -6159,12 +6024,7 @@
 							"description": "Credentials applied to the connection.",
 							"allOf": [
 								{
-									"title": "Data auth",
-									"allOf": [
-										{
-											"$ref": "#/definitions/v3-data-auth"
-										}
-									]
+									"$ref": "#/definitions/v3-data-auth"
 								}
 							]
 						},
@@ -6245,12 +6105,7 @@
 							"description": "Credentials applied to the connection.",
 							"allOf": [
 								{
-									"title": "Data auth",
-									"allOf": [
-										{
-											"$ref": "#/definitions/v3-data-auth"
-										}
-									]
+									"$ref": "#/definitions/v3-data-auth"
 								}
 							]
 						},
@@ -6323,12 +6178,7 @@
 							"description": "Credentials applied to the connection.",
 							"allOf": [
 								{
-									"title": "Data auth",
-									"allOf": [
-										{
-											"$ref": "#/definitions/v3-data-auth"
-										}
-									]
+									"$ref": "#/definitions/v3-data-auth"
 								}
 							]
 						},
@@ -6401,12 +6251,7 @@
 							"description": "Credentials applied to the connection.",
 							"allOf": [
 								{
-									"title": "Data auth",
-									"allOf": [
-										{
-											"$ref": "#/definitions/v3-data-auth"
-										}
-									]
+									"$ref": "#/definitions/v3-data-auth"
 								}
 							]
 						},
@@ -6530,7 +6375,7 @@
 					"const": "collection"
 				},
 				"scripts": {
-					"description": "Scripts that run around every request in the folder.",
+					"description": "Scripts that run on events in the request execution lifecycle.",
 					"allOf": [
 						{
 							"$ref": "#/definitions/v3-folder-scripts"
@@ -6541,12 +6386,7 @@
 					"description": "Credentials inherited by every request in the folder.",
 					"allOf": [
 						{
-							"title": "Folder auth",
-							"allOf": [
-								{
-									"$ref": "#/definitions/v3-folder-auth"
-								}
-							]
+							"$ref": "#/definitions/v3-folder-auth"
 						}
 					]
 				},
@@ -6565,20 +6405,10 @@
 								"$ref": "#/definitions/v3-http-request"
 							},
 							{
-								"title": "Kafka request",
-								"allOf": [
-									{
-										"$ref": "#/definitions/v3-kafka-request"
-									}
-								]
+								"$ref": "#/definitions/v3-kafka-request"
 							},
 							{
-								"title": "MCP request",
-								"allOf": [
-									{
-										"$ref": "#/definitions/v3-mcp-request"
-									}
-								]
+								"$ref": "#/definitions/v3-mcp-request"
 							},
 							{
 								"$ref": "#/definitions/v3-llm-request"
@@ -6593,12 +6423,7 @@
 								"$ref": "#/definitions/v3-socketio-request"
 							},
 							{
-								"title": "Data request",
-								"allOf": [
-									{
-										"$ref": "#/definitions/v3-data-request"
-									}
-								]
+								"$ref": "#/definitions/v3-data-request"
 							},
 							{
 								"allOf": [
@@ -6634,7 +6459,7 @@
 							"http:beforeRequest",
 							"http:afterResponse"
 						],
-						"description": "Lifecycle point the script runs at, such as `beforeRequest` or `afterResponse`."
+						"description": "Lifecycle point the script runs at."
 					},
 					"code": {
 						"type": "string",

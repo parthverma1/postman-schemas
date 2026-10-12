@@ -9,8 +9,6 @@
  *
  * Kept free of TS-only runtime syntax so Node can run it with type stripping.
  */
-import { transforms as collectionDraft07V3 } from './collection-draft-07-v3.0.0.ts';
-
 export type JsonObject = Record<string, unknown>;
 
 export type SchemaTransform = (schema: JsonObject) => JsonObject;
@@ -25,9 +23,7 @@ export interface SchemaId {
 export const GLOBAL_TRANSFORMS: SchemaTransform[] = [];
 
 /** Applied only to the schema with this id, after the global transforms. */
-export const SCHEMA_TRANSFORMS: Record<string, SchemaTransform[]> = {
-  'collection/draft-07/v3.0.0': collectionDraft07V3,
-};
+export const SCHEMA_TRANSFORMS: Record<string, SchemaTransform[]> = {};
 
 /** The schema as the viewer should render it. Never mutates `schema`. */
 export function transformForViewer(schema: JsonObject, { resource, draft, version }: SchemaId): JsonObject {
