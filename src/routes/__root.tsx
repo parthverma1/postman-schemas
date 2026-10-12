@@ -8,6 +8,7 @@ import {
 import type { ReactNode } from 'react';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { getQueryClient } from '../lib/queryClient';
+import { INTER_PRELOAD_HREFS } from '../lib/fonts';
 
 // Served from public/ at its literal root URL.
 const postmanLogo = '/assets/postman-logo-orange.svg';
@@ -44,6 +45,16 @@ export const Route = createRootRoute({
       { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/favicon-32x32.png' },
       { rel: 'icon', type: 'image/png', sizes: '16x16', href: '/favicon-16x16.png' },
       { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
+      // Fetch the above-the-fold Inter faces in parallel with app.css instead of
+      // after it parses. crossOrigin is required (fonts are CORS fetches) or the
+      // browser downloads each font twice.
+      ...INTER_PRELOAD_HREFS.map((href) => ({
+        rel: 'preload',
+        as: 'font',
+        type: 'font/woff2',
+        crossOrigin: 'anonymous' as const,
+        href,
+      })),
       { rel: 'stylesheet', href: appCss },
     ],
   }),

@@ -45,10 +45,10 @@
 			]
 		},
 		"uses": {
-			"description": "Resources pinned to the collection.",
+			"description": "Resources the collection uses.",
 			"allOf": [
 				{
-					"$ref": "#/definitions/v3-pins"
+					"$ref": "#/definitions/v3-collection-uses"
 				}
 			]
 		},
@@ -750,11 +750,11 @@
 				}
 			]
 		},
-		"v3-pins": {
+		"v3-collection-uses": {
 			"type": "object",
 			"properties": {
 				"environment": {
-					"description": "Identifiers of the environments pinned to the item.",
+					"description": "Identifiers of the environments the collection uses.",
 					"type": "array",
 					"items": {
 						"type": "string"
@@ -762,7 +762,7 @@
 				}
 			},
 			"additionalProperties": false,
-			"title": "Pins"
+			"title": "Uses"
 		},
 		"v3-graphql-request": {
 			"type": "object",

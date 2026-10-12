@@ -11,6 +11,7 @@
  * doesn't depend on the @fontsource package at runtime. `font-display: swap`
  * keeps text visible while the font loads.
  */
+/* Preloaded weights are listed in src/lib/fonts.ts; keep the URLs in sync. */
 @font-face {
   font-family: 'Inter';
   font-style: normal;
