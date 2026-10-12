@@ -22,6 +22,8 @@ describe('transformForViewer', () => {
 
   it('returns an equal copy for a schema with no registered transforms', () => {
     const id = { resource: 'collection', draft: 'draft-07', version: 'v0.0.0-unregistered' };
+    // Global transforms still run, so keep this sample free of anything they change
+    // (e.g. no required-only anyOf for foldRequiredAnyOf).
     const source = {
       title: 'x',
       definitions: { a: { type: 'string' } },
@@ -52,6 +54,18 @@ describe('generated output', () => {
 
   it('covers every schema', () => {
     expect(versions).toHaveLength(12);
+  });
+
+  it('applies viewer-only changes to the bundle, not the raw download (v2.1.0 variable fold)', () => {
+    const read = (...parts: string[]) => JSON.parse(fs.readFileSync(path.join(tmp, ...parts), 'utf8'));
+    const variable = (schema: { definitions: Record<string, Record<string, unknown>> }) => schema.definitions.variable;
+    const viewer = read('schemas', 'collection', 'draft-07', 'v2.1.0.json');
+    const raw = read('public', 'collection', 'json', 'v2.1.0', 'draft-07', 'collection.json');
+
+    expect(variable(viewer)).not.toHaveProperty('anyOf');
+    expect(variable(viewer).requiredAnyOf).toEqual([['id'], ['key']]);
+    expect(variable(raw).anyOf).toEqual([{ required: ['id'] }, { required: ['key'] }, { required: ['id', 'key'] }]);
+    expect(variable(raw)).not.toHaveProperty('requiredAnyOf');
   });
 
   describe.each(versions.map((v) => ({ ...v, label: `${v.draft}/${v.version}` })))('$label', (v) => {

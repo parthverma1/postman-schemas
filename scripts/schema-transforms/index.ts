@@ -9,6 +9,8 @@
  *
  * Kept free of TS-only runtime syntax so Node can run it with type stripping.
  */
+import { foldRequiredAnyOf } from './fold-required-anyof.ts';
+
 export type JsonObject = Record<string, unknown>;
 
 export type SchemaTransform = (schema: JsonObject) => JsonObject;
@@ -20,7 +22,7 @@ export interface SchemaId {
 }
 
 /** Applied to every schema, in order. */
-export const GLOBAL_TRANSFORMS: SchemaTransform[] = [];
+export const GLOBAL_TRANSFORMS: SchemaTransform[] = [foldRequiredAnyOf];
 
 /** Applied only to the schema with this id, after the global transforms. */
 export const SCHEMA_TRANSFORMS: Record<string, SchemaTransform[]> = {};

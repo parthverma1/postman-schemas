@@ -15,7 +15,7 @@ const VERSIONS = ['v1.0.0', 'v2.0.0', 'v2.1.0', 'v3.0.0'];
 // skipped and the depth is capped so the walk always ends.
 const MAX_DEPTH = 40;
 
-type ChoiceSet = { path: string; node: SchemaNode; titles: string[]; types: SchemaNode[] };
+type ChoiceSet = { path: string; node: SchemaNode; titles: string[] };
 
 let tmp: string;
 const trees: Record<string, SchemaNode> = {};
@@ -58,7 +58,6 @@ function choiceSets(version: string): ChoiceSet[] {
       path: node.path.join('/'),
       node,
       titles: choices.map(c => c.title),
-      types: choices.map(c => c.type),
     }));
 }
 
@@ -86,16 +85,10 @@ describe.each(VERSIONS)('%s', version => {
       expect(new Set(titles).size, `${at}: ${JSON.stringify(titles)}`).toBe(titles.length);
     }
   });
-
-  it('only offers combiner branches as choices', () => {
-    for (const { path: at, types } of choiceSets(version)) {
-      for (const type of types) {
-        expect(['anyOf', 'oneOf'], `${at} → ${type.path.join('/')}`).toContain(type.subpath[0]);
-      }
-    }
-  });
 });
 
+// The fold itself happens in scripts/schema-transforms (see schema-transforms.test.ts);
+// these check that the viewer tree built from the bundle picks it up.
 describe('constraint-only anyOf (required keys only) is folded into the node', () => {
   const variableCases = [
     ['v1.0.0', 'properties/variables/oneOf/0/items'],
@@ -107,8 +100,9 @@ describe('constraint-only anyOf (required keys only) is folded into the node', (
     for (const node of nodesAt(version, at)) {
       expect(buildChoices(node)).toHaveLength(1);
       expect(buildChoices(node.parent!)).toHaveLength(1);
-      expect(node.fragment).toMatchObject({ required: [], requiredAnyOf: [['id'], ['key']] });
+      expect(node.fragment).toMatchObject({ requiredAnyOf: [['id'], ['key']] });
       expect(node.fragment).not.toHaveProperty('anyOf');
+      expect(node.fragment).not.toHaveProperty('required');
     }
   });
 
@@ -183,6 +177,15 @@ describe('colliding labels get distinct, meaningful names', () => {
         expect((first.type.fragment as { properties: { type: { const: string } } }).properties.type.const).toBe('text');
       }
     }
+  });
+
+  it('falls back to an ordinal suffix when no other rule tells the variants apart', () => {
+    const tree = deserializeTree(
+      buildSerializedTree({ oneOf: [{ title: 'A', type: 'string' }, { title: 'A', type: 'number' }, { title: 'B' }] }).tree,
+    );
+    const combiner = (tree as SchemaNode & { children: SchemaNode[] }).children[0];
+
+    expect(buildChoices(combiner).map(c => c.title)).toEqual(['A (1)', 'A (2)', 'B']);
   });
 
   it('keeps labels that do not collide, e.g. v2.1.0 item and auth', () => {

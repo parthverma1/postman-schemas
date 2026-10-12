@@ -54,12 +54,6 @@ function makeArrayChoice(node: SchemaNode): Choice {
   };
 }
 
-/** Child nodes that are branches of `node`'s combiner (not its sibling `properties`). */
-function combinerBranches(node: SchemaNode & { children: SchemaNode[] }): SchemaNode[] {
-  const combiner = isRegularNode(node) ? node.combiners?.[0] : undefined;
-  return node.children.filter(child => child.subpath[0] === combiner);
-}
-
 /** The title a variant would get without its own (inherited) `title`. */
 function typeName(node: SchemaNode, isPlural: boolean): string | null {
   if (!isRegularNode(node) || node.primaryType === null) return null;
@@ -145,7 +139,7 @@ function disambiguateTitles(choices: Choice[], parentTitles: (string | null)[], 
  * Enumerates the sub-schema types for a given node.
  *
  * Usually a node has one choice, only one possible type: itself. If a node is
- * a oneOf or anyOf combiner, the possible types are the branches of the
+ * a oneOf or anyOf combiner, the possible types are the sub-types of the
  * combiner.
  */
 export function buildChoices(schemaNode: SchemaNode): Choice[] {
@@ -156,26 +150,20 @@ export function buildChoices(schemaNode: SchemaNode): Choice[] {
     shouldShowChildSelector(schemaNode.children[0])
   ) {
     const combinerNode = schemaNode.children[0];
-    const branches = combinerBranches(combinerNode);
-    if (branches.length > 0) {
-      // Sort before disambiguating so colliding variants keep their schema order
-      // (and the default choice stays the same).
-      const sorted = branches.map(makeArrayChoice).sort((a, b) => a.title.localeCompare(b.title));
-      return disambiguateTitles(sorted, [combinerNode.title, schemaNode.title], true);
-    }
+    // Sort before disambiguating so colliding variants keep their schema order
+    // (and the default choice stays the same).
+    const sorted = combinerNode.children.map(makeArrayChoice).sort((a, b) => a.title.localeCompare(b.title));
+    return disambiguateTitles(sorted, [combinerNode.title, schemaNode.title], true);
   }
 
-  // if current node is a combiner, offer its branches
+  // if current node is a combiner, offer its children
   if (isNonEmptyParentNode(schemaNode) && shouldShowChildSelector(schemaNode)) {
-    const branches = combinerBranches(schemaNode);
-    if (branches.length > 0) {
-      // An array's items combiner is shown under the array's title, so check that too.
-      const arrayTitle =
-        schemaNode.subpath[0] === 'items' && schemaNode.parent && isRegularNode(schemaNode.parent)
-          ? schemaNode.parent.title
-          : null;
-      return disambiguateTitles(branches.map(makeChoice), [schemaNode.title, arrayTitle], false);
-    }
+    // An array's items combiner is shown under the array's title, so check that too.
+    const arrayTitle =
+      schemaNode.subpath[0] === 'items' && schemaNode.parent && isRegularNode(schemaNode.parent)
+        ? schemaNode.parent.title
+        : null;
+    return disambiguateTitles(schemaNode.children.map(makeChoice), [schemaNode.title, arrayTitle], false);
   }
   // regular node, single choice - itself
   return [makeChoice(schemaNode)];
