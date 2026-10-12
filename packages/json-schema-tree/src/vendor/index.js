@@ -512,6 +512,34 @@ function mergeOneOrAnyOf(fragment, path, walkingOptions, mergedAllOfs) {
     return merged;
 }
 
+// Fork change: upstream builds a multi-branch oneOf/anyOf node from the combiner
+// alone, so a titled union loses its title and description. We copy the
+// combiner's display annotations back onto it, and only those. mergeOneOrAnyOf
+// has already merged every sibling keyword into each branch, so copying
+// structural keywords (type, properties, items, required, ...) onto the combiner
+// as well would make the walker emit phantom non-branch children and change the
+// node's types and validations.
+const COMBINER_ANNOTATION_KEYS = [
+    'title',
+    'description',
+    'default',
+    'examples',
+    'example',
+    'deprecated',
+    'readOnly',
+    'writeOnly',
+    '$comment',
+];
+function pickCombinerAnnotations(fragment) {
+    const annotations = {};
+    for (const key of Object.keys(fragment)) {
+        if (COMBINER_ANNOTATION_KEYS.includes(key) || key.startsWith('x-')) {
+            annotations[key] = fragment[key];
+        }
+    }
+    return annotations;
+}
+
 class Walker extends EventEmitter {
     constructor(root, walkingOptions) {
         var _a;
@@ -845,11 +873,7 @@ class Walker extends EventEmitter {
                 }
                 else {
                     const combiner = SchemaCombinerName.OneOf in fragment ? SchemaCombinerName.OneOf : SchemaCombinerName.AnyOf;
-                    // Keep the combiner's own sibling keywords (notably `title`, so a
-                    // titled discriminated union still names itself) rather than
-                    // building the node from the combiner alone.
-                    const { [combiner]: _items, allOf: _allOf, ...annotations } = fragment;
-                    return [new RegularNode({ ...annotations, [combiner]: merged }, { originalFragment }), initialFragment];
+                    return [new RegularNode({ ...pickCombinerAnnotations(fragment), [combiner]: merged }, { originalFragment }), initialFragment];
                 }
             }
             catch (ex) {

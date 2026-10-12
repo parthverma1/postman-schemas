@@ -105,7 +105,7 @@ export function schemaTreeQueryOptions(
 
 /**
  * Prefetch (build + cache) a schema's tree ahead of navigation — call on hover/focus
- * of a sidebar link. No-op on the server; React Query dedupes repeated calls.
+ * of a version-menu link. No-op on the server; React Query dedupes repeated calls.
  */
 export function prefetchSchemaTree(
   queryClient: QueryClient,

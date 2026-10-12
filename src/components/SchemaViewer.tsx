@@ -21,7 +21,7 @@ export default function SchemaViewer({
   initialData?: PrebuiltSchemaTree;
 }) {
   // On the client, prefer a tree built off the main thread (via the Web Worker),
-  // shared through React Query so a sidebar hover-prefetch makes this render instant.
+  // shared through React Query so a version-menu hover-prefetch makes this render instant.
   // `initialData` (built during SSR) seeds the cache so the first client render uses it
   // directly — no rebuild, and it matches the SSR HTML. Without it (client navigations),
   // the query is disabled/pending and the viewer builds synchronously from `schema`.
