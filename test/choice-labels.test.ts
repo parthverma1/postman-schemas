@@ -86,6 +86,56 @@ describe.each(VERSIONS)('%s', version => {
   });
 });
 
+// The required-only anyOf branches are named in the schemas themselves.
+describe('named required-only variants', () => {
+  const required = (node: SchemaNode) => [...((node as { required?: string[] | null }).required ?? [])].sort();
+  const VARIABLE = [
+    ['Variable (requires id)', ['id']],
+    ['Variable (requires key)', ['key']],
+    ['Variable (requires id and key)', ['id', 'key']],
+  ] as const;
+  const COMMON = ['headers', 'id', 'method', 'name', 'url'];
+  const REQUEST = [
+    ['Request (requires collectionId)', [...COMMON, 'collectionId'].sort()],
+    ['Request (requires collection)', [...COMMON, 'collection'].sort()],
+  ] as const;
+  const named = (version: string, prefix: string) =>
+    choiceSets(version).filter(set => set.titles.every(title => title.startsWith(prefix)));
+
+  it.each(['v1.0.0', 'v2.0.0', 'v2.1.0'])('%s variable: 3 named variants in schema order, each with its keys required', version => {
+    const sets = named(version, 'Variable (');
+
+    expect(sets.length).toBeGreaterThan(0);
+    for (const set of sets) {
+      expect(set.titles, set.path).toEqual(VARIABLE.map(([title]) => title));
+      buildChoices(set.node).forEach((choice, i) => expect(required(choice.type), choice.title).toEqual(VARIABLE[i][1]));
+    }
+  });
+
+  it('v1.0.0 requests: 2 named variants in schema order, common keys + their own required', () => {
+    const sets = named('v1.0.0', 'Request (');
+
+    expect(sets.map(set => set.path)).toContain('properties/requests');
+    for (const set of sets) {
+      expect(set.titles, set.path).toEqual(REQUEST.map(([title]) => title));
+      buildChoices(set.node).forEach((choice, i) => expect(required(choice.type), choice.title).toEqual(REQUEST[i][1]));
+    }
+  });
+
+  it('v1.0.0 variables (oneOf list or null) still offers the list and null', () => {
+    const root = choiceSets('v1.0.0').find(set => set.path === 'properties/variables');
+
+    expect(root?.titles).toEqual(['array[Variable]', 'null']);
+  });
+
+  it('still sorts other array variants alphabetically (v3.0.0 items)', () => {
+    const [titles] = titlesAt('v3.0.0', 'properties/items');
+
+    expect(titles.length).toBeGreaterThan(5);
+    expect(titles).toEqual([...titles].sort((a, b) => a.localeCompare(b)));
+  });
+});
+
 describe('colliding labels get distinct, meaningful names', () => {
   it.each([
     // A title that repeats the parent's → the type name.
