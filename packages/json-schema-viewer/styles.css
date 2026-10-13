@@ -96,7 +96,8 @@
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
   font-weight: 600;
   color: var(--content-color-error);
-  cursor: pointer;
+  /* Explicit, so the button doesn't pick up a pointer from a global rule. */
+  cursor: default;
 }
 .jsv-caret {
   display: inline-flex;
