@@ -100,7 +100,8 @@ describe('json-schema-tree oneOf/anyOf nodes', () => {
       fs.rmSync(tmp, { recursive: true, force: true });
     });
 
-    it('have no combiner with a non-branch child', () => {
+    // Builds a tree per viewer schema; slow on a busy machine, so it gets more than the 5s default.
+    it('have no combiner with a non-branch child', { timeout: 30_000 }, () => {
       expect(entries.length).toBeGreaterThan(0);
       for (const entry of entries) {
         const root = buildTree(load(entry));

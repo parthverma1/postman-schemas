@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /**
- * Compiles every JSON schema into a single dereferenced schema and emits it,
+ * Compiles every JSON schema into a single schema (sibling definition files
+ * merged into `definitions`; `$ref`s are kept, not dereferenced) and emits it,
  * along with a manifest, into `src/generated/` so the TanStack Start app can load
  * them for the Stoplight JSON Schema Viewer.
  *
@@ -210,7 +211,7 @@ function writeManifest(entries, defaultEntry) {
   lines.push("  status: 'stable' | 'rc' | 'draft' | string;");
   lines.push('  /** Stable identifier: `${resource}/${draft}/${version}`. */');
   lines.push('  id: string;');
-  lines.push('  /** Lazily loads the compiled, dereferenced schema JSON. */');
+  lines.push('  /** Lazily loads the compiled schema JSON (`$ref`s kept, not dereferenced). */');
   lines.push('  load: () => Promise<Record<string, unknown>>;');
   lines.push('}');
   lines.push('');
