@@ -22,6 +22,19 @@
   --jsv-toggle-pad: 0.25rem;
 }
 
+/* Screen-reader-only text ------------------------------------------------- */
+.jsv-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* Links ------------------------------------------------------------------- */
 .jsv-link {
   color: var(--content-color-link);
@@ -74,8 +87,16 @@
 .jsv-property-name {
   margin-right: var(--jsv-name-gap);
 }
+/* A required mark sits flush after the name and takes over the name gap. */
+.jsv-property-name:has(+ .jsv-required) {
+  margin-right: 0;
+}
+.jsv-required {
+  margin-right: var(--jsv-name-gap);
+}
 /* Last thing in the toggle: the toggle's own padding + margin provide the gap. */
-.jsv-row-toggle > .jsv-property-name:last-child {
+.jsv-row-toggle > .jsv-property-name:last-child,
+.jsv-row-toggle > .jsv-required:last-child {
   margin-right: 0;
 }
 .jsv-caret {

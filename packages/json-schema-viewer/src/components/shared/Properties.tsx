@@ -5,21 +5,19 @@ import * as React from 'react';
 import { useJSVOptionsContext } from '../../contexts';
 
 export interface IProperties {
-  required: boolean;
   deprecated: boolean;
   validations: Dictionary<unknown>;
 }
 
-export const useHasProperties = ({ required, deprecated, validations: { readOnly, writeOnly } }: IProperties) => {
+export const useHasProperties = ({ deprecated, validations: { readOnly, writeOnly } }: IProperties) => {
   const { viewMode } = useJSVOptionsContext();
 
   const showVisibilityValidations = viewMode === 'standalone' && !!readOnly !== !!writeOnly;
 
-  return deprecated || showVisibilityValidations || required;
+  return deprecated || showVisibilityValidations;
 };
 
 export const Properties: React.FunctionComponent<IProperties> = ({
-  required,
   deprecated,
   validations: { readOnly, writeOnly },
 }) => {
@@ -47,11 +45,6 @@ export const Properties: React.FunctionComponent<IProperties> = ({
         </Box>
       ) : null}
       {visibility}
-      {required && (
-        <Box as="span" ml={2} color="warning" data-test="property-required">
-          required
-        </Box>
-      )}
     </>
   );
 };

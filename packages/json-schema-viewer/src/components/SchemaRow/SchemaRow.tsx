@@ -81,7 +81,7 @@ export const SchemaRow: React.FunctionComponent<SchemaRowProps> = React.memo(
     const required = isPropertyRequired(schemaNode);
     const deprecated = isRegularNode(schemaNode) && schemaNode.deprecated;
     const validations = isRegularNode(schemaNode) ? schemaNode.validations : {};
-    const hasProperties = useHasProperties({ required, deprecated, validations });
+    const hasProperties = useHasProperties({ deprecated, validations });
 
     const [totalVendorExtensions, vendorExtensions] = React.useMemo(
       () => extractVendorExtensions(schemaNode.fragment),
@@ -115,6 +115,24 @@ export const SchemaRow: React.FunctionComponent<SchemaRowProps> = React.memo(
             data-test={`property-name-${last(schemaNode.subpath)}`}
           >
             {last(schemaNode.subpath)}
+          </Box>
+        )}
+        {showName && required && (
+          // Inside the toggle on purpose: no handler, so a click still toggles the row.
+          // The glyph is aria-hidden (title still shows on hover); screen readers
+          // get the hidden text instead, so "required" is announced once.
+          <Box
+            as="span"
+            className="jsv-required"
+            color="danger"
+            fontFamily="mono"
+            fontWeight="semibold"
+            data-test="property-required"
+          >
+            <span aria-hidden="true" title="required">
+              *
+            </span>
+            <span className="jsv-visually-hidden">required</span>
           </Box>
         )}
 
@@ -230,7 +248,7 @@ export const SchemaRow: React.FunctionComponent<SchemaRowProps> = React.memo(
                 )}
               </Flex>
               {hasProperties && <Divider atom={isNodeHoveredAtom(schemaNode)} />}
-              <Properties required={required} deprecated={deprecated} validations={validations} />
+              <Properties deprecated={deprecated} validations={validations} />
             </Flex>
             {[ownDescription, choiceDescription !== ownDescription ? choiceDescription : null].map(
               (description, index) =>
