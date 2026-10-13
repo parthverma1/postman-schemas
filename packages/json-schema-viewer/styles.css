@@ -50,7 +50,7 @@
   background: var(--highlight-background-color-primary);
 }
 
-/* Row expand/collapse toggle (caret + property name/type) ----------------- */
+/* Row expand/collapse toggle (caret + property name) ---------------------- */
 /*
  * Only this element toggles a row. The caret is a 1.5rem box in the gutter left
  * of the name; the negative margin + matching padding pulls the toggle box over
@@ -58,7 +58,8 @@
  * visible stroke (--jsv-caret-inset into the caret box). The rest of the caret
  * box still overhangs the pill and stays clickable. On the right, padding +
  * margin add up to --jsv-name-gap, so the hover background hugs the label and
- * stays clear of whatever follows (type select, ref link).
+ * stays clear of whatever follows (type, type select, ref link). A required
+ * mark pulls itself back to sit right at the pill edge (see .jsv-required).
  */
 .jsv-row-toggle {
   /* Centred square 0.75rem icon. The open chevron's stroke starts at x=3.25
@@ -95,7 +96,7 @@
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
   font-weight: 600;
   color: var(--content-color-error);
-  cursor: help;
+  cursor: pointer;
 }
 .jsv-caret {
   display: inline-flex;

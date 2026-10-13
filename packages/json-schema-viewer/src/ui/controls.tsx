@@ -212,8 +212,8 @@ export function Infotip({ trigger, children, className, ...rest }: InfotipProps)
       <PopoverPrimitive.Trigger
         className={className}
         aria-label={children}
+        // Opens after Base UI's default 300ms hover delay.
         openOnHover
-        delay={300}
         // Popover opens on hover and press only; show it for keyboard focus too.
         onFocus={e => e.currentTarget.matches(':focus-visible') && setOpen(true)}
         onBlur={() => setOpen(false)}
