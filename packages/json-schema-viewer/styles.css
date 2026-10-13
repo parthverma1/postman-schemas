@@ -20,6 +20,8 @@
   --jsv-name-gap: 0.75rem;
   /* Hover/focus pill padding, glyph to edge, on both sides of the row toggle. */
   --jsv-toggle-pad: 0.25rem;
+  /* Space on both sides of a required mark: name text to mark, mark to type. */
+  --jsv-required-gap: 0.5rem;
 }
 
 /* Links ------------------------------------------------------------------- */
@@ -48,7 +50,7 @@
   background: var(--highlight-background-color-primary);
 }
 
-/* Row expand/collapse toggle (caret + property name/type) ----------------- */
+/* Row expand/collapse toggle (caret + property name) ---------------------- */
 /*
  * Only this element toggles a row. The caret is a 1.5rem box in the gutter left
  * of the name; the negative margin + matching padding pulls the toggle box over
@@ -56,7 +58,9 @@
  * visible stroke (--jsv-caret-inset into the caret box). The rest of the caret
  * box still overhangs the pill and stays clickable. On the right, padding +
  * margin add up to --jsv-name-gap, so the hover background hugs the label and
- * stays clear of whatever follows (type select, ref link).
+ * stays clear of whatever follows (type, type select, ref link). A required
+ * mark pulls itself back to --jsv-required-gap from the name text, which puts
+ * it --jsv-required-gap minus --jsv-toggle-pad past the pill edge.
  */
 .jsv-row-toggle {
   /* Centred square 0.75rem icon. The open chevron's stroke starts at x=3.25
@@ -78,6 +82,24 @@
 .jsv-row-toggle > .jsv-property-name:last-child {
   margin-right: 0;
 }
+/*
+ * Required mark (infotip trigger), right after the name or the toggle pill.
+ * Both end --jsv-name-gap past the name text, so pull the mark back to
+ * --jsv-required-gap from it, and leave the same gap before the type.
+ */
+.jsv-required {
+  margin: 0 var(--jsv-required-gap) 0 calc(var(--jsv-required-gap) - var(--jsv-name-gap));
+  padding: 0;
+  border: 0;
+  border-radius: var(--border-radius-s);
+  background: none;
+  font: inherit;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+  font-weight: 600;
+  color: var(--content-color-error);
+  /* Explicit, so the button doesn't pick up a pointer from a global rule. */
+  cursor: default;
+}
 .jsv-caret {
   display: inline-flex;
   align-self: stretch;
@@ -96,6 +118,7 @@
 
 /* Keyboard focus ring for every interactive control ----------------------- */
 .jsv-row-toggle:focus-visible,
+.jsv-required:focus-visible,
 .jsv-pressable:focus-visible,
 .jsv-link:focus-visible,
 .jsv-description a:focus-visible,
@@ -275,6 +298,11 @@
   border: 1px solid var(--border-color-default);
   border-radius: var(--border-radius-default);
   box-shadow: var(--shadow-elevation-20);
+}
+.jsv-infotip {
+  min-width: 0;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
 }
 .jsv-dropdown--select {
   min-width: var(--anchor-width);

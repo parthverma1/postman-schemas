@@ -1,5 +1,5 @@
 import { isMirroredNode, isReferenceNode, isRegularNode, SchemaNode } from '@postman/json-schema-tree';
-import { Box, Flex, NodeAnnotation, Select, SpaceVals, VStack } from '../../ui';
+import { Box, Flex, Infotip, NodeAnnotation, Select, SpaceVals, VStack } from '../../ui';
 import type { ChangeType } from '@stoplight/types';
 import { Atom, useAtomValue, useSetAtom } from 'jotai';
 import { last } from '../../lodashLite';
@@ -81,7 +81,7 @@ export const SchemaRow: React.FunctionComponent<SchemaRowProps> = React.memo(
     const required = isPropertyRequired(schemaNode);
     const deprecated = isRegularNode(schemaNode) && schemaNode.deprecated;
     const validations = isRegularNode(schemaNode) ? schemaNode.validations : {};
-    const hasProperties = useHasProperties({ required, deprecated, validations });
+    const hasProperties = useHasProperties({ deprecated, validations });
 
     const [totalVendorExtensions, vendorExtensions] = React.useMemo(
       () => extractVendorExtensions(schemaNode.fragment),
@@ -102,22 +102,26 @@ export const SchemaRow: React.FunctionComponent<SchemaRowProps> = React.memo(
     }
 
     const showName = schemaNode.subpath.length > 0 && shouldShowPropertyName(schemaNode);
-    const hasLabel = showName || choices.length === 1;
-    const label = (
+    // The row toggle holds only the caret + name; everything else follows it.
+    const name = showName && (
+      <Box
+        as="span"
+        // Trailing gap comes from styles.css (--jsv-name-gap) on every row kind.
+        className="jsv-property-name"
+        fontFamily="mono"
+        fontWeight="semibold"
+        data-test={`property-name-${last(schemaNode.subpath)}`}
+      >
+        {last(schemaNode.subpath)}
+      </Box>
+    );
+    const afterName = (
       <>
-        {showName && (
-          <Box
-            as="span"
-            // Trailing gap comes from styles.css (--jsv-name-gap) on every row kind.
-            className="jsv-property-name"
-            fontFamily="mono"
-            fontWeight="semibold"
-            data-test={`property-name-${last(schemaNode.subpath)}`}
-          >
-            {last(schemaNode.subpath)}
-          </Box>
+        {showName && required && (
+          <Infotip className="jsv-required" data-test="property-required" trigger={<span aria-hidden="true">*</span>}>
+            required
+          </Infotip>
         )}
-
         {choices.length === 1 && <Types schemaNode={typeToShow} />}
       </>
     );
@@ -153,15 +157,15 @@ export const SchemaRow: React.FunctionComponent<SchemaRowProps> = React.memo(
               {/* minW 0 lets a long type title ellipsize instead of widening the page on phones. */}
               <Flex alignItems="baseline" fontSize="base" minW={0}>
                 {isCollapsible ? (
-                  // Only the caret + name/type label toggles the row; the rest of the
-                  // row (type select, divider, validations) is not a click target.
+                  // Only the caret + name toggles the row; the rest of the row (required
+                  // infotip, type, type select, divider, validations) is not a click target.
                   <span
                     className="jsv-row-toggle"
                     role="button"
                     tabIndex={0}
                     aria-expanded={isExpanded}
-                    // Caret-only toggle (no name, type picked via the Select): give it a name.
-                    aria-label={hasLabel ? undefined : isExpanded ? 'Collapse' : 'Expand'}
+                    // Caret-only toggle (no name): give it a name.
+                    aria-label={showName ? undefined : isExpanded ? 'Collapse' : 'Expand'}
                     onClick={() => setExpanded(!isExpanded)}
                     onKeyDown={e => {
                       // Modified arrows (Alt+← Back, Shift+← selection, ...) stay with the browser.
@@ -180,11 +184,12 @@ export const SchemaRow: React.FunctionComponent<SchemaRowProps> = React.memo(
                     }}
                   >
                     <Caret isExpanded={isExpanded} />
-                    {label}
+                    {name}
                   </span>
                 ) : (
-                  label
+                  name
                 )}
+                {afterName}
 
                 {onGoToRef && isReferenceNode(schemaNode) && schemaNode.external ? (
                   <Box
@@ -230,7 +235,7 @@ export const SchemaRow: React.FunctionComponent<SchemaRowProps> = React.memo(
                 )}
               </Flex>
               {hasProperties && <Divider atom={isNodeHoveredAtom(schemaNode)} />}
-              <Properties required={required} deprecated={deprecated} validations={validations} />
+              <Properties deprecated={deprecated} validations={validations} />
             </Flex>
             {[ownDescription, choiceDescription !== ownDescription ? choiceDescription : null].map(
               (description, index) =>

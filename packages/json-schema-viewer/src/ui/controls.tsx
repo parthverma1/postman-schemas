@@ -1,11 +1,12 @@
 /**
- * Interactive controls replacing the Mosaic widgets the viewer used. Select and
- * Menu are Base UI primitives (focus, keyboard, aria, outside-dismiss incl. touch
+ * Interactive controls replacing the Mosaic widgets the viewer used. Select,
+ * Menu and Infotip are Base UI primitives (focus, keyboard, aria, outside-dismiss incl. touch
  * handled for us); the rest are plain SSR-friendly elements (`<button>`, `title` tooltips).
  * All are styled with static classes (see styles.css) + Aether tokens — no
  * runtime CSS injection.
  */
 import { Menu as MenuPrimitive } from '@base-ui/react/menu';
+import { Popover as PopoverPrimitive } from '@base-ui/react/popover';
 import { Select as SelectPrimitive } from '@base-ui/react/select';
 import * as React from 'react';
 import { resolveStyle } from './styleProps';
@@ -190,6 +191,46 @@ export function Tooltip({ renderTrigger, children }: TooltipProps) {
     <span className="jsv-tooltip" title={title}>
       {renderTrigger}
     </span>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/* Infotip — Base UI Popover that also opens on hover (and on keyboard focus). */
+/* -------------------------------------------------------------------------- */
+export interface InfotipProps {
+  // Visible trigger content, e.g. "*".
+  trigger: React.ReactNode;
+  // Popup text; also the trigger's accessible name, so it's announced once.
+  children: string;
+  className?: string;
+  'data-test'?: string;
+}
+export function Infotip({ trigger, children, className, ...rest }: InfotipProps) {
+  const [open, setOpen] = React.useState(false);
+  return (
+    <PopoverPrimitive.Root open={open} onOpenChange={setOpen}>
+      <PopoverPrimitive.Trigger
+        className={className}
+        aria-label={children}
+        // Opens after Base UI's default 300ms hover delay.
+        openOnHover
+        // Popover opens on hover and press only; show it for keyboard focus too.
+        onFocus={e => e.currentTarget.matches(':focus-visible') && setOpen(true)}
+        onBlur={() => setOpen(false)}
+        {...rest}
+      >
+        {trigger}
+      </PopoverPrimitive.Trigger>
+      {/* Nothing is rendered here until it opens, so SSR emits only the trigger. */}
+      <PopoverPrimitive.Portal className="jsv-dropdown-portal">
+        <PopoverPrimitive.Positioner className="jsv-dropdown-positioner" side="top" sideOffset={4}>
+          {/* Keep focus on the trigger; the popup has nothing to interact with. */}
+          <PopoverPrimitive.Popup className="jsv-dropdown jsv-infotip" initialFocus={false} finalFocus={false}>
+            {children}
+          </PopoverPrimitive.Popup>
+        </PopoverPrimitive.Positioner>
+      </PopoverPrimitive.Portal>
+    </PopoverPrimitive.Root>
   );
 }
 
