@@ -5,9 +5,6 @@
  * along with a manifest, into `src/generated/` so the TanStack Start app can load
  * them for the Stoplight JSON Schema Viewer.
  *
- * The viewer bundle is passed through `transformForViewer`
- * (scripts/schema-transforms/) first; raw downloads are the compiled original.
- *
  * Schemas all live under the local `schemas/` tree. Two layouts are supported:
  *   - Legacy: `collection.json` references sibling definition files that are
  *     merged into `definitions` by `tools.compile` (e.g. v1/v2).
@@ -15,7 +12,7 @@
  *     (e.g. v3), so it is emitted verbatim.
  *
  * Output layout (per resource kind, e.g. "collection"):
- *   src/generated/schemas/{resource}/{draft}/{version}.json   (viewer bundle, INCLUDED_DRAFTS only, transformed)
+ *   src/generated/schemas/{resource}/{draft}/{version}.json   (viewer bundle, INCLUDED_DRAFTS only)
  *   public/{resource}/json/{version}/{draft}/{resource}.json  (raw download, every draft)
  *   public/json/...                                           (legacy raw URLs, see legacy-urls.ts)
  *
@@ -27,7 +24,6 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import fs from 'node:fs';
 import { VIEWER_DRAFT, legacyUrls } from './legacy-urls.ts';
-import { transformForViewer } from './schema-transforms/index.ts';
 
 const require = createRequire(import.meta.url);
 const semver = require('semver');
@@ -114,9 +110,9 @@ function loadSchema(draft, version) {
 }
 
 /**
- * Writes the viewer bundle (INCLUDED_DRAFTS only, through `transformForViewer`)
- * into `schemaOutDir` and every raw download (current + legacy URLs, all drafts,
- * compiled original) into `publicDir`. Does not clean either directory.
+ * Writes the viewer bundle (INCLUDED_DRAFTS only) into `schemaOutDir` and every
+ * raw download (current + legacy URLs, all drafts) into `publicDir`. Does not
+ * clean either directory.
  *
  * @param {{publicDir?: string, schemaOutDir?: string}} [dirs]
  * @returns {{entries: import('./generate-schemas.d.mts').SchemaEntry[], rawPaths: string[]}}
@@ -129,19 +125,16 @@ export function writeSchemas({ publicDir = PUBLIC_DIR, schemaOutDir = SCHEMA_OUT
 
   for (const [draft, versions] of Object.entries(versionsByDraft)) {
     for (const version of versions) {
-      const schema = loadSchema(draft, version);
+      const content = JSON.stringify(loadSchema(draft, version), null, 2);
 
-      // Raw downloads: the compiled original, never transformed.
-      serialized.set(`${draft}/${version}`, JSON.stringify(schema, null, 2));
+      serialized.set(`${draft}/${version}`, content);
 
       if (!INCLUDED_DRAFTS.includes(draft)) {
         continue;
       }
 
       // Bundled copy consumed by the viewer via the manifest.
-      const viewerSchema = transformForViewer(schema, { resource: 'collection', draft, version });
-
-      writeFile(path.join(schemaOutDir, 'collection', draft, `${version}.json`), JSON.stringify(viewerSchema, null, 2));
+      writeFile(path.join(schemaOutDir, 'collection', draft, `${version}.json`), content);
       entries.push({
         resource: 'collection',
         label: RESOURCE_LABELS.collection,
@@ -218,7 +211,7 @@ function writeManifest(entries, defaultEntry) {
   lines.push("  status: 'stable' | 'rc' | 'draft' | string;");
   lines.push('  /** Stable identifier: `${resource}/${draft}/${version}`. */');
   lines.push('  id: string;');
-  lines.push('  /** Lazily loads the compiled schema JSON, pre-processed for the viewer. */');
+  lines.push('  /** Lazily loads the compiled schema JSON (`$ref`s kept, not dereferenced). */');
   lines.push('  load: () => Promise<Record<string, unknown>>;');
   lines.push('}');
   lines.push('');

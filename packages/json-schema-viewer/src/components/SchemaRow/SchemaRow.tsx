@@ -10,15 +10,7 @@ import { useJSVOptionsContext } from '../../contexts';
 import { getNodeId, getOriginalNodeId } from '../../hash';
 import { isComplexArray, isNonEmptyParentNode, isPropertyRequired, visibleChildren } from '../../tree';
 import { extractVendorExtensions } from '../../utils/extractVendorExtensions';
-import {
-  Caret,
-  Description,
-  getValidationsFromSchema,
-  RequiredAnyOf,
-  requiredAnyOfFor,
-  Types,
-  Validations,
-} from '../shared';
+import { Caret, Description, getValidationsFromSchema, Types, Validations } from '../shared';
 import { ChildStack } from '../shared/ChildStack';
 import { Error } from '../shared/Error';
 import { Properties, useHasProperties } from '../shared/Properties';
@@ -87,8 +79,6 @@ export const SchemaRow: React.FunctionComponent<SchemaRowProps> = React.memo(
     const isRootLevel = nestingLevel < rootLevel;
 
     const required = isPropertyRequired(schemaNode);
-    // "Requires `id` or `key`", read from the selected choice so it follows the dropdown.
-    const requiredAnyOf = requiredAnyOfFor(typeToShow);
     const deprecated = isRegularNode(schemaNode) && schemaNode.deprecated;
     const validations = isRegularNode(schemaNode) ? schemaNode.validations : {};
     const hasProperties = useHasProperties({ required, deprecated, validations });
@@ -252,7 +242,6 @@ export const SchemaRow: React.FunctionComponent<SchemaRowProps> = React.memo(
               validations={isRegularNode(schemaNode) ? getValidationsFromSchema(schemaNode) : {}}
               hideExamples={hideExamples}
             />
-            {requiredAnyOf && <RequiredAnyOf sets={requiredAnyOf} />}
             {hasVendorProperties && renderExtensionAddon ? (
               <Box>{renderExtensionAddon({ schemaNode, nestingLevel, vendorExtensions })}</Box>
             ) : null}

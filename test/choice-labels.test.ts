@@ -5,7 +5,6 @@ import path from 'node:path';
 import { writeSchemas } from '../scripts/generate-schemas.mjs';
 import { buildSerializedTree, deserializeTree } from '../packages/json-schema-viewer/src/worker';
 import { buildChoices } from '../packages/json-schema-viewer/src/components/SchemaRow/useChoices';
-import { requiredAnyOfFor } from '../packages/json-schema-viewer/src/components/shared/Validations';
 import type { JSONSchema } from '../packages/json-schema-viewer/src/types';
 
 type SchemaNode = Parameters<typeof buildChoices>[0];
@@ -87,61 +86,6 @@ describe.each(VERSIONS)('%s', version => {
   });
 });
 
-// The fold itself happens in scripts/schema-transforms (see schema-transforms.test.ts);
-// these check that the viewer tree built from the bundle picks it up.
-describe('constraint-only anyOf (required keys only) is folded into the node', () => {
-  const variableCases = [
-    ['v1.0.0', 'properties/variables/oneOf/0/items'],
-    ['v2.0.0', 'properties/item/items/oneOf/0/properties/variable/items'],
-    ['v2.1.0', 'properties/item/items/oneOf/0/properties/variable/items'],
-  ];
-
-  it.each(variableCases)('%s variable: one choice, "Requires id or key"', (version, at) => {
-    for (const node of nodesAt(version, at)) {
-      expect(buildChoices(node)).toHaveLength(1);
-      expect(buildChoices(node.parent!)).toHaveLength(1);
-      expect(node.fragment).toMatchObject({ requiredAnyOf: [['id'], ['key']] });
-      expect(node.fragment).not.toHaveProperty('anyOf');
-      expect(node.fragment).not.toHaveProperty('required');
-    }
-  });
-
-  it('v1.0.0 requests: one choice, shared keys required, "Requires collectionId or collection"', () => {
-    for (const node of nodesAt('v1.0.0', 'properties/requests/items')) {
-      expect(buildChoices(node)).toHaveLength(1);
-      expect(buildChoices(node.parent!)).toHaveLength(1);
-      expect(node.fragment).toMatchObject({
-        required: ['id', 'method', 'url', 'headers', 'name'],
-        requiredAnyOf: [['collectionId'], ['collection']],
-      });
-    }
-  });
-
-  it('v1.0.0 variables (oneOf list or null): the note follows the selected choice', () => {
-    for (const node of nodesAt('v1.0.0', 'properties/variables')) {
-      const [list, nullChoice] = buildChoices(node);
-      expect(list.title).toBe('array[Variable]');
-      expect(requiredAnyOfFor(list.type)).toEqual([['id'], ['key']]);
-      expect(nullChoice.title).toBe('null');
-      expect(requiredAnyOfFor(nullChoice.type)).toBeNull();
-      expect(requiredAnyOfFor(node)).toBeNull();
-    }
-  });
-
-  it('shows the note on single-choice rows (v2.1.0 variable, v1.0.0 requests)', () => {
-    for (const node of nodesAt('v2.1.0', 'properties/item/items/oneOf/0/properties/variable')) {
-      expect(requiredAnyOfFor(buildChoices(node)[0].type)).toEqual([['id'], ['key']]);
-    }
-    for (const node of nodesAt('v1.0.0', 'properties/requests')) {
-      expect(requiredAnyOfFor(buildChoices(node)[0].type)).toEqual([['collectionId'], ['collection']]);
-    }
-  });
-
-  it('leaves no requiredAnyOf on v3.0.0 (it has no constraint-only anyOf)', () => {
-    expect(nodes(trees['v3.0.0']).some(node => 'requiredAnyOf' in (node.fragment as object))).toBe(false);
-  });
-});
-
 describe('colliding labels get distinct, meaningful names', () => {
   it.each([
     // A title that repeats the parent's → the type name.
@@ -155,12 +99,12 @@ describe('colliding labels get distinct, meaningful names', () => {
     ['v2.0.0', 'response/items/properties/header', ['array[oneOf]', 'string', 'null']],
     ['v2.1.0', 'response/items/properties/header/oneOf/0', ['objects', 'strings']],
     // const → its value; enum → "<type> (enum)".
-    ['v1.0.0', 'properties/requests/items/properties/method', ['string (enum)', 'string']],
+    ['v1.0.0', 'properties/requests/items/anyOf/0/properties/method', ['string (enum)', 'string']],
     ['v2.1.0', 'request/oneOf/0/properties/method', ['string (enum)', 'string']],
     ['v3.0.0', 'properties/settings/properties/maxResponseSize', ['number', 'null']],
     ['v3.0.0', 'properties/settings/properties/maxHeaderSize', ['number', 'null']],
     // Objects told apart by a const property.
-    ['v1.0.0', 'properties/requests/items/properties/data/oneOf/0', ['type: text', 'type: file']],
+    ['v1.0.0', 'properties/requests/items/anyOf/0/properties/data/oneOf/0', ['type: text', 'type: file']],
     ['v2.0.0', 'properties/body/oneOf/0/properties/formdata', ['type: text', 'type: file']],
     ['v2.1.0', 'properties/body/oneOf/0/properties/formdata', ['type: text', 'type: file']],
   ] as const)('%s …%s', (version, at, expected) => {

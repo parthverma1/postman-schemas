@@ -119,35 +119,19 @@ describe('json-schema-tree oneOf/anyOf nodes', () => {
       expect(withNonBranchChildren(root)).toEqual([]);
     });
 
-    it('give the v2.1.0 formdata items exactly its 2 anyOf branches', () => {
+    it('give the v2.1.0 variable items exactly its 3 anyOf branches', () => {
       const entry = entries.find((e) => e.version === 'v2.1.0')!;
-      // formdata is reached from several places; the first visit is a regular
+      // `variable` is reached from several places; the first visit is a regular
       // node and later ones mirror it, so check every regular occurrence.
       const nodes = combinerNodes(buildTree(load(entry))).filter((node) =>
-        node.path.join('/').endsWith('/body/oneOf/0/properties/formdata/items'),
+        node.path.join('/').endsWith('/variable/items'),
       );
 
       expect(nodes.length).toBeGreaterThan(0);
       for (const node of nodes) {
-        expect(node.children?.map((child) => child.subpath.join('/'))).toEqual(['anyOf/0', 'anyOf/1']);
-      }
-    });
-
-    it('fold the v2.1.0 variable items required-only anyOf into one node', () => {
-      const entry = entries.find((e) => e.version === 'v2.1.0')!;
-      const nodes: RegularNode[] = [];
-      const walk = (node: SchemaNode) => {
-        if (isMirroredNode(node)) return;
-        if (isRegularNode(node) && node.path.join('/').endsWith('/variable/items')) nodes.push(node);
-        for (const child of ('children' in node ? node.children : null) ?? []) walk(child);
-      };
-
-      walk(buildTree(load(entry)));
-
-      expect(nodes.length).toBeGreaterThan(0);
-      for (const node of nodes) {
-        expect(isCombiner(node)).toBe(false);
-        expect((node.fragment as Record<string, unknown>).requiredAnyOf).toEqual([['id'], ['key']]);
+        // These are the schema's 3 required-only anyOf branches (id, key, or both).
+        // Folding them into a single choice would intentionally change this count.
+        expect(node.children?.map((child) => child.subpath.join('/'))).toEqual(['anyOf/0', 'anyOf/1', 'anyOf/2']);
       }
     });
   });
