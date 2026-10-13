@@ -20,8 +20,8 @@
   --jsv-name-gap: 0.75rem;
   /* Hover/focus pill padding, glyph to edge, on both sides of the row toggle. */
   --jsv-toggle-pad: 0.25rem;
-  /* Space between a property name and its required mark. */
-  --jsv-required-gap: 0.25rem;
+  /* Space on both sides of a required mark: name text to mark, mark to type. */
+  --jsv-required-gap: 0.5rem;
 }
 
 /* Links ------------------------------------------------------------------- */
@@ -59,7 +59,8 @@
  * box still overhangs the pill and stays clickable. On the right, padding +
  * margin add up to --jsv-name-gap, so the hover background hugs the label and
  * stays clear of whatever follows (type, type select, ref link). A required
- * mark pulls itself back to sit right at the pill edge (see .jsv-required).
+ * mark pulls itself back to --jsv-required-gap from the name text, which puts
+ * it --jsv-required-gap minus --jsv-toggle-pad past the pill edge.
  */
 .jsv-row-toggle {
   /* Centred square 0.75rem icon. The open chevron's stroke starts at x=3.25
@@ -83,11 +84,11 @@
 }
 /*
  * Required mark (infotip trigger), right after the name or the toggle pill.
- * Both end --jsv-name-gap before it, so pull it back to --jsv-required-gap from
- * the name text; the name gap then follows the mark instead.
+ * Both end --jsv-name-gap past the name text, so pull the mark back to
+ * --jsv-required-gap from it, and leave the same gap before the type.
  */
 .jsv-required {
-  margin: 0 var(--jsv-name-gap) 0 calc(var(--jsv-required-gap) - var(--jsv-name-gap));
+  margin: 0 var(--jsv-required-gap) 0 calc(var(--jsv-required-gap) - var(--jsv-name-gap));
   padding: 0;
   border: 0;
   border-radius: var(--border-radius-s);
