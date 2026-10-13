@@ -36,7 +36,7 @@ export default function SchemaViewer({
       name={name}
       schema={schema as JSONSchema7}
       tree={tree}
-      defaultExpandedDepth={1}
+      defaultExpandedDepth={0}
       emptyText="No schema defined"
     />
   );
