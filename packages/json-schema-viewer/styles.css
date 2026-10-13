@@ -20,19 +20,8 @@
   --jsv-name-gap: 0.75rem;
   /* Hover/focus pill padding, glyph to edge, on both sides of the row toggle. */
   --jsv-toggle-pad: 0.25rem;
-}
-
-/* Screen-reader-only text ------------------------------------------------- */
-.jsv-visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  padding: 0;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
+  /* Space between a property name and its required mark. */
+  --jsv-required-gap: 0.25rem;
 }
 
 /* Links ------------------------------------------------------------------- */
@@ -87,17 +76,26 @@
 .jsv-property-name {
   margin-right: var(--jsv-name-gap);
 }
-/* A required mark sits flush after the name and takes over the name gap. */
-.jsv-property-name:has(+ .jsv-required) {
-  margin-right: 0;
-}
-.jsv-required {
-  margin-right: var(--jsv-name-gap);
-}
 /* Last thing in the toggle: the toggle's own padding + margin provide the gap. */
-.jsv-row-toggle > .jsv-property-name:last-child,
-.jsv-row-toggle > .jsv-required:last-child {
+.jsv-row-toggle > .jsv-property-name:last-child {
   margin-right: 0;
+}
+/*
+ * Required mark (infotip trigger), right after the name or the toggle pill.
+ * Both end --jsv-name-gap before it, so pull it back to --jsv-required-gap from
+ * the name text; the name gap then follows the mark instead.
+ */
+.jsv-required {
+  margin: 0 var(--jsv-name-gap) 0 calc(var(--jsv-required-gap) - var(--jsv-name-gap));
+  padding: 0;
+  border: 0;
+  border-radius: var(--border-radius-s);
+  background: none;
+  font: inherit;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+  font-weight: 600;
+  color: var(--content-color-error);
+  cursor: help;
 }
 .jsv-caret {
   display: inline-flex;
@@ -117,6 +115,7 @@
 
 /* Keyboard focus ring for every interactive control ----------------------- */
 .jsv-row-toggle:focus-visible,
+.jsv-required:focus-visible,
 .jsv-pressable:focus-visible,
 .jsv-link:focus-visible,
 .jsv-description a:focus-visible,
@@ -296,6 +295,11 @@
   border: 1px solid var(--border-color-default);
   border-radius: var(--border-radius-default);
   box-shadow: var(--shadow-elevation-20);
+}
+.jsv-infotip {
+  min-width: 0;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
 }
 .jsv-dropdown--select {
   min-width: var(--anchor-width);
