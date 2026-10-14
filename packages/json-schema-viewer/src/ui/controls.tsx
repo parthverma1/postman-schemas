@@ -206,9 +206,8 @@ export interface InfotipProps {
   'data-test'?: string;
 }
 export function Infotip({ trigger, children, className, ...rest }: InfotipProps) {
-  const [open, setOpen] = React.useState(false);
   return (
-    <PopoverPrimitive.Root open={open} onOpenChange={setOpen}>
+    <PopoverPrimitive.Root>
       <PopoverPrimitive.Trigger
         className={className}
         aria-label={children}
