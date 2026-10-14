@@ -16,7 +16,11 @@ pnpm install       # install dependencies
 pnpm dev           # start the dev server at http://localhost:3000
 pnpm build         # production build
 pnpm start         # serve the production build
+pnpm run preview:cf  # build for Cloudflare Workers and serve it with wrangler dev
+pnpm run deploy      # build for Cloudflare Workers and deploy the "schemas" Worker
 ```
+
+Use `pnpm run deploy`, not `pnpm deploy`: pnpm 10's built-in `deploy` command takes precedence over the script.
 
 Each schema under `schemas/<draft>/<version>/` is compiled into a single document (sibling definitions merged, `$ref`s kept, not dereferenced) by `pnpm generate:schemas` (run automatically before `dev`/`build`), which reuses the tooling in `lib/`. The compiled output and a manifest are written to `src/generated/` (git-ignored).
 
