@@ -195,7 +195,7 @@ export function Tooltip({ renderTrigger, children }: TooltipProps) {
 }
 
 /* -------------------------------------------------------------------------- */
-/* Infotip — Base UI Popover that also opens on hover (and on keyboard focus). */
+/* Infotip — Base UI Popover that also opens on hover.                        */
 /* -------------------------------------------------------------------------- */
 export interface InfotipProps {
   // Visible trigger content, e.g. "*".
@@ -214,9 +214,8 @@ export function Infotip({ trigger, children, className, ...rest }: InfotipProps)
         aria-label={children}
         // Opens after Base UI's default 300ms hover delay.
         openOnHover
-        // Popover opens on hover and press only; show it for keyboard focus too.
-        onFocus={e => e.currentTarget.matches(':focus-visible') && setOpen(true)}
-        onBlur={() => setOpen(false)}
+        // Not a tab stop; screen readers still reach it as a button.
+        tabIndex={-1}
         {...rest}
       >
         {trigger}
