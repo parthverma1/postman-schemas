@@ -115,7 +115,7 @@
 							"secret": {
 								"type": "boolean",
 								"const": true,
-								"description": "Whether the value is held in a vault rather than stored inline."
+								"description": "Whether the variable references a secret rather than an inline value."
 							},
 							"disabled": {
 								"description": "Whether the variable is excluded from resolution.",
@@ -157,7 +157,7 @@
 								"type": "boolean"
 							},
 							"secret": {
-								"description": "Whether the value is held in a vault rather than stored inline.",
+								"description": "Whether the variable references a secret rather than an inline value.",
 								"type": "boolean",
 								"const": false
 							},
@@ -459,7 +459,12 @@
 							"grpc:onIncomingMessage",
 							"grpc:afterResponse",
 							"http:beforeRequest",
-							"http:afterResponse"
+							"http:afterResponse",
+							"kafka:beforeConsume",
+							"kafka:onIncomingMessage",
+							"kafka:afterConsume",
+							"kafka:beforeProduce",
+							"kafka:afterProduce"
 						],
 						"description": "Lifecycle point the script runs at."
 					},
@@ -581,7 +586,8 @@
 										"edgegrid",
 										"hawk",
 										"asap",
-										"awsv4"
+										"awsv4",
+										"sasl"
 									],
 									"description": "Auth scheme to apply."
 								}
@@ -730,7 +736,8 @@
 											"edgegrid",
 											"hawk",
 											"asap",
-											"awsv4"
+											"awsv4",
+											"sasl"
 										],
 										"description": "Auth scheme to apply."
 									}
@@ -2273,7 +2280,10 @@
 									"user-agent",
 									"connection",
 									"accept",
-									"host"
+									"host",
+									"x-amz-date",
+									"x-amz-security-token",
+									"x-amz-content-sha256"
 								]
 							}
 						}
@@ -3008,6 +3018,14 @@
 								"$ref": "#/definitions/v3-kafka-message"
 							}
 						},
+						"scripts": {
+							"description": "Scripts that run on events in the request execution lifecycle.",
+							"allOf": [
+								{
+									"$ref": "#/definitions/v3-kafka-scripts"
+								}
+							]
+						},
 						"mode": {
 							"type": "string",
 							"const": "producer",
@@ -3106,6 +3124,14 @@
 							"items": {
 								"$ref": "#/definitions/v3-kafka-message"
 							}
+						},
+						"scripts": {
+							"description": "Scripts that run on events in the request execution lifecycle.",
+							"allOf": [
+								{
+									"$ref": "#/definitions/v3-kafka-scripts"
+								}
+							]
 						},
 						"mode": {
 							"type": "string",
@@ -3482,6 +3508,58 @@
 			],
 			"additionalProperties": false,
 			"title": "Kafka content"
+		},
+		"v3-kafka-scripts": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"type": {
+						"type": "string",
+						"enum": [
+							"beforeConsume",
+							"onIncomingMessage",
+							"afterConsume",
+							"beforeProduce",
+							"afterProduce"
+						],
+						"description": "Lifecycle point the script runs at."
+					},
+					"code": {
+						"type": "string",
+						"description": "Source of the script."
+					},
+					"language": {
+						"description": "Language the script is written in.",
+						"type": "string",
+						"enum": [
+							"text/javascript"
+						]
+					},
+					"packages": {
+						"description": "Package Library packages the script imports, keyed by the name it imports them under.",
+						"type": "object",
+						"propertyNames": {
+							"type": "string"
+						},
+						"additionalProperties": false
+					},
+					"requests": {
+						"description": "Collection requests the script sends, keyed by the name it references them under.",
+						"type": "object",
+						"propertyNames": {
+							"type": "string"
+						},
+						"additionalProperties": false
+					}
+				},
+				"required": [
+					"type",
+					"code"
+				],
+				"additionalProperties": false
+			},
+			"title": "Kafka scripts"
 		},
 		"v3-kafka-topic-schema": {
 			"title": "Kafka topic schema source",
@@ -6457,7 +6535,12 @@
 							"grpc:onIncomingMessage",
 							"grpc:afterResponse",
 							"http:beforeRequest",
-							"http:afterResponse"
+							"http:afterResponse",
+							"kafka:beforeConsume",
+							"kafka:onIncomingMessage",
+							"kafka:afterConsume",
+							"kafka:beforeProduce",
+							"kafka:afterProduce"
 						],
 						"description": "Lifecycle point the script runs at."
 					},
@@ -6579,7 +6662,8 @@
 										"jwt",
 										"digest",
 										"ntlm",
-										"asap"
+										"asap",
+										"sasl"
 									],
 									"description": "Auth scheme to apply."
 								}
@@ -6728,7 +6812,8 @@
 											"jwt",
 											"digest",
 											"ntlm",
-											"asap"
+											"asap",
+											"sasl"
 										],
 										"description": "Auth scheme to apply."
 									}
