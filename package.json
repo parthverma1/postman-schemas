@@ -44,11 +44,11 @@
     "dev": "vite dev",
     "prebuild": "pnpm build:packages && pnpm generate",
     "build": "vite build",
-    "build:cf": "pnpm build:packages && pnpm generate && cross-env NITRO_PRESET=cloudflare_pages vite build",
+    "build:cf": "pnpm build:packages && pnpm generate && cross-env NITRO_PRESET=cloudflare_module vite build",
     "start": "node .output/server/index.mjs",
     "preview": "vite preview",
-    "preview:cf": "pnpm build:cf && wrangler pages dev",
-    "deploy": "pnpm build:cf && wrangler pages deploy",
+    "preview:cf": "pnpm build:cf && wrangler dev",
+    "deploy": "pnpm build:cf && wrangler deploy",
     "typecheck": "tsc --noEmit && pnpm --filter \"./packages/*\" typecheck",
     "test": "vitest run",
     "compile": "node bin/compile.js",
@@ -87,6 +87,6 @@
     "typescript": "^7.0.2",
     "vite": "^8.3.4",
     "vitest": "^5.0.3",
-    "wrangler": "^4.131.2"
+    "wrangler": "^4.151.0"
   }
 }
