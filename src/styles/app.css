@@ -46,9 +46,15 @@
   --docs-header-allowance: 96px;
 }
 
-/* Keep focused and #hash targets out from under the sticky top bar + docs header. */
 html {
+  /* Keep focused and #hash targets out from under the sticky top bar + docs header. */
   scroll-padding-top: calc(var(--topbar-height) + var(--docs-header-allowance));
+  /*
+   * Always reserve the scrollbar's space, so content doesn't shift sideways when
+   * a page turns long or short or a popup locks scroll (Base UI's lock only sets
+   * overflow when the gutter is stable; it adds no padding).
+   */
+  scrollbar-gutter: stable;
 }
 
 * {
@@ -184,6 +190,15 @@ body {
   top: var(--topbar-height);
   z-index: 10;
   background: var(--background-color-primary);
+  /*
+   * Paint the background across the full width (main padding and the gutters
+   * beyond the column) so rows don't show beside the stuck header. A shadow is
+   * ink overflow, so it never adds horizontal scroll; the clip limits it to the
+   * header's height, plus the top bar's height upwards (under the top bar) so no
+   * gap can open between them. The bottom border stays column-wide like the content.
+   */
+  box-shadow: 0 0 0 100vmax var(--background-color-primary);
+  clip-path: inset(calc(-1 * var(--topbar-height)) -100vmax 0);
   padding-top: var(--spacing-xl, 16px);
   margin-top: calc(-1 * var(--spacing-xl, 16px));
   border-bottom: var(--border-width-default, 1px) solid var(--border-color-default);
