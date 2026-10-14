@@ -62,12 +62,20 @@ export const Route = createRootRoute({
   notFoundComponent: NotFound,
 });
 
-// Static (not sticky) so it never stacks over the viewer's dropdown portals.
+// Sticky (see .topbar in app.css); the dropdown portals sit above it at z-index 1000.
 function TopBar() {
   return (
     <header className="topbar">
       <div className="layout__content topbar__inner">
-        <a href="https://www.getpostman.com" className="brand__logo-link" target="_blank" rel="noopener">
+        {/* Out of the tab order: keyboard users reach the wordmark link first;
+            the logo stays clickable and keeps its alt text. */}
+        <a
+          href="https://www.getpostman.com"
+          className="brand__logo-link"
+          target="_blank"
+          rel="noopener"
+          tabIndex={-1}
+        >
           <img className="brand__logo" src={postmanLogo} alt="Postman" />
         </a>
         {/* `/` redirects to the latest schema. */}
@@ -80,7 +88,7 @@ function TopBar() {
 }
 
 // A sibling of <main> (not inside it) so it keeps the implicit contentinfo
-// landmark role. Static: no position/z-index, so popups and crumbs stack above.
+// landmark role. Static: no position/z-index, so popups stack above.
 function SiteFooter() {
   return (
     <footer className="site-footer">

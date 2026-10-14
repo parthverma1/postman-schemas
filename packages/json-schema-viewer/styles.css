@@ -271,8 +271,9 @@
 
 /*
  * The portal holds Base UI's modal backdrop (fixed, no z-index) and the
- * positioner. Its own stacking context lifts both above sticky page chrome such
- * as PathCrumbs (z-index 10), so an outside press there only dismisses. Fixed
+ * positioner. Its own stacking context lifts both above the sticky top bar
+ * (z-index 20) and docs header (z-index 10), so an outside press there only
+ * dismisses. Fixed
  * at the viewport top with zero height (not `relative`): as a relative box at the
  * end of <body> it became the positioner's containing block, so the popup was
  * first placed at the page bottom and focusing it scrolled the page.

@@ -11,7 +11,6 @@ export type JSVOptions = {
   renderExtensionAddon?: ExtensionAddonRenderer;
   hideExamples?: boolean;
   renderRootTreeLines?: boolean;
-  disableCrumbs?: boolean;
   nodeHasChanged?: NodeHasChangedFn<React.ReactNode>;
 };
 
