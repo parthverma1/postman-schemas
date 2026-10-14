@@ -1,16 +1,13 @@
 import { isPlainObject } from '@stoplight/json';
 import { isRegularNode, RegularNode } from '@postman/json-schema-tree';
 import { Box, Flex, HStack, Icon, Menu, Pressable } from '../../ui';
-import { useSetAtom } from 'jotai';
 import { isEmpty } from '../../lodashLite';
 import * as React from 'react';
 
 import { COMBINER_NAME_MAP } from '../../consts';
 import { useJSVOptionsContext } from '../../contexts';
-import { useIsOnScreen } from '../../hooks/useIsOnScreen';
 import { isComplexArray, isDictionaryNode, visibleChildren } from '../../tree';
 import { extractVendorExtensions } from '../../utils/extractVendorExtensions';
-import { showPathCrumbsAtom } from '../PathCrumbs/state';
 import { Description, getValidationsFromSchema, Validations } from '../shared';
 import { ChildStack } from '../shared/ChildStack';
 import { Error } from '../shared/Error';
@@ -44,7 +41,6 @@ export const TopLevelSchemaRow = ({
   if (isRegularNode(schemaNode) && isPureObjectNode(schemaNode)) {
     return (
       <>
-        <ScrollCheck />
         {!skipDescription ? <Description value={schemaNode.annotations.description} /> : null}
         {hasVendorProperties && renderExtensionAddon
           ? renderExtensionAddon({ schemaNode, nestingLevel, vendorExtensions })
@@ -65,7 +61,6 @@ export const TopLevelSchemaRow = ({
 
     return (
       <>
-        <ScrollCheck />
         {schemaNode.annotations.description !== schemaNode.parent?.fragment.description && (
           <Description value={schemaNode.annotations.description} />
         )}
@@ -115,7 +110,6 @@ export const TopLevelSchemaRow = ({
     const validations = isRegularNode(schemaNode) ? getValidationsFromSchema(schemaNode) : {};
     return (
       <>
-        <ScrollCheck />
         <Description value={schemaNode.annotations.description} />
 
         <Box fontFamily="mono" fontWeight="semibold" fontSize="base" pb={4}>
@@ -142,23 +136,10 @@ export const TopLevelSchemaRow = ({
 
   return (
     <>
-      <ScrollCheck />
       <SchemaRow schemaNode={schemaNode} nestingLevel={nestingLevel} />
     </>
   );
 };
-
-function ScrollCheck() {
-  const elementRef = React.useRef<HTMLDivElement>(null);
-
-  const isOnScreen = useIsOnScreen(elementRef);
-  const setShowPathCrumbs = useSetAtom(showPathCrumbsAtom);
-  React.useEffect(() => {
-    setShowPathCrumbs(!isOnScreen);
-  }, [isOnScreen, setShowPathCrumbs]);
-
-  return <div ref={elementRef} />;
-}
 
 function isPureObjectNode(schemaNode: RegularNode) {
   return schemaNode.primaryType === 'object' && schemaNode.types?.length === 1 && !isDictionaryNode(schemaNode);

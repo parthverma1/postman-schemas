@@ -14,7 +14,6 @@ import * as React from 'react';
 import { JSVOptions, JSVOptionsContextProvider } from '../contexts';
 import { shouldNodeBeIncluded } from '../tree/utils';
 import { JSONSchema } from '../types';
-import { PathCrumbs } from './PathCrumbs';
 import { TopLevelSchemaRow } from './SchemaRow';
 import { hoveredNodeAtom } from './SchemaRow/state';
 
@@ -46,7 +45,6 @@ export type JsonSchemaProps = Partial<JSVOptions> & {
   maxRefDepth?: number;
   onTreePopulated?: (props: { rootNode: RootNode; nodeCount: number }) => void;
   maxHeight?: number;
-  parentCrumbs?: string[];
   skipTopLevelDescription?: boolean;
 };
 
@@ -58,7 +56,6 @@ const JsonSchemaViewerComponent = ({
   renderExtensionAddon,
   hideExamples,
   renderRootTreeLines,
-  disableCrumbs,
   nodeHasChanged,
   skipTopLevelDescription,
   ...rest
@@ -72,7 +69,6 @@ const JsonSchemaViewerComponent = ({
       renderExtensionAddon,
       hideExamples,
       renderRootTreeLines,
-      disableCrumbs,
       nodeHasChanged,
     }),
     [
@@ -83,7 +79,6 @@ const JsonSchemaViewerComponent = ({
       renderExtensionAddon,
       hideExamples,
       renderRootTreeLines,
-      disableCrumbs,
       nodeHasChanged,
     ],
   );
@@ -109,7 +104,6 @@ const JsonSchemaViewerInner = ({
   emptyText = 'No schema defined',
   onTreePopulated,
   maxHeight,
-  parentCrumbs,
   skipTopLevelDescription,
 }: Pick<
   JsonSchemaProps,
@@ -122,7 +116,6 @@ const JsonSchemaViewerInner = ({
   | 'emptyText'
   | 'onTreePopulated'
   | 'maxHeight'
-  | 'parentCrumbs'
   | 'skipTopLevelDescription'
 >) => {
   const setHoveredNode = useSetAtom(hoveredNodeAtom);
@@ -183,7 +176,6 @@ const JsonSchemaViewerInner = ({
       onMouseLeave={onMouseLeave}
       style={{ maxHeight }}
     >
-      <PathCrumbs parentCrumbs={parentCrumbs} />
       <TopLevelSchemaRow schemaNode={jsonSchemaTreeRoot.children[0]} skipDescription={skipTopLevelDescription} />
     </Box>
   );

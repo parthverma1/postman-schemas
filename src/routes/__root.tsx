@@ -62,7 +62,7 @@ export const Route = createRootRoute({
   notFoundComponent: NotFound,
 });
 
-// Static (not sticky) so it never stacks over the viewer's dropdown portals.
+// Sticky (see .topbar in app.css); the dropdown portals sit above it at z-index 1000.
 function TopBar() {
   return (
     <header className="topbar">
@@ -80,7 +80,7 @@ function TopBar() {
 }
 
 // A sibling of <main> (not inside it) so it keeps the implicit contentinfo
-// landmark role. Static: no position/z-index, so popups and crumbs stack above.
+// landmark role. Static: no position/z-index, so popups stack above.
 function SiteFooter() {
   return (
     <footer className="site-footer">
