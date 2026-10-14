@@ -20,11 +20,11 @@ export default function SchemaViewer({
   /** Tree built during SSR and transferred to the client to seed the query cache. */
   initialData?: PrebuiltSchemaTree;
 }) {
-  // On the client, prefer a tree built off the main thread (via the Web Worker),
-  // shared through React Query so a version-menu hover-prefetch makes this render instant.
-  // `initialData` (built during SSR) seeds the cache so the first client render uses it
-  // directly — no rebuild, and it matches the SSR HTML. Without it (client navigations),
-  // the query is disabled/pending and the viewer builds synchronously from `schema`.
+  // The tree is built off the main thread and shared through React Query. On the first
+  // load, `initialData` (built during SSR) seeds the cache, so hydration uses it directly
+  // and matches the SSR HTML. On client navigations, the route loader has already built
+  // it in the Web Worker. Only if the worker failed is `tree` undefined, and the viewer
+  // then builds it synchronously from `schema` as a fallback.
   const { data: tree } = useQuery({
     ...schemaTreeQueryOptions(schemaId, () => schema as unknown as JSONSchema7),
     enabled: typeof window !== 'undefined',

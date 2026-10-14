@@ -264,6 +264,14 @@ body {
 
 .schema-page__viewer {
   font-size: 0.9rem;
+  transition: opacity 0.15s;
+}
+
+/* Slow version switch (worker still building the next tree): dim the old page, but
+   only after 200ms so fast or preloaded switches never flash. */
+.schema-page__viewer[aria-busy='true'] {
+  opacity: 0.6;
+  transition: opacity 0.15s 0.2s;
 }
 
 .empty-state,

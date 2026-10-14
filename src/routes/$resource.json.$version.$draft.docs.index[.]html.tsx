@@ -10,7 +10,13 @@ import {
 import { findSchema } from '../generated/manifest';
 import SchemaViewer from '../components/SchemaViewer';
 import VersionMenu from '../components/VersionMenu';
-import { deserializeSchemaTree, type SerializedSchemaTree } from '../lib/schemaTree';
+import type { JSONSchema7 } from 'json-schema';
+import { getQueryClient } from '../lib/queryClient';
+import {
+  deserializeSchemaTree,
+  schemaTreeQueryOptions,
+  type SerializedSchemaTree,
+} from '../lib/schemaTree';
 
 // The Stoplight viewer lives in the workspace package `@postman/json-schema-viewer`,
 // an SSR-safe fork (see its hash.ts / lodashLite.ts).
@@ -35,12 +41,22 @@ export const Route = createFileRoute(
     const schema = await entry.load();
 
     // Build the tree once on the server so React Query can hydrate with it on the
-    // client instead of rebuilding on the main thread. Skipped on client-side
-    // navigations (import.meta.env.SSR === false), which use the worker/prefetch path.
+    // client instead of rebuilding on the main thread. On client-side navigations
+    // (and the router's hover/focus/touch preloads), build it in the worker before the
+    // route resolves, so the viewer never builds it synchronously; the old page stays
+    // visible meanwhile.
     let initialTree: SerializedSchemaTree | undefined;
     if (import.meta.env.SSR) {
       const { buildSerializedSchemaTree } = await import('../lib/schemaTree.server');
       initialTree = buildSerializedSchemaTree(schema as never);
+    } else {
+      try {
+        await getQueryClient().ensureQueryData(
+          schemaTreeQueryOptions(entry.id, () => schema as unknown as JSONSchema7),
+        );
+      } catch {
+        // Worker failed: fall through and let the viewer build the tree itself.
+      }
     }
 
     return {
@@ -77,6 +93,9 @@ function SchemaPage() {
   );
 
   const schemaHref = schemaJsonUrl({ resource, version, draft });
+  // Uncached version switches wait for the worker build; dim the old page (after a
+  // short delay, see app.css) so slow switches get some feedback.
+  const busy = useRouterState({ select: (s) => s.isLoading });
 
   return (
     <div className="schema-page">
@@ -96,7 +115,7 @@ function SchemaPage() {
         </div>
       </header>
 
-      <div className="schema-page__viewer">
+      <div className="schema-page__viewer" aria-busy={busy || undefined}>
         <SchemaViewer name={`${label} ${version}`} schema={schema} schemaId={id} initialData={initialData} />
       </div>
     </div>

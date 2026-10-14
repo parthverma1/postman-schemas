@@ -54,15 +54,24 @@ function getWorker(): Worker {
       if (data.ok) entry.resolve(data);
       else entry.reject(new Error(data.error));
     });
-    worker.addEventListener('error', (event) => {
-      // Fail everything in flight; callers fall back to a main-thread build.
-      const err = new Error(event.message || 'schema tree worker error');
+    const fail = (message: string) => {
+      // Fail everything in flight (callers fall back to a main-thread build) and drop
+      // the dead worker, so the next request starts a fresh one instead of waiting
+      // forever on a worker that will never answer (e.g. its script failed to load).
+      const err = new Error(message);
       for (const [, p] of pending) p.reject(err);
       pending.clear();
-    });
+      worker?.terminate();
+      worker = undefined;
+    };
+    worker.addEventListener('error', (event) => fail(event.message || 'schema tree worker error'));
+    worker.addEventListener('messageerror', () => fail('schema tree worker message error'));
   }
   return worker;
 }
+
+// Backstop so a stuck worker can't hold a navigation forever (the route loader awaits it).
+const WORKER_TIMEOUT_MS = 10_000;
 
 /**
  * Build a schema tree in the worker and rebuild real node instances on the main
@@ -78,7 +87,20 @@ export async function buildSchemaTreeViaWorker(
   const id = ++seq;
 
   const result = await new Promise<WorkerSuccess>((resolve, reject) => {
-    pending.set(id, { resolve, reject });
+    const timer = setTimeout(() => {
+      pending.delete(id);
+      reject(new Error('schema tree worker timed out'));
+    }, WORKER_TIMEOUT_MS);
+    pending.set(id, {
+      resolve: (r) => {
+        clearTimeout(timer);
+        resolve(r);
+      },
+      reject: (e) => {
+        clearTimeout(timer);
+        reject(e);
+      },
+    });
     w.postMessage({ id, schema, viewMode });
   });
 
