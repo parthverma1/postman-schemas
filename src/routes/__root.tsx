@@ -79,6 +79,20 @@ function TopBar() {
   );
 }
 
+// A sibling of <main> (not inside it) so it keeps the implicit contentinfo
+// landmark role. Static: no position/z-index, so popups and crumbs stack above.
+function SiteFooter() {
+  return (
+    <footer className="site-footer">
+      <div className="layout__content site-footer__inner">
+        {/* The year comes from the server render; ignore a rollover mismatch. */}
+        <span suppressHydrationWarning>© {new Date().getFullYear()} Postman, Inc.</span>
+        <span>All Rights Reserved</span>
+      </div>
+    </footer>
+  );
+}
+
 function NotFound() {
   return (
     <div className="empty-state">
@@ -101,10 +115,13 @@ function RootDocument({ children }: { children: ReactNode }) {
       </head>
       <body data-theme={theme}>
         <QueryClientProvider client={getQueryClient()}>
-          <TopBar />
-          <main className="layout__main">
-            <div className="layout__content">{children}</div>
-          </main>
+          <div className="layout">
+            <TopBar />
+            <main className="layout__main">
+              <div className="layout__content">{children}</div>
+            </main>
+            <SiteFooter />
+          </div>
         </QueryClientProvider>
         {/* Postman analytics SDK + config (restored from the legacy hosted docs). */}
         <script id="pmtSDK" src={pmtSdkSrc} />
