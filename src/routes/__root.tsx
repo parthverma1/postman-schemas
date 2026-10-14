@@ -67,7 +67,15 @@ function TopBar() {
   return (
     <header className="topbar">
       <div className="layout__content topbar__inner">
-        <a href="https://www.getpostman.com" className="brand__logo-link" target="_blank" rel="noopener">
+        {/* Out of the tab order: keyboard users reach the wordmark link first;
+            the logo stays clickable and keeps its alt text. */}
+        <a
+          href="https://www.getpostman.com"
+          className="brand__logo-link"
+          target="_blank"
+          rel="noopener"
+          tabIndex={-1}
+        >
           <img className="brand__logo" src={postmanLogo} alt="Postman" />
         </a>
         {/* `/` redirects to the latest schema. */}
