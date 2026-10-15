@@ -10,12 +10,10 @@ import { findSchema } from '../generated/manifest';
 import SchemaViewer from '../components/SchemaViewer';
 import VersionMenu from '../components/VersionMenu';
 import { deserializeSchemaTree, type SerializedSchemaTree } from '../lib/schemaTree';
+import { SCHEMA_BASE_URL } from '../lib/site';
 
 // The Stoplight viewer lives in the workspace package `@postman/json-schema-viewer`,
 // an SSR-safe fork (see its hash.ts / lodashLite.ts).
-//
-// Canonical public host these schemas are served from.
-const SCHEMA_BASE_URL = 'https://schema.postman.com';
 
 function schemaJsonUrl({ resource, version, draft }: { resource: string; version: string; draft: string }) {
   return `${SCHEMA_BASE_URL}/${resource}/json/${version}/${draft}/${resource}.json`;
@@ -53,10 +51,18 @@ export const Route = createFileRoute(
   },
   // The most-nested title wins, so this overrides the root's "Postman Schemas".
   // Without loaderData (not found, or the loader threw) the page keeps the root
-  // title.
+  // title and gets no canonical link.
   head: ({ loaderData }) =>
     loaderData
-      ? { meta: [{ title: `Postman ${loaderData.label} Format ${loaderData.version} Schema Documentation` }] }
+      ? {
+          meta: [{ title: `Postman ${loaderData.label} Format ${loaderData.version} Schema Documentation` }],
+          links: [
+            {
+              rel: 'canonical',
+              href: `${SCHEMA_BASE_URL}/${loaderData.resource}/json/${loaderData.version}/${loaderData.draft}/docs/index.html`,
+            },
+          ],
+        }
       : {},
   component: SchemaPage,
   errorComponent: SchemaError,
