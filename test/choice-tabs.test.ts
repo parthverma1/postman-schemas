@@ -25,11 +25,19 @@ const schema = {
 } as JSONSchema;
 
 // The server render (also the first client render): fit detection only runs after mount.
-function render(defaultExpandedDepth?: number) {
-  const { tree, nodeCount } = buildSerializedTree(schema);
+// The viewer's default depth (1) expands the top-level rows; 0 leaves them collapsed.
+function render(defaultExpandedDepth?: number, source: JSONSchema = schema) {
+  const { tree, nodeCount } = buildSerializedTree(source);
   return renderToString(
     React.createElement(JsonSchemaViewer, { tree: { root: deserializeTree(tree), nodeCount }, defaultExpandedDepth }),
   );
+}
+
+/** The HTML from the start of `name`'s row (its toggle included) to the next property's name. */
+function rowOf(html: string, name: string, next?: string) {
+  const at = html.indexOf(`property-name-${name}"`);
+  const start = html.lastIndexOf('data-test="schema-row"', at);
+  return html.slice(start, next ? html.indexOf(`property-name-${next}"`) : undefined);
 }
 
 type Tab = { label: string; selected: boolean; active: boolean };
@@ -94,6 +102,62 @@ describe('oneOf choice tabs (server render)', () => {
     expect(pet).toContain('role="tabpanel"');
     expect(pet).toContain('property-name-meow');
     expect(pet).not.toContain('property-name-bark');
+  });
+});
+
+describe('oneOf rows when collapsed', () => {
+  it('show no tabs, no dropdown and no panel, only the selected variant in the head', () => {
+    const html = render(0);
+    expect(html).not.toContain('role="tablist"');
+    expect(html).not.toContain('role="tabpanel"');
+    expect(html).not.toContain('class="jsv-choice-tabs"');
+    expect(html).not.toContain('jsv-choice-tabs__measure');
+    const pet = rowOf(html, 'pet', 'either');
+    expect(pet).not.toContain('jsv-select__control');
+    expect(pet).toMatch(/data-test="property-type-choice"><span class="jsv-select__prefix">one of: <\/span><span[^>]*>Cat<\/span>/);
+    const list = rowOf(html, 'list');
+    expect(list).toMatch(/data-test="property-type-choice"><span class="jsv-select__prefix">array one of: <\/span><span[^>]*>A<\/span>/);
+    // Collapsed, like any other row, but still expandable.
+    expect(pet).toContain('aria-expanded="false"');
+    expect(pet).not.toContain('property-name-meow');
+  });
+
+  it('keep the anyOf dropdown in the head', () => {
+    const html = render(0);
+    expect(rowOf(html, 'either', 'list')).toContain('jsv-select__control');
+  });
+});
+
+describe('oneOf rows when expanded', () => {
+  it('show the tabs with the selected variant already open', () => {
+    const html = render();
+    const pet = rowOf(html, 'pet', 'either');
+    expect(pet).toContain('aria-expanded="true"');
+    expect(pet).toContain('role="tablist"');
+    expect(pet).not.toContain('data-test="property-type-choice"');
+    // The selected variant's properties are one level down, no further click.
+    expect(pet).toMatch(/role="tabpanel"[\s\S]*property-name-meow/);
+  });
+
+  it('expand even when the selected variant has no children', () => {
+    const leafFirst = {
+      type: 'object',
+      properties: {
+        shape: {
+          oneOf: [
+            { title: 'Name', type: 'string' },
+            { title: 'Box', type: 'object', properties: { w: { type: 'number' } } },
+          ],
+        },
+      },
+    } as JSONSchema;
+    // A toggle, so the tabs stay reachable…
+    expect(rowOf(render(0, leafFirst), 'shape')).toContain('aria-expanded="false"');
+    // …and expanded, the tabs show with an (empty) panel for the string variant.
+    const expanded = rowOf(render(1, leafFirst), 'shape');
+    expect(expanded).toContain('role="tablist"');
+    expect(expanded).toContain('role="tabpanel"');
+    expect(expanded).not.toContain('property-name-w');
   });
 });
 

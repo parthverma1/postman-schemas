@@ -87,8 +87,10 @@ export const SchemaRow: React.FunctionComponent<SchemaRowProps> = React.memo(
         ? schemaNode.combiners[0]
         : (arrayCombinerChild?.combiners?.[0] ?? null);
     // oneOf variants are picked with tabs under the description (the Select
-    // when they don't fit); anyOf keeps the Select in the row head.
+    // when they don't fit), shown only while the row is expanded; collapsed,
+    // the head names the selected variant. anyOf keeps the Select in the head.
     const hasTabs = choices.length > 1 && combiner === 'oneOf';
+    const showTabs = hasTabs && isExpanded;
     const choiceProps = {
       label: shouldShowPropertyName(schemaNode) ? last(schemaNode.subpath) : undefined,
       triggerTextPrefix: combiner
@@ -103,7 +105,9 @@ export const SchemaRow: React.FunctionComponent<SchemaRowProps> = React.memo(
         /* String to work around https://github.com/stoplightio/mosaic/issues/162 */,
       onChange: (selectedIndex: string | number) => setSelectedChoice(choices[Number(selectedIndex)]),
     };
-    const isCollapsible = childNodes.length > 0;
+    // A oneOf row always expands, even onto a variant without children, so its
+    // tabs stay reachable.
+    const isCollapsible = childNodes.length > 0 || hasTabs;
     const isRootLevel = nestingLevel < rootLevel;
 
     const required = isPropertyRequired(schemaNode);
@@ -249,6 +253,16 @@ export const SchemaRow: React.FunctionComponent<SchemaRowProps> = React.memo(
                 ) : null}
 
                 {choices.length > 1 && !hasTabs && <Select size="sm" {...choiceProps} />}
+                {hasTabs && !isExpanded && (
+                  <span className="jsv-select" data-test="property-type-choice">
+                    {choiceProps.triggerTextPrefix ? (
+                      <span className="jsv-select__prefix">{choiceProps.triggerTextPrefix}</span>
+                    ) : null}
+                    <Box as="span" textOverflow="truncate" color="muted">
+                      {selectedChoice.title}
+                    </Box>
+                  </span>
+                )}
               </Flex>
               {hasProperties && <Divider atom={isNodeHoveredAtom(schemaNode)} />}
               <Properties deprecated={deprecated} validations={validations} />
@@ -256,7 +270,7 @@ export const SchemaRow: React.FunctionComponent<SchemaRowProps> = React.memo(
             {/* The tabs sit between the property's description and the selected
                 variant's, so switching variants never moves them. */}
             {descriptions[0]}
-            {hasTabs && <ChoiceTabList {...choiceProps} />}
+            {showTabs && <ChoiceTabList {...choiceProps} />}
             {descriptions[1]}
             <Validations
               validations={isRegularNode(schemaNode) ? getValidationsFromSchema(schemaNode) : {}}
@@ -271,18 +285,23 @@ export const SchemaRow: React.FunctionComponent<SchemaRowProps> = React.memo(
         </Flex>
         {isCollapsible && isExpanded ? (
           <ChoicePanelIf hasTabs={hasTabs} value={choiceProps.value}>
-            <ChildStack
-              schemaNode={schemaNode}
-              childNodes={childNodes}
-              currentNestingLevel={nestingLevel}
-              parentNodeId={nodeId}
-              parentChangeType={parentChangeType ? parentChangeType : hasChanged ? hasChanged?.type : undefined}
-            />
+            {childNodes.length > 0 && (
+              <ChildStack
+                schemaNode={schemaNode}
+                childNodes={childNodes}
+                currentNestingLevel={nestingLevel}
+                parentNodeId={nodeId}
+                parentChangeType={parentChangeType ? parentChangeType : hasChanged ? hasChanged?.type : undefined}
+              />
+            )}
           </ChoicePanelIf>
         ) : null}
       </>
     );
 
+    // Always wrapped (even collapsed) so expanding doesn't remount the row and
+    // drop focus from its toggle; the tab list and its observers mount only
+    // while expanded.
     return hasTabs ? (
       <ChoiceTabs value={choiceProps.value} onChange={choiceProps.onChange}>
         {row}
