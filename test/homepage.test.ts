@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { docsLink, groupByResource, homepageGroups, rawPath, type HomepageEntry } from '../src/lib/homepage';
+import { docsLink, groupByResource, homepageGroups, NEW_TAB, rawPath, type HomepageEntry } from '../src/lib/homepage';
 
 // Newest first, like the generated manifest; a second resource interleaved.
 const entries: HomepageEntry[] = [
@@ -57,11 +57,19 @@ describe('links', () => {
     expect(link).toEqual({
       to: '/$resource/json/$version/$draft/docs/index.html',
       params: { resource: 'collection', version: 'v3.0.0', draft: 'draft-07' },
+      target: '_blank',
+      rel: 'noopener',
     });
     expect(link.to.replace(/\$(\w+)/g, (_, k: keyof typeof link.params) => link.params[k])).toBe(
       '/collection/json/v3.0.0/draft-07/docs/index.html',
     );
     expect(rawPath(entries[0])).toBe('/collection/json/v3.0.0/draft-07/collection.json');
     expect(rawPath(entries[1])).toBe('/environment/json/v1.0.0/draft-07/environment.json');
+  });
+
+  it('opens both links in a new tab', () => {
+    // index.tsx spreads NEW_TAB onto the raw <a>; docsLink already includes it.
+    expect(NEW_TAB).toEqual({ target: '_blank', rel: 'noopener' });
+    expect(docsLink(entries[0])).toMatchObject(NEW_TAB);
   });
 });

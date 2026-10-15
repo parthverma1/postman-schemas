@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { schemas } from '../generated/manifest';
-import { docsLink, homepageGroups, rawPath } from '../lib/homepage';
+import { docsLink, homepageGroups, NEW_TAB, rawPath } from '../lib/homepage';
 
 export const Route = createFileRoute('/')({
   component: Homepage,
@@ -36,13 +36,15 @@ function Homepage() {
                         <code>{entry.version}</code>
                       </td>
                       <td>
-                        {/* Full load: the docs pages are prerendered HTML (and no preload). */}
+                        {/* New tab, full load: the docs pages are prerendered HTML (and no preload). */}
                         <Link reloadDocument {...docsLink(entry)}>
                           View documentation
                         </Link>
                       </td>
                       <td>
-                        <a href={rawPath(entry)}>JSON Schema</a>
+                        <a href={rawPath(entry)} {...NEW_TAB}>
+                          JSON Schema
+                        </a>
                       </td>
                     </tr>
                   ))}

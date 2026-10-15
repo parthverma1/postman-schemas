@@ -16,10 +16,14 @@ export interface ResourceGroup<T extends HomepageEntry = HomepageEntry> {
   entries: T[];
 }
 
-/** The viewer page for a version, as the `to` + `params` that the homepage's `<Link>` renders. */
+/** The homepage table links open in a new tab. */
+export const NEW_TAB = { target: '_blank', rel: 'noopener' } as const;
+
+/** The viewer page for a version, as the `to` + `params` (+ new tab) that the homepage's `<Link>` renders. */
 export const docsLink = (e: HomepageEntry) => ({
   to: '/$resource/json/$version/$draft/docs/index.html' as const,
   params: { resource: e.resource, version: e.version, draft: e.draft },
+  ...NEW_TAB,
 });
 
 /** The raw compiled schema for a version. */
