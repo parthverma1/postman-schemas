@@ -1,5 +1,16 @@
 import { isMirroredNode, isReferenceNode, isRegularNode, SchemaNode } from '@postman/json-schema-tree';
-import { Box, Flex, Infotip, NodeAnnotation, Select, SpaceVals, VStack } from '../../ui';
+import {
+  Box,
+  ChoicePanel,
+  ChoiceTabList,
+  ChoiceTabs,
+  Flex,
+  Infotip,
+  NodeAnnotation,
+  Select,
+  SpaceVals,
+  VStack,
+} from '../../ui';
 import type { ChangeType } from '@stoplight/types';
 import { Atom, useAtomValue, useSetAtom } from 'jotai';
 import { last } from '../../lodashLite';
@@ -75,6 +86,23 @@ export const SchemaRow: React.FunctionComponent<SchemaRowProps> = React.memo(
       isRegularNode(schemaNode) && schemaNode.combiners?.length
         ? schemaNode.combiners[0]
         : (arrayCombinerChild?.combiners?.[0] ?? null);
+    // oneOf variants are picked with tabs under the description (the Select
+    // when they don't fit); anyOf keeps the Select in the row head.
+    const hasTabs = choices.length > 1 && combiner === 'oneOf';
+    const choiceProps = {
+      label: shouldShowPropertyName(schemaNode) ? last(schemaNode.subpath) : undefined,
+      triggerTextPrefix: combiner
+        ? `${arrayCombinerChild ? 'array ' : ''}${COMBINER_NAME_MAP[combiner]}: `
+        : undefined,
+      options: choices.map((choice, index) => ({
+        value: String(index),
+        label: choice.title,
+      })),
+      value:
+        String(choices.indexOf(selectedChoice))
+        /* String to work around https://github.com/stoplightio/mosaic/issues/162 */,
+      onChange: (selectedIndex: string | number) => setSelectedChoice(choices[Number(selectedIndex)]),
+    };
     const isCollapsible = childNodes.length > 0;
     const isRootLevel = nestingLevel < rootLevel;
 
@@ -126,6 +154,13 @@ export const SchemaRow: React.FunctionComponent<SchemaRowProps> = React.memo(
       </>
     );
 
+    const descriptions = [ownDescription, choiceDescription !== ownDescription ? choiceDescription : null].map(
+      (description, index) =>
+        typeof description === 'string' &&
+        (!combiner || schemaNode.parent?.fragment.description !== description) &&
+        description.length > 0 && <Description key={index} value={description} />,
+    );
+
     if (parentChangeType === 'added' && hasChanged && hasChanged.type === 'removed') {
       return null;
     }
@@ -134,7 +169,7 @@ export const SchemaRow: React.FunctionComponent<SchemaRowProps> = React.memo(
       return null;
     }
 
-    return (
+    const row = (
       <>
         <Flex
           maxW="full"
@@ -213,36 +248,16 @@ export const SchemaRow: React.FunctionComponent<SchemaRowProps> = React.memo(
                   </Box>
                 ) : null}
 
-                {choices.length > 1 && (
-                  <Select
-                    label={shouldShowPropertyName(schemaNode) ? last(schemaNode.subpath) : undefined}
-                    size="sm"
-                    triggerTextPrefix={
-                      combiner
-                        ? `${arrayCombinerChild ? 'array ' : ''}${COMBINER_NAME_MAP[combiner]}: `
-                        : undefined
-                    }
-                    options={choices.map((choice, index) => ({
-                      value: String(index),
-                      label: choice.title,
-                    }))}
-                    value={
-                      String(choices.indexOf(selectedChoice))
-                      /* String to work around https://github.com/stoplightio/mosaic/issues/162 */
-                    }
-                    onChange={selectedIndex => setSelectedChoice(choices[selectedIndex as number])}
-                  />
-                )}
+                {choices.length > 1 && !hasTabs && <Select size="sm" {...choiceProps} />}
               </Flex>
               {hasProperties && <Divider atom={isNodeHoveredAtom(schemaNode)} />}
               <Properties deprecated={deprecated} validations={validations} />
             </Flex>
-            {[ownDescription, choiceDescription !== ownDescription ? choiceDescription : null].map(
-              (description, index) =>
-                typeof description === 'string' &&
-                (!combiner || schemaNode.parent?.fragment.description !== description) &&
-                description.length > 0 && <Description key={index} value={description} />,
-            )}
+            {/* The tabs sit between the property's description and the selected
+                variant's, so switching variants never moves them. */}
+            {descriptions[0]}
+            {hasTabs && <ChoiceTabList {...choiceProps} />}
+            {descriptions[1]}
             <Validations
               validations={isRegularNode(schemaNode) ? getValidationsFromSchema(schemaNode) : {}}
               hideExamples={hideExamples}
@@ -255,18 +270,31 @@ export const SchemaRow: React.FunctionComponent<SchemaRowProps> = React.memo(
           {renderRowAddon ? <Box>{renderRowAddon({ schemaNode, nestingLevel })}</Box> : null}
         </Flex>
         {isCollapsible && isExpanded ? (
-          <ChildStack
-            schemaNode={schemaNode}
-            childNodes={childNodes}
-            currentNestingLevel={nestingLevel}
-            parentNodeId={nodeId}
-            parentChangeType={parentChangeType ? parentChangeType : hasChanged ? hasChanged?.type : undefined}
-          />
+          <ChoicePanelIf hasTabs={hasTabs} value={choiceProps.value}>
+            <ChildStack
+              schemaNode={schemaNode}
+              childNodes={childNodes}
+              currentNestingLevel={nestingLevel}
+              parentNodeId={nodeId}
+              parentChangeType={parentChangeType ? parentChangeType : hasChanged ? hasChanged?.type : undefined}
+            />
+          </ChoicePanelIf>
         ) : null}
       </>
     );
+
+    return hasTabs ? (
+      <ChoiceTabs value={choiceProps.value} onChange={choiceProps.onChange}>
+        {row}
+      </ChoiceTabs>
+    ) : (
+      row
+    );
   },
 );
+
+const ChoicePanelIf = ({ hasTabs, value, children }: { hasTabs: boolean; value: string; children: React.ReactNode }) =>
+  hasTabs ? <ChoicePanel value={value}>{children}</ChoicePanel> : <>{children}</>;
 
 const Divider = ({ atom }: { atom: Atom<boolean> }) => {
   const isHovering = useAtomValue(atom);
