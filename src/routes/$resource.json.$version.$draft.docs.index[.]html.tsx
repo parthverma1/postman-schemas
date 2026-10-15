@@ -57,7 +57,7 @@ export const Route = createFileRoute(
   head: ({ loaderData }) =>
     loaderData
       ? {
-          meta: [{ title: `${loaderData.label} ${loaderData.version} · Postman Schemas` }],
+          meta: [{ title: `Postman ${loaderData.label} Format ${loaderData.version} Schema Documentation` }],
           links: [
             {
               rel: 'canonical',
