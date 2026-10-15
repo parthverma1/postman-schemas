@@ -58,7 +58,7 @@ export const Route = createFileRoute(
       <h1>Schema not found</h1>
       <p>
         <Link reloadDocument to="/" className="schema-link">
-          View latest schema
+          View all schemas
         </Link>
       </p>
     </div>
@@ -130,7 +130,7 @@ function SchemaError({ error }: ErrorComponentProps) {
           View raw JSON
         </a>
         <Link reloadDocument to="/" className="schema-link">
-          View latest schema
+          View all schemas
         </Link>
       </div>
       <details className="error-state__details">

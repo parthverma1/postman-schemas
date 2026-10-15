@@ -3,7 +3,15 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { lib, schemaVersions } from './helpers';
-import { legacyRedirectsFile, legacyUrls, latestStable, viewerPage, VIEWER_DRAFT } from '../scripts/legacy-urls';
+import {
+  HOMEPAGE_REWRITE,
+  legacyRedirectsFile,
+  legacyUrls,
+  latestStable,
+  viewerPage,
+  VIEWER_DRAFT,
+  withHomepageRewrite,
+} from '../scripts/legacy-urls';
 import { writeSchemas } from '../scripts/generate-schemas.mjs';
 
 const versions = schemaVersions();
@@ -87,6 +95,17 @@ it("includes the legacy URLs that 404'd after the rebuild", () => {
 
   expect(redirects['/json/collection/v2.1.0/docs/index.html']).toBe(viewerPage('v2.1.0'));
   expect(redirects['/index.html']).toBe('/');
+});
+
+it('starts the built _redirects with the homepage rewrite (first match wins)', () => {
+  const built = withHomepageRewrite(fs.readFileSync(path.join(tmp, 'public', '_redirects'), 'utf8'));
+
+  expect(HOMEPAGE_REWRITE).toBe('/ /index.html 200');
+  expect(built.startsWith('/ /index.html 200\n')).toBe(true);
+  expect(built.split('\n')).toContain('/index.html / 301');
+  // Idempotent (a rebuild reuses the copied file), and never in the 301 map.
+  expect(withHomepageRewrite(built)).toBe(built);
+  expect(redirects['/']).toBeUndefined();
 });
 
 it('writes exactly the listed raw files', () => {
