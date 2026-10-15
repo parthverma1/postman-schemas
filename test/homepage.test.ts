@@ -1,12 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { badgeTone, docsLink, groupByResource, LEGEND, rawPath, type HomepageEntry } from '../src/lib/homepage';
+import { docsLink, groupByResource, rawPath, type HomepageEntry } from '../src/lib/homepage';
 
 // Newest first, like the generated manifest; a second resource interleaved.
 const entries: HomepageEntry[] = [
-  { resource: 'collection', label: 'Collection', draft: 'draft-07', version: 'v3.0.0', status: 'stable' },
-  { resource: 'environment', label: 'Environment', draft: 'draft-07', version: 'v1.0.0', status: 'stable' },
-  { resource: 'collection', label: 'Collection', draft: 'draft-07', version: 'v2.2.0-rc.1', status: 'rc' },
-  { resource: 'collection', label: 'Collection', draft: 'draft-07', version: 'v2.1.0', status: 'stable' },
+  { resource: 'collection', label: 'Collection', draft: 'draft-07', version: 'v3.0.0' },
+  { resource: 'environment', label: 'Environment', draft: 'draft-07', version: 'v1.0.0' },
+  { resource: 'collection', label: 'Collection', draft: 'draft-07', version: 'v2.2.0-rc.1' },
+  { resource: 'collection', label: 'Collection', draft: 'draft-07', version: 'v2.1.0' },
 ];
 
 describe('groupByResource', () => {
@@ -39,20 +39,5 @@ describe('links', () => {
     );
     expect(rawPath(entries[0])).toBe('/collection/json/v3.0.0/draft-07/collection.json');
     expect(rawPath(entries[1])).toBe('/environment/json/v1.0.0/draft-07/environment.json');
-  });
-});
-
-describe('badgeTone', () => {
-  it.each([
-    ['stable', 'success'],
-    ['rc', 'info'],
-    ['draft', 'warning'],
-    ['beta', 'neutral'],
-  ])('%s → %s', (status, tone) => {
-    expect(badgeTone(status)).toBe(tone);
-  });
-
-  it('has a legend row for draft, rc and stable', () => {
-    expect(LEGEND.map((l) => l.status)).toEqual(['draft', 'rc', 'stable']);
   });
 });

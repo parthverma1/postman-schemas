@@ -8,7 +8,6 @@ export interface HomepageEntry {
   label: string;
   draft: string;
   version: string;
-  status: string;
 }
 
 export interface ResourceGroup<T extends HomepageEntry = HomepageEntry> {
@@ -44,28 +43,3 @@ export function groupByResource<T extends HomepageEntry>(entries: T[]): Resource
 
   return [...groups.values()];
 }
-
-/** Status → the `--badge-*` token family used for its badge. */
-export function badgeTone(status: string): 'success' | 'info' | 'warning' | 'neutral' {
-  switch (status) {
-    case 'stable':
-      return 'success';
-    case 'rc':
-      return 'info';
-    case 'draft':
-      return 'warning';
-    default:
-      return 'neutral';
-  }
-}
-
-/** The legend, in production's wording. */
-export const LEGEND: { status: string; description: string }[] = [
-  { status: 'draft', description: 'Draft - unstable and liable to be changed anytime' },
-  { status: 'rc', description: 'Release Candidate - Only minor changes possible in the future' },
-  {
-    status: 'stable',
-    description:
-      'Stable - No changes likely. In exceptional cases, changes may occur, but they will be backwards compatible',
-  },
-];

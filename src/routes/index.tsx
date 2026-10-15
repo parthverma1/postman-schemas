@@ -1,14 +1,10 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { schemas } from '../generated/manifest';
-import { badgeTone, docsLink, groupByResource, LEGEND, rawPath } from '../lib/homepage';
+import { docsLink, groupByResource, rawPath } from '../lib/homepage';
 
 export const Route = createFileRoute('/')({
   component: Homepage,
 });
-
-function StatusBadge({ status }: { status: string }) {
-  return <span className={`status-badge status-badge--${badgeTone(status)}`}>{status}</span>;
-}
 
 function Homepage() {
   const groups = groupByResource(schemas);
@@ -29,7 +25,6 @@ function Homepage() {
                 <thead>
                   <tr>
                     <th scope="col">Version</th>
-                    <th scope="col">Status</th>
                     <th scope="col">Documentation</th>
                     <th scope="col">Raw Schema</th>
                   </tr>
@@ -39,9 +34,6 @@ function Homepage() {
                     <tr key={entry.id}>
                       <td>
                         <code>{entry.version}</code>
-                      </td>
-                      <td>
-                        <StatusBadge status={entry.status} />
                       </td>
                       <td>
                         {/* Full load: the docs pages are prerendered HTML (and no preload). */}
@@ -60,28 +52,6 @@ function Homepage() {
           </section>
         ))
       )}
-
-      <section aria-labelledby="legend-heading">
-        <h2 id="legend-heading">Legend</h2>
-        <table className="homepage-table">
-          <thead>
-            <tr>
-              <th scope="col">Status</th>
-              <th scope="col">Description</th>
-            </tr>
-          </thead>
-          <tbody>
-            {LEGEND.map(({ status, description }) => (
-              <tr key={status}>
-                <td>
-                  <StatusBadge status={status} />
-                </td>
-                <td>{description}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </section>
     </div>
   );
 }
