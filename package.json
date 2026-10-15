@@ -48,6 +48,7 @@
     "preview": "vite preview",
     "preview:cf": "pnpm build:cf && wrangler dev",
     "deploy": "pnpm build:cf && wrangler deploy",
+    "pretypecheck": "pnpm build:packages && pnpm generate:schemas",
     "typecheck": "tsc --noEmit && pnpm --filter \"./packages/*\" typecheck",
     "test": "vitest run",
     "compile": "node bin/compile.js",
