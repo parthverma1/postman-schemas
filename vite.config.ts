@@ -29,6 +29,11 @@ export default defineConfig({
   },
   resolve: {
     dedupe: ['react', 'react-dom'],
+    // @stoplight/json (used by the viewer packages) imports from the CommonJS
+    // `lodash`, which can't be tree-shaken, so the whole library ended up in
+    // both the Worker and the docs page. lodash-es is the same code as ES
+    // modules. The regex matches the bare `lodash` only, not `lodash/...`.
+    alias: [{ find: /^lodash$/, replacement: 'lodash-es' }],
   },
   build: {
     // Always minify CSS (strips comments/whitespace) regardless of the JS
