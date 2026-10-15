@@ -6,10 +6,25 @@
 export { Box, Flex, HStack, VStack, Text } from './primitives';
 export { Icon } from './Icon';
 export type { IconName, IconProps } from './Icon';
-export { Provider, Link, Pressable, Select, Menu, Infotip, Tooltip, NodeAnnotation } from './controls';
+export {
+  Provider,
+  Link,
+  Pressable,
+  Select,
+  ChoiceTabs,
+  ChoiceTabList,
+  ChoicePanel,
+  choiceTabsFit,
+  Menu,
+  Infotip,
+  Tooltip,
+  NodeAnnotation,
+} from './controls';
 export type {
   SelectOption,
   SelectProps,
+  ChoiceTabsProps,
+  ChoiceTabListProps,
   MenuItem,
   MenuProps,
   TooltipProps,
