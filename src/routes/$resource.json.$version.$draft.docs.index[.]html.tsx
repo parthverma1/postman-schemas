@@ -51,6 +51,21 @@ export const Route = createFileRoute(
       version: entry.version,
     };
   },
+  // The most-nested title wins, so this overrides the root's "Postman Schemas".
+  // Without loaderData (not found, or the loader threw) the page keeps the root
+  // title and gets no canonical link.
+  head: ({ loaderData }) =>
+    loaderData
+      ? {
+          meta: [{ title: `${loaderData.label} ${loaderData.version} · Postman Schemas` }],
+          links: [
+            {
+              rel: 'canonical',
+              href: `${SCHEMA_BASE_URL}/${loaderData.resource}/json/${loaderData.version}/${loaderData.draft}/docs/index.html`,
+            },
+          ],
+        }
+      : {},
   component: SchemaPage,
   errorComponent: SchemaError,
   notFoundComponent: () => (
