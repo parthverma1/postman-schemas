@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { lib, utils, createAjv, schemaVersions } from './helpers';
+import { lib, utils, createAjv, schemaVersions, type Draft } from './helpers';
 
 const versions = schemaVersions();
 const cases = versions.map((v) => ({ ...v, label: `${v.draft}/${v.version}` }));
@@ -33,4 +33,10 @@ it('infers the draft from $schema when none is given', () => {
 
   expect(Object.keys(lib.compile(v2.schemaPath, v2.schemaDir).definitions ?? {})).toHaveLength(23);
   expect(lib.compile(v2.schemaPath, v2.schemaDir)).toEqual(lib.compile(v2.schemaPath, v2.schemaDir, 'draft-04'));
+});
+
+it('rejects an unknown draft with a clear error', () => {
+  const v2 = versions.find((v) => v.draft === 'draft-04' && v.version === 'v2.1.0')!;
+
+  expect(() => lib.compile(v2.schemaPath, v2.schemaDir, 'draft-99' as Draft)).toThrow('Unsupported draft version: draft-99');
 });
