@@ -6,6 +6,7 @@ import {
   redirect,
   type ErrorComponentProps,
 } from '@tanstack/react-router';
+import { createServerOnlyFn } from '@tanstack/react-start';
 import { findSchema } from '../generated/manifest';
 import SchemaViewer from '../components/SchemaViewer';
 import VersionMenu from '../components/VersionMenu';
@@ -20,6 +21,14 @@ const SCHEMA_BASE_URL = 'https://schema.postman.com';
 function schemaJsonUrl({ resource, version, draft }: { resource: string; version: string; draft: string }) {
   return `${SCHEMA_BASE_URL}/${resource}/json/${version}/${draft}/${resource}.json`;
 }
+
+// Builds the tree on the server. On the client this is a stub that throws, and
+// the compiler drops the import inside it, so the builder never reaches the
+// client graph. The import stays dynamic so the builder loads only when needed.
+const buildTree = createServerOnlyFn(async (schema: unknown): Promise<SerializedSchemaTree> => {
+  const { buildSerializedSchemaTree } = await import('../lib/schemaTree.server');
+  return buildSerializedSchemaTree(schema as never);
+});
 
 export const Route = createFileRoute(
   '/$resource/json/$version/$draft/docs/index.html',
@@ -40,8 +49,7 @@ export const Route = createFileRoute(
 
     // Build the tree on the server; the client only deserialises it.
     const schema = await entry.load();
-    const { buildSerializedSchemaTree } = await import('../lib/schemaTree.server');
-    const initialTree: SerializedSchemaTree = buildSerializedSchemaTree(schema as never);
+    const initialTree = await buildTree(schema);
 
     return {
       initialTree,
