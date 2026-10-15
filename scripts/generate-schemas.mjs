@@ -28,7 +28,7 @@ import { VIEWER_DRAFT, legacyRedirectsFile, legacyUrls } from './legacy-urls.ts'
 
 const require = createRequire(import.meta.url);
 const semver = require('semver');
-const tools = require('../lib'); // { compile, validate, versions }
+const tools = require('../lib'); // { compile, validate }
 
 const DEFAULT_DRAFT = 'draft-07';
 
