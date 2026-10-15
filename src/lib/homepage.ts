@@ -26,6 +26,13 @@ export const docsLink = (e: HomepageEntry) => ({
 export const rawPath = (e: HomepageEntry): string =>
   `/${e.resource}/json/${e.version}/${e.draft}/${e.resource}.json`;
 
+// Curated, not derived: the homepage lists only these versions (newest first); a new release needs a line here.
+export const HOMEPAGE_VERSIONS: readonly string[] = ['v3.0.0', 'v2.1.0'];
+
+/** The homepage tables: only HOMEPAGE_VERSIONS (missing ones are skipped), grouped by resource. */
+export const homepageGroups = <T extends HomepageEntry>(entries: T[]): ResourceGroup<T>[] =>
+  groupByResource(entries.filter((e) => HOMEPAGE_VERSIONS.includes(e.version)));
+
 /** Groups entries by resource, keeping the input order (the manifest is newest first). */
 export function groupByResource<T extends HomepageEntry>(entries: T[]): ResourceGroup<T>[] {
   const groups = new Map<string, ResourceGroup<T>>();

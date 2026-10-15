@@ -1,13 +1,13 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { schemas } from '../generated/manifest';
-import { docsLink, groupByResource, rawPath } from '../lib/homepage';
+import { docsLink, homepageGroups, rawPath } from '../lib/homepage';
 
 export const Route = createFileRoute('/')({
   component: Homepage,
 });
 
 function Homepage() {
-  const groups = groupByResource(schemas);
+  const groups = homepageGroups(schemas);
 
   return (
     <div className="homepage">

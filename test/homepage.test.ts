@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { docsLink, groupByResource, rawPath, type HomepageEntry } from '../src/lib/homepage';
+import { docsLink, groupByResource, homepageGroups, rawPath, type HomepageEntry } from '../src/lib/homepage';
 
 // Newest first, like the generated manifest; a second resource interleaved.
 const entries: HomepageEntry[] = [
@@ -7,6 +7,8 @@ const entries: HomepageEntry[] = [
   { resource: 'environment', label: 'Environment', draft: 'draft-07', version: 'v1.0.0' },
   { resource: 'collection', label: 'Collection', draft: 'draft-07', version: 'v2.2.0-rc.1' },
   { resource: 'collection', label: 'Collection', draft: 'draft-07', version: 'v2.1.0' },
+  { resource: 'collection', label: 'Collection', draft: 'draft-07', version: 'v2.0.0' },
+  { resource: 'collection', label: 'Collection', draft: 'draft-07', version: 'v1.0.0' },
 ];
 
 describe('groupByResource', () => {
@@ -17,12 +19,34 @@ describe('groupByResource', () => {
       ['collection', 'Collection'],
       ['environment', 'Environment'],
     ]);
-    expect(groups[0].entries.map((e) => e.version)).toEqual(['v3.0.0', 'v2.2.0-rc.1', 'v2.1.0']);
+    expect(groups[0].entries.map((e) => e.version)).toEqual([
+      'v3.0.0',
+      'v2.2.0-rc.1',
+      'v2.1.0',
+      'v2.0.0',
+      'v1.0.0',
+    ]);
     expect(groups[1].entries.map((e) => e.version)).toEqual(['v1.0.0']);
   });
 
   it('returns no groups for an empty manifest', () => {
     expect(groupByResource([])).toEqual([]);
+  });
+});
+
+describe('homepageGroups', () => {
+  it('lists only v3.0.0 and v2.1.0, newest first, still grouped by resource', () => {
+    const groups = homepageGroups(entries);
+
+    expect(groups.map((g) => g.resource)).toEqual(['collection']);
+    expect(groups[0].entries.map((e) => e.version)).toEqual(['v3.0.0', 'v2.1.0']);
+  });
+
+  it('skips a listed version that is missing from the manifest', () => {
+    const withoutV21 = entries.filter((e) => e.version !== 'v2.1.0');
+
+    expect(homepageGroups(withoutV21)[0].entries.map((e) => e.version)).toEqual(['v3.0.0']);
+    expect(homepageGroups([])).toEqual([]);
   });
 });
 
