@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { badgeTone, docsPath, groupByResource, LEGEND, rawPath, type HomepageEntry } from '../src/lib/homepage';
+import { badgeTone, docsLink, groupByResource, LEGEND, rawPath, type HomepageEntry } from '../src/lib/homepage';
 
 // Newest first, like the generated manifest; a second resource interleaved.
 const entries: HomepageEntry[] = [
@@ -28,7 +28,15 @@ describe('groupByResource', () => {
 
 describe('links', () => {
   it('points to the draft-07 viewer page and the raw schema', () => {
-    expect(docsPath(entries[0])).toBe('/collection/json/v3.0.0/draft-07/docs/index.html');
+    // Exactly what index.tsx spreads onto <Link>; filled in, it's the viewer URL.
+    const link = docsLink(entries[0]);
+    expect(link).toEqual({
+      to: '/$resource/json/$version/$draft/docs/index.html',
+      params: { resource: 'collection', version: 'v3.0.0', draft: 'draft-07' },
+    });
+    expect(link.to.replace(/\$(\w+)/g, (_, k: keyof typeof link.params) => link.params[k])).toBe(
+      '/collection/json/v3.0.0/draft-07/docs/index.html',
+    );
     expect(rawPath(entries[0])).toBe('/collection/json/v3.0.0/draft-07/collection.json');
     expect(rawPath(entries[1])).toBe('/environment/json/v1.0.0/draft-07/environment.json');
   });

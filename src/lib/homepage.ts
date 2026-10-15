@@ -17,9 +17,11 @@ export interface ResourceGroup<T extends HomepageEntry = HomepageEntry> {
   entries: T[];
 }
 
-/** The viewer page for a version. */
-export const docsPath = (e: HomepageEntry): string =>
-  `/${e.resource}/json/${e.version}/${e.draft}/docs/index.html`;
+/** The viewer page for a version, as the `to` + `params` that the homepage's `<Link>` renders. */
+export const docsLink = (e: HomepageEntry) => ({
+  to: '/$resource/json/$version/$draft/docs/index.html' as const,
+  params: { resource: e.resource, version: e.version, draft: e.draft },
+});
 
 /** The raw compiled schema for a version. */
 export const rawPath = (e: HomepageEntry): string =>

@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { schemas } from '../generated/manifest';
-import { badgeTone, docsPath, groupByResource, LEGEND, rawPath } from '../lib/homepage';
+import { badgeTone, docsLink, groupByResource, LEGEND, rawPath } from '../lib/homepage';
 
 export const Route = createFileRoute('/')({
   component: Homepage,
@@ -45,11 +45,7 @@ function Homepage() {
                       </td>
                       <td>
                         {/* Full load: the docs pages are prerendered HTML (and no preload). */}
-                        <Link
-                          reloadDocument
-                          to="/$resource/json/$version/$draft/docs/index.html"
-                          params={{ resource: entry.resource, version: entry.version, draft: entry.draft }}
-                        >
+                        <Link reloadDocument {...docsLink(entry)}>
                           View documentation
                         </Link>
                       </td>
