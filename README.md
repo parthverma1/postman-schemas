@@ -2,7 +2,7 @@
 
 # Postman Schemas
 
-Repository of all schemas for JSON structures compatible with Postman (such as the Postman Collection Format). The schemas are also hosted online, at [schema.getpostman.com](https://schema.getpostman.com). 
+Repository of all schemas for JSON structures compatible with Postman (such as the Postman Collection Format). The schemas are also hosted online, at [schema.postman.com](https://schema.postman.com): the documentation for a version lives at `/collection/<version>` (e.g. [/collection/v2.1.0](https://schema.postman.com/collection/v2.1.0)) and its raw JSON Schema at `/collection/<version>/collection.json`. 
 
 ## Schema Viewer
 
@@ -22,7 +22,7 @@ pnpm run deploy      # build and deploy the "schemas" Worker (production!)
 
 Use `pnpm run deploy`, not `pnpm deploy`: pnpm 10's built-in `deploy` command takes precedence over the script. `pnpm run deploy` publishes straight to the production Worker; use `pnpm run preview:cf` to try a build locally.
 
-The legacy URL redirects live in a generated `public/_redirects` file. `pnpm preview`, `wrangler dev` and Cloudflare apply it; `pnpm dev` does not.
+The redirects from the old URLs (e.g. `/collection/json/<version>/draft-07/docs/index.html`) live in a generated `public/_redirects` file. `pnpm preview`, `wrangler dev` and Cloudflare apply it; `pnpm dev` does not, so old URLs 404 there.
 
 Each schema under `schemas/<draft>/<version>/` is compiled into a single document (sibling definitions merged, `$ref`s kept, not dereferenced) by `pnpm generate:schemas` (run automatically before `dev`/`build`), which reuses the tooling in `lib/`. The compiled output and a manifest are written to `src/generated/` (git-ignored).
 
@@ -53,7 +53,7 @@ var input = {
 
 // we fetch the schema from server and when it is received, 
 // validate our input JSON against it.
-https.get('https://schema.getpostman.com/json/collection/v1/', function (response) {
+https.get('https://schema.postman.com/collection/v1.0.0/collection.json', function (response) {
     var body = '';
 
     response.on('data', function (d) {
@@ -78,7 +78,7 @@ var input = {
 
 // we fetch the schema from server and when it is received,
 // validate our input JSON against it.
-https.get('https://schema.getpostman.com/json/collection/v1/', function (response) {
+https.get('https://schema.postman.com/collection/v1.0.0/collection.json', function (response) {
     var body = '';
 
     response.on('data', function (d) {
@@ -101,7 +101,7 @@ import requests  # make sure this is installed
 from jsonschema import validate
 from jsonschema.exceptions import ValidationError
 
-schema = requests.get('https://schema.getpostman.com/json/collection/v1/').json()
+schema = requests.get('https://schema.postman.com/collection/v1.0.0/collection.json').json()
 
 test_input = {}  # Whatever needs to be validated.
 

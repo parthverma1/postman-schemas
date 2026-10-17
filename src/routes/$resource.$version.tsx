@@ -10,22 +10,27 @@ import { findSchema } from '../generated/manifest';
 import SchemaViewer from '../components/SchemaViewer';
 import VersionMenu from '../components/VersionMenu';
 import { deserializeSchemaTree, type SerializedSchemaTree } from '../lib/schemaTree';
+import { VIEWER_DRAFT } from '../../scripts/legacy-urls';
 
+// The docs page for a version, e.g. /collection/v3.0.0 (always the VIEWER_DRAFT
+// schema). Old docs URLs 301 here via the generated `_redirects`.
+//
 // The Stoplight viewer lives in the workspace package `@postman/json-schema-viewer`,
 // an SSR-safe fork (see its hash.ts / lodashLite.ts).
-//
+
 // Canonical public host these schemas are served from.
 const SCHEMA_BASE_URL = 'https://schema.postman.com';
 
-function schemaJsonUrl({ resource, version, draft }: { resource: string; version: string; draft: string }) {
-  return `${SCHEMA_BASE_URL}/${resource}/json/${version}/${draft}/${resource}.json`;
-}
+const pageUrl = ({ resource, version }: { resource: string; version: string }) =>
+  `${SCHEMA_BASE_URL}/${resource}/${version}`;
 
-export const Route = createFileRoute(
-  '/$resource/json/$version/$draft/docs/index.html',
-)({
+/** The raw draft-07 schema next to the page, e.g. …/collection/v3.0.0/collection.json. */
+const schemaJsonUrl = (params: { resource: string; version: string }) =>
+  `${pageUrl(params)}/${params.resource}.json`;
+
+export const Route = createFileRoute('/$resource/$version')({
   loader: async ({ params }) => {
-    const entry = findSchema(params.resource, params.draft, params.version);
+    const entry = findSchema(params.resource, VIEWER_DRAFT, params.version);
 
     if (!entry) {
       throw notFound();
@@ -35,7 +40,7 @@ export const Route = createFileRoute(
     // into a full page load, so the tree is never built in the browser. Hydration
     // doesn't re-run the loader, so this can't loop.
     if (!import.meta.env.SSR) {
-      throw redirect({ to: '/$resource/json/$version/$draft/docs/index.html', params, reloadDocument: true });
+      throw redirect({ to: '/$resource/$version', params, reloadDocument: true });
     }
 
     // Build the tree on the server; the client only deserialises it.
@@ -47,7 +52,6 @@ export const Route = createFileRoute(
       initialTree,
       resource: entry.resource,
       label: entry.label,
-      draft: entry.draft,
       version: entry.version,
     };
   },
@@ -73,19 +77,19 @@ export const Route = createFileRoute(
 });
 
 function SchemaPage() {
-  const { initialTree, resource, label, version, draft } = Route.useLoaderData();
+  const { initialTree, resource, label, version } = Route.useLoaderData();
 
   // Rebuild the server-built tree (cheap: no $ref/allOf work).
   const tree = React.useMemo(() => deserializeSchemaTree(initialTree), [initialTree]);
 
-  const schemaHref = schemaJsonUrl({ resource, version, draft });
+  const schemaHref = schemaJsonUrl({ resource, version });
 
   return (
     <div className="schema-page">
       <header className="schema-page__header">
         <div className="schema-page__title">
           <h1>
-            {label} <VersionMenu resource={resource} draft={draft} version={version} />
+            {label} <VersionMenu resource={resource} draft={VIEWER_DRAFT} version={version} />
           </h1>
           <a
             className="schema-link"
@@ -113,7 +117,7 @@ function SchemaError({ error }: ErrorComponentProps) {
   const [retrying, setRetrying] = React.useState(false);
   const schemaHref = schemaJsonUrl(params);
   const message = error instanceof Error ? error.message : String(error);
-  const label = findSchema(params.resource, params.draft, params.version)?.label ?? params.resource;
+  const label = findSchema(params.resource, VIEWER_DRAFT, params.version)?.label ?? params.resource;
 
   // The page is built on the server, so a full reload is the retry (it also
   // clears a cached failed chunk import after a redeploy).
@@ -126,7 +130,7 @@ function SchemaError({ error }: ErrorComponentProps) {
     <div className="error-state">
       <h1>Couldn&rsquo;t load this schema</h1>
       <p role="alert">
-        Something went wrong while loading {label} <code>{params.version}</code> ({params.draft}).
+        Something went wrong while loading {label} <code>{params.version}</code>.
         Check your connection and try again, or reload the page if it keeps happening.
       </p>
       <div className="error-state__actions">

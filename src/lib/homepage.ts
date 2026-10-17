@@ -19,16 +19,15 @@ export interface ResourceGroup<T extends HomepageEntry = HomepageEntry> {
 /** The homepage table links open in a new tab. */
 export const NEW_TAB = { target: '_blank', rel: 'noopener' } as const;
 
-/** The viewer page for a version, as the `to` + `params` (+ new tab) that the homepage's `<Link>` renders. */
+/** The viewer page for a version (e.g. /collection/v3.0.0), as the `to` + `params` (+ new tab) that the homepage's `<Link>` renders. */
 export const docsLink = (e: HomepageEntry) => ({
-  to: '/$resource/json/$version/$draft/docs/index.html' as const,
-  params: { resource: e.resource, version: e.version, draft: e.draft },
+  to: '/$resource/$version' as const,
+  params: { resource: e.resource, version: e.version },
   ...NEW_TAB,
 });
 
-/** The raw compiled schema for a version. */
-export const rawPath = (e: HomepageEntry): string =>
-  `/${e.resource}/json/${e.version}/${e.draft}/${e.resource}.json`;
+/** The raw compiled (draft-07) schema next to the viewer page, e.g. /collection/v3.0.0/collection.json. */
+export const rawPath = (e: HomepageEntry): string => `/${e.resource}/${e.version}/${e.resource}.json`;
 
 // Curated, not derived: the homepage lists only these versions (newest first); a new release needs a line here.
 export const HOMEPAGE_VERSIONS: readonly string[] = ['v3.0.0', 'v2.1.0'];
