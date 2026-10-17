@@ -124,4 +124,3 @@ export function legacyRedirectsFile(versionsByDraft: Record<string, string[]>): 
     .map(([from, to]) => `${from} ${to} 301\n`)
     .join('');
 }
-
