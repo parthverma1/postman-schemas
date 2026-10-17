@@ -10,75 +10,43 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ResourceJsonVersionDraftDocsRouteImport } from './routes/$resource.json.$version.$draft.docs'
-import { Route as ResourceJsonVersionDraftDocsIndexRouteImport } from './routes/$resource.json.$version.$draft.docs.index'
-import { Route as ResourceJsonVersionDraftDocsIndexDothtmlRouteImport } from './routes/$resource.json.$version.$draft.docs.index[.]html'
+import { Route as ResourceVersionRouteImport } from './routes/$resource.$version'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ResourceJsonVersionDraftDocsRoute =
-  ResourceJsonVersionDraftDocsRouteImport.update({
-    id: '/$resource/json/$version/$draft/docs',
-    path: '/$resource/json/$version/$draft/docs',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ResourceJsonVersionDraftDocsIndexRoute =
-  ResourceJsonVersionDraftDocsIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => ResourceJsonVersionDraftDocsRoute,
-  } as any)
-const ResourceJsonVersionDraftDocsIndexDothtmlRoute =
-  ResourceJsonVersionDraftDocsIndexDothtmlRouteImport.update({
-    id: '/index.html',
-    path: '/index.html',
-    getParentRoute: () => ResourceJsonVersionDraftDocsRoute,
-  } as any)
+const ResourceVersionRoute = ResourceVersionRouteImport.update({
+  id: '/$resource/$version',
+  path: '/$resource/$version',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/$resource/json/$version/$draft/docs': typeof ResourceJsonVersionDraftDocsRouteWithChildren
-  '/$resource/json/$version/$draft/docs/index.html': typeof ResourceJsonVersionDraftDocsIndexDothtmlRoute
-  '/$resource/json/$version/$draft/docs/': typeof ResourceJsonVersionDraftDocsIndexRoute
+  '/$resource/$version': typeof ResourceVersionRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/$resource/json/$version/$draft/docs/index.html': typeof ResourceJsonVersionDraftDocsIndexDothtmlRoute
-  '/$resource/json/$version/$draft/docs': typeof ResourceJsonVersionDraftDocsIndexRoute
+  '/$resource/$version': typeof ResourceVersionRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/$resource/json/$version/$draft/docs': typeof ResourceJsonVersionDraftDocsRouteWithChildren
-  '/$resource/json/$version/$draft/docs/index.html': typeof ResourceJsonVersionDraftDocsIndexDothtmlRoute
-  '/$resource/json/$version/$draft/docs/': typeof ResourceJsonVersionDraftDocsIndexRoute
+  '/$resource/$version': typeof ResourceVersionRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/$resource/json/$version/$draft/docs'
-    | '/$resource/json/$version/$draft/docs/index.html'
-    | '/$resource/json/$version/$draft/docs/'
+  fullPaths: '/' | '/$resource/$version'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/$resource/json/$version/$draft/docs/index.html'
-    | '/$resource/json/$version/$draft/docs'
-  id:
-    | '__root__'
-    | '/'
-    | '/$resource/json/$version/$draft/docs'
-    | '/$resource/json/$version/$draft/docs/index.html'
-    | '/$resource/json/$version/$draft/docs/'
+  to: '/' | '/$resource/$version'
+  id: '__root__' | '/' | '/$resource/$version'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  ResourceJsonVersionDraftDocsRoute: typeof ResourceJsonVersionDraftDocsRouteWithChildren
+  ResourceVersionRoute: typeof ResourceVersionRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -90,52 +58,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/$resource/json/$version/$draft/docs': {
-      id: '/$resource/json/$version/$draft/docs'
-      path: '/$resource/json/$version/$draft/docs'
-      fullPath: '/$resource/json/$version/$draft/docs'
-      preLoaderRoute: typeof ResourceJsonVersionDraftDocsRouteImport
+    '/$resource/$version': {
+      id: '/$resource/$version'
+      path: '/$resource/$version'
+      fullPath: '/$resource/$version'
+      preLoaderRoute: typeof ResourceVersionRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/$resource/json/$version/$draft/docs/': {
-      id: '/$resource/json/$version/$draft/docs/'
-      path: '/'
-      fullPath: '/$resource/json/$version/$draft/docs/'
-      preLoaderRoute: typeof ResourceJsonVersionDraftDocsIndexRouteImport
-      parentRoute: typeof ResourceJsonVersionDraftDocsRoute
-    }
-    '/$resource/json/$version/$draft/docs/index.html': {
-      id: '/$resource/json/$version/$draft/docs/index.html'
-      path: '/index.html'
-      fullPath: '/$resource/json/$version/$draft/docs/index.html'
-      preLoaderRoute: typeof ResourceJsonVersionDraftDocsIndexDothtmlRouteImport
-      parentRoute: typeof ResourceJsonVersionDraftDocsRoute
-    }
   }
 }
-
-interface ResourceJsonVersionDraftDocsRouteChildren {
-  ResourceJsonVersionDraftDocsIndexDothtmlRoute: typeof ResourceJsonVersionDraftDocsIndexDothtmlRoute
-  ResourceJsonVersionDraftDocsIndexRoute: typeof ResourceJsonVersionDraftDocsIndexRoute
-}
-
-const ResourceJsonVersionDraftDocsRouteChildren: ResourceJsonVersionDraftDocsRouteChildren =
-  {
-    ResourceJsonVersionDraftDocsIndexDothtmlRoute:
-      ResourceJsonVersionDraftDocsIndexDothtmlRoute,
-    ResourceJsonVersionDraftDocsIndexRoute:
-      ResourceJsonVersionDraftDocsIndexRoute,
-  }
-
-const ResourceJsonVersionDraftDocsRouteWithChildren =
-  ResourceJsonVersionDraftDocsRoute._addFileChildren(
-    ResourceJsonVersionDraftDocsRouteChildren,
-  )
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  ResourceJsonVersionDraftDocsRoute:
-    ResourceJsonVersionDraftDocsRouteWithChildren,
+  ResourceVersionRoute: ResourceVersionRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

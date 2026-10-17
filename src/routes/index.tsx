@@ -1,8 +1,10 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { schemas } from '../generated/manifest';
 import { docsLink, homepageGroups, NEW_TAB, rawPath } from '../lib/homepage';
+import { SCHEMA_BASE_URL } from '../lib/site';
 
 export const Route = createFileRoute('/')({
+  head: () => ({ links: [{ rel: 'canonical', href: `${SCHEMA_BASE_URL}/` }] }),
   component: Homepage,
 });
 

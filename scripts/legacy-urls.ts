@@ -8,15 +8,16 @@
  * directory URLs 403 there, so they are not recreated):
  *   raw JSON (static copies, 200):
  *     draft-04: /json/collection/{v}/collection.json, /collection/json/{v}/draft-04/collection.json
- *     draft-07: /json/draft-07/collection/{v}/collection.json (+ the viewer's own
- *               /collection/json/{v}/draft-07/collection.json)
- *     "latest" variants of all of the above.
- *   docs HTML (301): the matching .../docs/index.html URLs → the draft-07 viewer
- *     page for that version, or the version's raw JSON when no viewer page
- *     exists; /index.html → /.
- *   The built `_redirects` also starts with `/ /index.html 200`
- *   (HOMEPAGE_REWRITE, added after the homepage is prerendered), which serves
- *   the prerendered homepage for `/`.
+ *     draft-07: /json/draft-07/collection/{v}/collection.json, /collection/json/{v}/draft-07/collection.json
+ *     "latest" variants of all of the above, plus the current
+ *     /collection/{v}/collection.json (draft-07, viewer versions only).
+ *   docs HTML (301, single hop): every old .../docs/index.html URL (and the bare
+ *     /collection/json/{v}/{draft}/docs{,/} forms) → the viewer page
+ *     /collection/{v} for that version, or the version's raw JSON when no
+ *     viewer page exists. /index.html → / and /collection/{v}{/,/index.html} →
+ *     /collection/{v} (explicit 301s instead of html_handling's native 307s).
+ *   `/` and `/collection/{v}` are served from the prerendered index.html files
+ *   by `html_handling: "drop-trailing-slash"` (wrangler.jsonc), not by a rule here.
  *
  * Kept free of TS-only runtime syntax so Node can run it with type stripping.
  */
@@ -24,7 +25,8 @@
 /** The only draft rendered by the viewer (see INCLUDED_DRAFTS in generate-schemas.mjs). */
 export const VIEWER_DRAFT = 'draft-07';
 
-const RESOURCE = 'collection';
+/** The only resource kind served (URL segment and file name). */
+export const RESOURCE = 'collection';
 
 export interface RawFile {
   /** URL path, e.g. "/json/collection/v2.1.0/collection.json". */
@@ -58,19 +60,30 @@ export function latestStable(versions: string[]): string | undefined {
 const legacyBase = (draft: string, v: string): string =>
   draft === 'draft-04' ? `/json/${RESOURCE}/${v}` : `/json/${draft}/${RESOURCE}/${v}`;
 
-/** Current layout (also the viewer's layout for VIEWER_DRAFT). */
+/** The /collection/json layout: raw files still served; its docs pages (the old viewer URLs) now 301. */
 const newBase = (draft: string, v: string): string => `/${RESOURCE}/json/${v}/${draft}`;
 
-export const viewerPage = (version: string): string => `${newBase(VIEWER_DRAFT, version)}/docs/index.html`;
+/** The viewer page for a VIEWER_DRAFT version, e.g. /collection/v3.0.0. */
+export const viewerPage = (version: string): string => `/${RESOURCE}/${version}`;
+
+/** The draft-07 raw schema next to the viewer page, e.g. /collection/v3.0.0/collection.json. */
+export const viewerRawPath = (version: string): string => `${viewerPage(version)}/${RESOURCE}.json`;
 
 /**
  * @param versionsByDraft every schemas/{draft}/{version} directory, e.g. { "draft-04": ["v2.1.0", ...] }.
  */
 export function legacyUrls(versionsByDraft: Record<string, string[]>): LegacyUrls {
   const viewerVersions = new Set(versionsByDraft[VIEWER_DRAFT] ?? []);
-  const viewerPages = new Set([...viewerVersions].map(viewerPage));
   const raw: RawFile[] = [];
   const redirects: Record<string, string> = { '/index.html': '/' };
+
+  for (const version of viewerVersions) {
+    const page = viewerPage(version);
+
+    raw.push({ path: viewerRawPath(version), draft: VIEWER_DRAFT, version });
+    redirects[`${page}/`] = page;
+    redirects[`${page}/index.html`] = page;
+  }
 
   for (const [draft, versions] of Object.entries(versionsByDraft)) {
     const latest = latestStable(versions);
@@ -87,14 +100,14 @@ export function legacyUrls(versionsByDraft: Record<string, string[]>): LegacyUrl
 
       for (const base of [legacyBase(draft, alias), newBase(draft, alias)]) {
         raw.push({ path: `${base}/${RESOURCE}.json`, draft, version });
-
-        const docs = `${base}/docs/index.html`;
-
-        // Never shadow a real viewer page.
-        if (!viewerPages.has(docs)) {
-          redirects[docs] = target;
-        }
+        redirects[`${base}/docs/index.html`] = target;
       }
+
+      // The old Worker route also served the bare forms (via 307s); /json/... never did.
+      const base = newBase(draft, alias);
+
+      redirects[`${base}/docs`] = target;
+      redirects[`${base}/docs/`] = target;
     }
   }
 
@@ -112,18 +125,3 @@ export function legacyRedirectsFile(versionsByDraft: Record<string, string[]>): 
     .join('');
 }
 
-/**
- * Serve the prerendered homepage as an asset: `html_handling: "none"` doesn't map
- * `/` to `/index.html`. Only the first matching rule applies, so it doesn't loop
- * with `/index.html / 301`. Kept out of `redirects` (a rewrite, not a 301 hop).
- */
-export const HOMEPAGE_REWRITE = '/ /index.html 200';
-
-/**
- * Puts HOMEPAGE_REWRITE first in a `_redirects` file (idempotent). Applied to the
- * built file only once /index.html exists (vite.config.ts): the prerender server
- * honours `_redirects`, so the rule in public/ would 404 the `/` prerender.
- */
-export function withHomepageRewrite(file: string): string {
-  return file.startsWith(`${HOMEPAGE_REWRITE}\n`) ? file : `${HOMEPAGE_REWRITE}\n${file}`;
-}
