@@ -168,6 +168,81 @@
   border-color: var(--border-color-strong);
 }
 
+/* Choice tabs (oneOf variants) -------------------------------------------- */
+/* Wraps the row and its children only to share Tabs state; no box of its own. */
+.jsv-choice-tabs-root {
+  display: contents;
+}
+/*
+ * The switcher slot. A fixed height fits both the tabs and the Select, so the
+ * swap between them never moves anything below. Its width comes from the row,
+ * never from the tabs (inline-size containment), and tabs wider than the slot
+ * are clipped until the fit check swaps in the Select.
+ */
+.jsv-choice-tabs {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  height: 1.5rem;
+  min-width: 0;
+  overflow: hidden;
+  contain: inline-size;
+  white-space: nowrap;
+}
+/* Hidden copy of the prefix + tabs at their natural width, for the fit check. */
+.jsv-choice-tabs__measure {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  width: max-content;
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
+  pointer-events: none;
+}
+.jsv-choice-tabs__list {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+/* Same box as .jsv-select__control (12px text, 1px padding + border). Also
+ * applied to the measurer's spans, so nothing here may depend on the element. */
+.jsv-choice-tabs__tab {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  margin: 0;
+  font: inherit;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  white-space: nowrap;
+  color: var(--content-color-secondary);
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  padding: 0.0625rem 0.5rem;
+  cursor: pointer;
+}
+.jsv-choice-tabs__tab:not([data-active]):hover {
+  color: var(--content-color-primary);
+  background: var(--background-color-tertiary);
+}
+.jsv-choice-tabs__tab[data-active] {
+  color: var(--content-color-primary);
+  background: var(--background-color-secondary);
+  border-color: var(--input-border-color-default);
+  cursor: default;
+}
+/* Inset, so the slot's overflow clip never cuts the focus ring. */
+.jsv-choice-tabs__tab:focus-visible {
+  outline: 2px solid var(--input-border-color-focus);
+  outline-offset: -2px;
+}
+
 /* Menu (disclosure dropdown) --------------------------------------------- */
 .jsv-menu {
   display: inline-flex;

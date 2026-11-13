@@ -1,13 +1,14 @@
 /**
  * Interactive controls replacing the Mosaic widgets the viewer used. Select,
- * Menu and Infotip are Base UI primitives (focus, keyboard, aria, outside-dismiss incl. touch
- * handled for us); the rest are plain SSR-friendly elements (`<button>`, `title` tooltips).
+ * ChoiceTabs, Menu and Infotip are Base UI primitives (focus, keyboard, aria,
+ * outside-dismiss incl. touch handled for us); the rest are plain SSR-friendly elements (`<button>`, `title` tooltips).
  * All are styled with static classes (see styles.css) + Aether tokens — no
  * runtime CSS injection.
  */
 import { Menu as MenuPrimitive } from '@base-ui/react/menu';
 import { Popover as PopoverPrimitive } from '@base-ui/react/popover';
 import { Select as SelectPrimitive } from '@base-ui/react/select';
+import { Tabs as TabsPrimitive } from '@base-ui/react/tabs';
 import * as React from 'react';
 import { resolveStyle } from './styleProps';
 
@@ -105,6 +106,122 @@ export function Select({ options, value, onChange, triggerTextPrefix, label, ...
         </SelectPrimitive.Portal>
       </SelectPrimitive.Root>
     </span>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/* ChoiceTabs — Base UI tabs for picking a variant, falling back to Select.    */
+/* -------------------------------------------------------------------------- */
+/*
+ * ChoiceTabs wraps the whole row (head + children) so the tab list and the panel
+ * share one Tabs.Root. ChoiceTabList is the switcher slot: it renders tabs on
+ * the server and on the first client render, then measures and swaps to the
+ * Select when the tabs don't fit. ChoicePanel wraps the selected variant's
+ * children; it stays mounted in both modes, so swapping never remounts them.
+ */
+const ChoiceTabsContext = React.createContext<{ asTabs: boolean; setAsTabs: (asTabs: boolean) => void }>({
+  asTabs: true,
+  setAsTabs: () => {},
+});
+
+// useLayoutEffect warns during SSR on React 18; nothing is measured there anyway.
+const useIsoLayoutEffect = typeof window === 'undefined' ? React.useEffect : React.useLayoutEffect;
+
+export interface ChoiceTabsProps {
+  value: string;
+  onChange: (value: string) => void;
+  children?: React.ReactNode;
+}
+export function ChoiceTabs({ value, onChange, children }: ChoiceTabsProps) {
+  const [asTabs, setAsTabs] = React.useState(true);
+  const context = React.useMemo(() => ({ asTabs, setAsTabs }), [asTabs]);
+  return (
+    <TabsPrimitive.Root className="jsv-choice-tabs-root" value={value} onValueChange={v => onChange(v as string)}>
+      <ChoiceTabsContext.Provider value={context}>{children}</ChoiceTabsContext.Provider>
+    </TabsPrimitive.Root>
+  );
+}
+
+/** Whether content `required` px wide fits a box `available` px wide (sub-pixel widths). */
+export function choiceTabsFit(required: number, available: number) {
+  return Math.ceil(required) <= Math.floor(available);
+}
+
+export type ChoiceTabListProps = Omit<SelectProps, 'size' | 'aria-label'> & { value: string };
+export function ChoiceTabList({ options, value, onChange, triggerTextPrefix, label }: ChoiceTabListProps) {
+  const { asTabs, setAsTabs } = React.useContext(ChoiceTabsContext);
+  const slotRef = React.useRef<HTMLDivElement>(null);
+  const measureRef = React.useRef<HTMLSpanElement>(null);
+
+  // Before paint: compare the tabs' natural width (the hidden measurer) with
+  // the slot's, and again whenever either changes (viewport, fonts loading).
+  useIsoLayoutEffect(() => {
+    const slot = slotRef.current;
+    const measure = measureRef.current;
+    if (!slot || !measure) return;
+    const update = () =>
+      setAsTabs(choiceTabsFit(measure.getBoundingClientRect().width, slot.getBoundingClientRect().width));
+    update();
+    if (typeof ResizeObserver === 'undefined') return;
+    const observer = new ResizeObserver(update);
+    observer.observe(slot);
+    observer.observe(measure);
+    return () => observer.disconnect();
+  }, [setAsTabs]);
+
+  const prefix = triggerTextPrefix ? <span className="jsv-select__prefix">{triggerTextPrefix}</span> : null;
+  const combinerName = triggerTextPrefix?.replace(/:\s*$/, '');
+  const listLabel = [label && `${label} type`, combinerName].filter(Boolean).join(', ') || undefined;
+
+  return (
+    <div ref={slotRef} className="jsv-choice-tabs">
+      {/* Same classes and text as the tabs, at max-content width. */}
+      <span ref={measureRef} className="jsv-choice-tabs__measure" aria-hidden="true">
+        {prefix}
+        <span className="jsv-choice-tabs__list">
+          {options.map(opt => (
+            <span key={opt.value} className="jsv-choice-tabs__tab">
+              {opt.label ?? opt.value}
+            </span>
+          ))}
+        </span>
+      </span>
+      {asTabs ? (
+        <>
+          {prefix}
+          <TabsPrimitive.List className="jsv-choice-tabs__list" aria-label={listLabel}>
+            {options.map(opt => (
+              <TabsPrimitive.Tab key={opt.value} value={opt.value} className="jsv-choice-tabs__tab">
+                {opt.label ?? opt.value}
+              </TabsPrimitive.Tab>
+            ))}
+          </TabsPrimitive.List>
+        </>
+      ) : (
+        <Select
+          options={options}
+          value={value}
+          onChange={onChange}
+          triggerTextPrefix={triggerTextPrefix}
+          label={label}
+        />
+      )}
+    </div>
+  );
+}
+
+export function ChoicePanel({ value, children }: { value: string; children?: React.ReactNode }) {
+  const { asTabs } = React.useContext(ChoiceTabsContext);
+  return (
+    <TabsPrimitive.Panel
+      value={value}
+      // The rows inside have their own tab stops, so the panel isn't one. With
+      // the Select there are no tabs, so it's a plain wrapper.
+      tabIndex={undefined}
+      {...(asTabs ? null : { role: undefined, id: undefined, 'aria-labelledby': undefined })}
+    >
+      {children}
+    </TabsPrimitive.Panel>
   );
 }
 
