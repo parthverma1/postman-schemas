@@ -1,3 +1,5 @@
 # Postman Schemas Changelog
+v3.0.0:
+  - Added the Collection v3.0.0 schema (draft-07)
 master:
   - Initial Release

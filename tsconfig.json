@@ -1,7 +1,5 @@
 {
-  "include": ["**/*.ts", "**/*.tsx", "**/*.d.ts"],
-  "files": ["scripts/legacy-urls.ts"],
-  "exclude": ["node_modules", "lib", "bin", "scripts", "index.js", "packages"],
+  "include": ["src", "test", "scripts/legacy-urls.ts", "vite.config.ts", "vitest.config.ts"],
   "compilerOptions": {
     "strict": true,
     "esModuleInterop": true,

@@ -1,8 +1,8 @@
-<a href="https://schemas.getpostman.com" target="_blank"><img src="https://s3.amazonaws.com/web-artefacts/postman-logo%2Btext-197x68.png" /></a>
+<a href="https://schema.postman.com" target="_blank"><img src="https://s3.amazonaws.com/web-artefacts/postman-logo%2Btext-197x68.png" /></a>
 
 # Postman Schemas
 
-Repository of all schemas for JSON structures compatible with Postman (such as the Postman Collection Format). The schemas are also hosted online, at [schema.getpostman.com](https://schema.getpostman.com). 
+Repository of all schemas for JSON structures compatible with Postman (such as the Postman Collection Format). The schemas are also hosted online, at [schema.postman.com](https://schema.postman.com).
 
 ## Schema Viewer
 
@@ -37,78 +37,57 @@ The draft (`draft-04` or `draft-07`) is read from the schema's `$schema` when `-
 
 ## Usage
 
-All the schemas in this repository are valid JSON Schemas, compliant with the [JSON-Schema, Draft 4](http://json-schema.org/documentation.html). As such, they can be used with a number of tools to validate arbitrary JSON blobs, as show below: 
-
-### Examples: JavaScript
-
-#### [is-my-json-valid](https://github.com/mafintosh/is-my-json-valid)
+All the schemas in this repository are valid JSON Schemas. Each collection version is published at:
 
 ```
-var https = require('https'),
-    validate = require('is-my-json-valid');
+https://schema.postman.com/collection/json/<version>/<draft>/collection.json
+```
 
-var input = {
-    /* JSON of a collection V1 */
+- `<version>`: `v1.0.0`, `v2.0.0`, `v2.1.0` or `v3.0.0` (and `latest`)
+- `<draft>`: `draft-04` or `draft-07` ([JSON Schema drafts](https://json-schema.org/specification-links)). v3.0.0 is draft-07 only.
+
+For example, https://schema.postman.com/collection/json/v2.1.0/draft-07/collection.json. Each version also has a viewer at `.../<version>/<draft>/docs/index.html`.
+
+They can be used with any JSON Schema validator, as shown below.
+
+### Example: JavaScript
+
+With [Ajv](https://ajv.js.org) 8 (`npm install ajv`) on Node.js 18+ (global `fetch`), as an ES module:
+
+```js
+import Ajv from 'ajv';
+
+const input = {
+    /* JSON of a v2.1.0 collection */
 };
 
-// we fetch the schema from server and when it is received, 
-// validate our input JSON against it.
-https.get('https://schema.getpostman.com/json/collection/v1/', function (response) {
-    var body = '';
+const schema = await (await fetch('https://schema.postman.com/collection/json/v2.1.0/draft-07/collection.json')).json();
 
-    response.on('data', function (d) {
-        body += d;
-    });
+// strict: false, because the v1/v2 schemas use keywords that Ajv's strict mode rejects
+const validate = new Ajv({ strict: false }).compile(schema);
 
-    response.on('end', function () {
-        var validate = validator(JSON.parse(body));
-        console.log(validate(input) ? 'It is a valid collection!' : 'It is not a valid collection!');
-    });
-});
+console.log(validate(input) ? 'It is a valid collection!' : 'It is not a valid collection!');
 ```
 
-#### [tv4](https://github.com/geraintluff/tv4)
-```
-var https = require('https'),
-    tv4 = require('tv4');
-
-var input = {
-    /* JSON of a collection V1 */
-};
-
-// we fetch the schema from server and when it is received,
-// validate our input JSON against it.
-https.get('https://schema.getpostman.com/json/collection/v1/', function (response) {
-    var body = '';
-
-    response.on('data', function (d) {
-        body += d;
-    });
-
-    response.on('end', function () {
-        var result = tv4.validate(input, JSON.parse(body));
-        console.log((result) ? 'It is a valid collection!' : 'It is not a valid collection!');
-    });
-});
-```
+For the `draft-04` schemas, use `import Ajv from 'ajv-draft-04'` (`npm install ajv-draft-04`) instead.
 
 ### Example: Python
 
-#### [jsonschema](https://github.com/Julian/jsonschema)
+With [jsonschema](https://github.com/python-jsonschema/jsonschema) (`pip install jsonschema requests`), which picks the draft from the schema's `$schema`:
 
-```
-import requests  # make sure this is installed
+```python
+import requests
 from jsonschema import validate
 from jsonschema.exceptions import ValidationError
 
-schema = requests.get('https://schema.getpostman.com/json/collection/v1/').json()
+schema = requests.get('https://schema.postman.com/collection/json/v2.1.0/draft-07/collection.json').json()
 
 test_input = {}  # Whatever needs to be validated.
 
 try:
     validate(test_input, schema)
 except ValidationError:
-    print 'It is not a valid collection!'
+    print('It is not a valid collection!')
 else:
-    print 'It is a valid collection!'
+    print('It is a valid collection!')
 ```
