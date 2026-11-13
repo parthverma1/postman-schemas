@@ -51,20 +51,20 @@ describe('homepageGroups', () => {
 });
 
 describe('links', () => {
-  it('points to the draft-07 viewer page and the raw schema', () => {
+  it('points to the viewer page and the raw schema next to it', () => {
     // Exactly what index.tsx spreads onto <Link>; filled in, it's the viewer URL.
     const link = docsLink(entries[0]);
     expect(link).toEqual({
-      to: '/$resource/json/$version/$draft/docs/index.html',
-      params: { resource: 'collection', version: 'v3.0.0', draft: 'draft-07' },
+      to: '/$resource/$version',
+      params: { resource: 'collection', version: 'v3.0.0' },
       target: '_blank',
       rel: 'noopener',
     });
     expect(link.to.replace(/\$(\w+)/g, (_, k: keyof typeof link.params) => link.params[k])).toBe(
-      '/collection/json/v3.0.0/draft-07/docs/index.html',
+      '/collection/v3.0.0',
     );
-    expect(rawPath(entries[0])).toBe('/collection/json/v3.0.0/draft-07/collection.json');
-    expect(rawPath(entries[1])).toBe('/environment/json/v1.0.0/draft-07/environment.json');
+    expect(rawPath(entries[0])).toBe('/collection/v3.0.0/collection.json');
+    expect(rawPath(entries[1])).toBe('/environment/v1.0.0/environment.json');
   });
 
   it('opens both links in a new tab', () => {

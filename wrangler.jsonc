@@ -8,9 +8,10 @@
   "compatibility_flags": ["nodejs_compat"],
   "workers_dev": true,
   "preview_urls": false,
-  // Serve the prerendered /…/docs/index.html files as-is. The default
-  // ("auto-trailing-slash") would 307 them to /…/docs/. With "none", `/` is
-  // mapped to the prerendered /index.html by the `/ /index.html 200` line in
-  // the generated `_redirects`.
-  "assets": { "html_handling": "none" }
+  // Serve the prerendered /index.html and /collection/<v>/index.html at `/` and
+  // the extension-less /collection/<v>. Their `/` and `/index.html` variants
+  // would get native 307s; the generated `_redirects` (applied first) 301s them
+  // instead. Caveat: any HTML asset at a *.html URL would also be 307'd, so
+  // don't add pages that must be served at a .html URL.
+  "assets": { "html_handling": "drop-trailing-slash" }
 }

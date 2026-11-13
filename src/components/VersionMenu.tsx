@@ -47,8 +47,8 @@ export default function VersionMenu({
                   render={
                     <Link
                       reloadDocument
-                      to="/$resource/json/$version/$draft/docs/index.html"
-                      params={{ resource: entry.resource, version: entry.version, draft: entry.draft }}
+                      to="/$resource/$version"
+                      params={{ resource: entry.resource, version: entry.version }}
                     />
                   }
                 >

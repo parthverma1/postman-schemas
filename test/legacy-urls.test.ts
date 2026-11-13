@@ -2,15 +2,15 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { lib, schemaVersions } from './helpers';
+import { lib, ROOT, schemaVersions } from './helpers';
 import {
-  HOMEPAGE_REWRITE,
   legacyRedirectsFile,
   legacyUrls,
   latestStable,
+  RESOURCE,
   viewerPage,
+  viewerRawPath,
   VIEWER_DRAFT,
-  withHomepageRewrite,
 } from '../scripts/legacy-urls';
 import { writeSchemas } from '../scripts/generate-schemas.mjs';
 
@@ -22,6 +22,7 @@ for (const { draft, version } of versions) {
 }
 
 const { raw, redirects } = legacyUrls(versionsByDraft);
+// The prerendered docs pages (dist/client/collection/{v}/index.html).
 const viewerPages = new Set(versionsByDraft[VIEWER_DRAFT].map(viewerPage));
 
 /** Same as generate-schemas.mjs: lib.compile. */
@@ -59,12 +60,13 @@ it('writes every redirect into public/_redirects as an exact-path 301', () => {
   expect(file).not.toMatch(/[*:]/);
 });
 
-// Guards so a discovery bug can't pass vacuously. Raw: (8 draft-04 + latest) × 2
-// layouts + (4 draft-07 + latest) × 2 layouts. Redirects: one per raw docs URL
-// except the 4 draft-07 viewer pages, plus /index.html.
+// Guards so a discovery bug can't pass vacuously. Aliases: (8 draft-04 + latest)
+// + (4 draft-07 + latest) = 14. Raw: 14 × 2 layouts + 4 /collection/{v}/collection.json.
+// Redirects: 14 × 2 docs/index.html + 14 × 2 bare /collection/json/.../docs{,/}
+// + 4 × 2 /collection/{v}{/,/index.html} + /index.html.
 it('covers every legacy URL', () => {
-  expect(raw).toHaveLength(28);
-  expect(Object.keys(redirects)).toHaveLength(25);
+  expect(raw).toHaveLength(32);
+  expect(Object.keys(redirects)).toHaveLength(65);
   expect(new Set(raw.map((f) => f.path)).size).toBe(raw.length);
 });
 
@@ -97,15 +99,46 @@ it("includes the legacy URLs that 404'd after the rebuild", () => {
   expect(redirects['/index.html']).toBe('/');
 });
 
-it('starts the built _redirects with the homepage rewrite (first match wins)', () => {
-  const built = withHomepageRewrite(fs.readFileSync(path.join(tmp, 'public', '_redirects'), 'utf8'));
+it('serves the viewer pages at /collection/{v} with a raw schema next to them', () => {
+  expect(viewerPage('v3.0.0')).toBe(`/${RESOURCE}/v3.0.0`);
+  expect(viewerPage('v3.0.0')).toBe('/collection/v3.0.0');
 
-  expect(HOMEPAGE_REWRITE).toBe('/ /index.html 200');
-  expect(built.startsWith('/ /index.html 200\n')).toBe(true);
-  expect(built.split('\n')).toContain('/index.html / 301');
-  // Idempotent (a rebuild reuses the copied file), and never in the 301 map.
-  expect(withHomepageRewrite(built)).toBe(built);
+  for (const v of versionsByDraft[VIEWER_DRAFT]) {
+    expect(raw).toContainEqual({ path: viewerRawPath(v), draft: VIEWER_DRAFT, version: v });
+    // The old viewer page and its variants now 301 straight to the new page.
+    expect(redirects[`/collection/json/${v}/draft-07/docs/index.html`]).toBe(viewerPage(v));
+    expect(redirects[`${viewerPage(v)}/`]).toBe(viewerPage(v));
+    expect(redirects[`${viewerPage(v)}/index.html`]).toBe(viewerPage(v));
+    // Served by html_handling, never a redirect source.
+    expect(redirects[viewerPage(v)]).toBeUndefined();
+  }
+
   expect(redirects['/']).toBeUndefined();
+});
+
+it('301s the bare /collection/json/{v}/{draft}/docs forms in one hop', () => {
+  for (const [draft, versions] of Object.entries(versionsByDraft)) {
+    for (const v of [...versions, 'latest']) {
+      const base = `/collection/json/${v}/${draft}/docs`;
+
+      expect(redirects[`${base}`]).toBe(redirects[`${base}/index.html`]);
+      expect(redirects[`${base}/`]).toBe(redirects[`${base}/index.html`]);
+    }
+  }
+
+  expect(redirects['/collection/json/latest/draft-07/docs/']).toBe(viewerPage('v3.0.0'));
+  expect(redirects['/collection/json/v1.1.0-draft.1/draft-04/docs']).toBe(
+    '/collection/json/v1.1.0-draft.1/draft-04/collection.json',
+  );
+});
+
+it('serves pages via html_handling, with no rewrite (200) lines in _redirects', () => {
+  const file = fs.readFileSync(path.join(tmp, 'public', '_redirects'), 'utf8');
+  const wrangler = fs.readFileSync(path.join(ROOT, 'wrangler.jsonc'), 'utf8');
+
+  expect(wrangler).toMatch(/"html_handling":\s*"drop-trailing-slash"/);
+  expect(file.trimEnd().split('\n').every((line) => line.endsWith(' 301'))).toBe(true);
+  expect(file).not.toMatch(/ 200$/m);
 });
 
 it('writes exactly the listed raw files', () => {
@@ -130,5 +163,6 @@ describe.each(Object.entries(redirects).map(([from, to]) => ({ from, to })))('$f
     expect(exists).toBe(true);
     expect(redirects[to]).toBeUndefined();
     expect(viewerPages.has(from)).toBe(false);
+    expect(to).not.toMatch(/\/docs\/index\.html$/);
   });
 });

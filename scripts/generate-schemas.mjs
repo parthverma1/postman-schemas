@@ -13,8 +13,9 @@
  * Output layout (per resource kind, e.g. "collection"):
  *   src/generated/schemas/{resource}/{draft}/{version}.json   (viewer bundle, INCLUDED_DRAFTS only)
  *   public/{resource}/json/{version}/{draft}/{resource}.json  (raw download, every draft)
+ *   public/{resource}/{version}/{resource}.json               (raw download, viewer draft, next to the docs page)
  *   public/json/...                                           (legacy raw URLs, see legacy-urls.ts)
- *   public/_redirects                                         (legacy docs URL 301s, see legacy-urls.ts)
+ *   public/_redirects                                         (old docs URL 301s, see legacy-urls.ts)
  *
  * Run as a script to regenerate everything; import `writeSchemas` to write the
  * schema files elsewhere (used by tests).
@@ -137,14 +138,14 @@ export function writeSchemas({ publicDir = PUBLIC_DIR, schemaOutDir = SCHEMA_OUT
     }
   }
 
-  // Static copies at every hosted URL, incl. /collection/json/{version}/{draft}/collection.json.
+  // Static copies at every hosted URL, incl. /collection/{version}/collection.json.
   const { raw } = legacyUrls(versionsByDraft);
 
   for (const file of raw) {
     writeFile(path.join(publicDir, file.path), serialized.get(`${file.draft}/${file.version}`));
   }
 
-  // Legacy docs URLs → 301, applied by Cloudflare before the assets and the Worker.
+  // Old docs URLs → 301, applied by Cloudflare before the assets and the Worker.
   writeFile(path.join(publicDir, '_redirects'), legacyRedirectsFile(versionsByDraft));
 
   return { entries, rawPaths: raw.map((f) => f.path) };
