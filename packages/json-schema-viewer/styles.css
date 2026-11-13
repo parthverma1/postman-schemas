@@ -24,6 +24,16 @@
   --jsv-required-gap: 0.5rem;
 }
 
+/* Narrow screens: a row's name and type select wrap instead of widening the
+ * page, and a long inline code token (e.g. a URL path) breaks anywhere. */
+.jsv-row-head {
+  flex-wrap: wrap;
+  row-gap: 0.25rem;
+}
+.JsonSchemaViewer code {
+  overflow-wrap: anywhere;
+}
+
 /* Links ------------------------------------------------------------------- */
 .jsv-link {
   color: var(--content-color-link);
