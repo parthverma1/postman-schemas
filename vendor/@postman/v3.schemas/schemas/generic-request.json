@@ -1,0 +1,7400 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"oneOf": [
+		{
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"name": {
+					"type": "string"
+				},
+				"description": {
+					"type": "string"
+				},
+				"$kind": {
+					"type": "string",
+					"const": "http-request"
+				},
+				"url": {
+					"type": "string"
+				},
+				"method": {
+					"type": "string"
+				},
+				"headers": {
+					"oneOf": [
+						{
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"key": {
+										"type": "string"
+									},
+									"value": {
+										"type": "string"
+									},
+									"disabled": {
+										"type": "boolean"
+									},
+									"description": {
+										"type": "string"
+									},
+									"$type": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"key",
+									"value"
+								],
+								"additionalProperties": false
+							}
+						},
+						{
+							"type": "object",
+							"propertyNames": {
+								"type": "string"
+							},
+							"additionalProperties": {
+								"type": "string"
+							}
+						}
+					]
+				},
+				"queryParams": {
+					"oneOf": [
+						{
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"key": {
+										"oneOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"value": {
+										"oneOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"disabled": {
+										"type": "boolean"
+									},
+									"description": {
+										"type": "string"
+									},
+									"$type": {
+										"type": "string"
+									}
+								},
+								"additionalProperties": false
+							}
+						},
+						{
+							"type": "object",
+							"propertyNames": {
+								"type": "string"
+							},
+							"additionalProperties": {
+								"oneOf": [
+									{
+										"type": "string"
+									},
+									{
+										"type": "null"
+									}
+								]
+							}
+						}
+					]
+				},
+				"pathVariables": {
+					"oneOf": [
+						{
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"key": {
+										"type": "string"
+									},
+									"value": {
+										"type": "string"
+									},
+									"disabled": {
+										"type": "boolean"
+									},
+									"description": {
+										"type": "string"
+									},
+									"$type": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"key",
+									"value"
+								],
+								"additionalProperties": false
+							}
+						},
+						{
+							"type": "object",
+							"propertyNames": {
+								"type": "string"
+							},
+							"additionalProperties": {
+								"type": "string"
+							}
+						}
+					]
+				},
+				"body": {
+					"oneOf": [
+						{
+							"type": "object",
+							"properties": {
+								"type": {
+									"type": "string",
+									"const": "none"
+								}
+							},
+							"required": [
+								"type"
+							],
+							"additionalProperties": false
+						},
+						{
+							"type": "object",
+							"properties": {
+								"type": {
+									"type": "string",
+									"const": "formdata"
+								},
+								"content": {
+									"type": "array",
+									"items": {
+										"oneOf": [
+											{
+												"type": "object",
+												"properties": {
+													"type": {
+														"type": "string",
+														"const": "text"
+													},
+													"key": {
+														"type": "string"
+													},
+													"value": {
+														"type": "string"
+													},
+													"contentType": {
+														"type": "string"
+													},
+													"description": {
+														"type": "string"
+													},
+													"disabled": {
+														"type": "boolean"
+													}
+												},
+												"required": [
+													"type",
+													"key",
+													"value"
+												],
+												"additionalProperties": false
+											},
+											{
+												"type": "object",
+												"properties": {
+													"type": {
+														"type": "string",
+														"const": "file"
+													},
+													"key": {
+														"type": "string"
+													},
+													"src": {
+														"oneOf": [
+															{
+																"type": "string"
+															},
+															{
+																"type": "array",
+																"items": {
+																	"type": "string"
+																}
+															}
+														]
+													},
+													"contentType": {
+														"type": "string"
+													},
+													"description": {
+														"type": "string"
+													},
+													"disabled": {
+														"type": "boolean"
+													}
+												},
+												"required": [
+													"type",
+													"key",
+													"src"
+												],
+												"additionalProperties": false
+											}
+										]
+									}
+								}
+							},
+							"required": [
+								"type",
+								"content"
+							],
+							"additionalProperties": false
+						},
+						{
+							"type": "object",
+							"properties": {
+								"type": {
+									"type": "string",
+									"const": "urlencoded"
+								},
+								"content": {
+									"oneOf": [
+										{
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"key": {
+														"type": "string"
+													},
+													"value": {
+														"type": "string"
+													},
+													"disabled": {
+														"type": "boolean"
+													},
+													"description": {
+														"type": "string"
+													}
+												},
+												"required": [
+													"key",
+													"value"
+												],
+												"additionalProperties": false
+											}
+										},
+										{
+											"type": "object",
+											"propertyNames": {
+												"type": "string"
+											},
+											"additionalProperties": {
+												"type": "string"
+											}
+										}
+									]
+								}
+							},
+							"required": [
+								"type",
+								"content"
+							],
+							"additionalProperties": false
+						},
+						{
+							"type": "object",
+							"properties": {
+								"type": {
+									"type": "string",
+									"enum": [
+										"text",
+										"json",
+										"xml",
+										"html",
+										"javascript"
+									]
+								},
+								"content": {
+									"type": "string"
+								},
+								"$type": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"type",
+								"content"
+							],
+							"additionalProperties": false
+						},
+						{
+							"type": "object",
+							"properties": {
+								"type": {
+									"type": "string",
+									"const": "file"
+								},
+								"content": {
+									"type": "object",
+									"properties": {
+										"src": {
+											"type": "string"
+										}
+									},
+									"additionalProperties": false
+								}
+							},
+							"required": [
+								"type",
+								"content"
+							],
+							"additionalProperties": false
+						},
+						{
+							"type": "object",
+							"properties": {
+								"type": {
+									"type": "string",
+									"const": "graphql"
+								},
+								"content": {
+									"type": "object",
+									"properties": {
+										"query": {
+											"type": "string"
+										},
+										"variables": {
+											"type": "string"
+										},
+										"operationName": {
+											"oneOf": [
+												{
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											]
+										}
+									},
+									"required": [
+										"query"
+									],
+									"additionalProperties": false
+								}
+							},
+							"required": [
+								"type",
+								"content"
+							],
+							"additionalProperties": false
+						}
+					]
+				},
+				"auth": {
+					"oneOf": [
+						{
+							"type": "object",
+							"properties": {
+								"id": {
+									"type": "string"
+								},
+								"name": {
+									"type": "string"
+								},
+								"description": {
+									"type": "string"
+								},
+								"type": {
+									"type": "string",
+									"const": "noauth"
+								}
+							},
+							"required": [
+								"type"
+							],
+							"additionalProperties": false
+						},
+						{
+							"type": "object",
+							"properties": {
+								"name": {
+									"type": "string"
+								},
+								"description": {
+									"type": "string"
+								},
+								"credentials": {
+									"oneOf": [
+										{
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"key": {
+														"type": "string"
+													},
+													"value": {}
+												},
+												"required": [
+													"key",
+													"value"
+												],
+												"additionalProperties": false
+											}
+										},
+										{
+											"type": "object",
+											"propertyNames": {
+												"type": "string"
+											},
+											"additionalProperties": {}
+										}
+									]
+								},
+								"type": {
+									"type": "string",
+									"enum": [
+										"awsv4",
+										"basic",
+										"bearer",
+										"hawk",
+										"oauth1",
+										"oauth2",
+										"apikey",
+										"edgegrid",
+										"jwt",
+										"digest",
+										"ntlm",
+										"asap",
+										"azure",
+										"sasl",
+										"inherit"
+									]
+								}
+							},
+							"required": [
+								"type"
+							],
+							"additionalProperties": false
+						}
+					]
+				},
+				"scripts": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"type": {
+								"type": "string"
+							},
+							"code": {
+								"type": "string"
+							},
+							"language": {
+								"type": "string",
+								"enum": [
+									"text/javascript"
+								]
+							},
+							"packages": {
+								"type": "object",
+								"propertyNames": {
+									"type": "string"
+								},
+								"additionalProperties": {
+									"type": "object",
+									"properties": {
+										"id": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"id"
+									],
+									"additionalProperties": false
+								}
+							},
+							"requests": {
+								"type": "object",
+								"propertyNames": {
+									"type": "string"
+								},
+								"additionalProperties": {
+									"type": "object",
+									"properties": {
+										"workspace": {
+											"type": "string"
+										},
+										"collection": {
+											"type": "string"
+										},
+										"location": {
+											"type": "array",
+											"items": {
+												"type": "string"
+											}
+										}
+									},
+									"required": [
+										"workspace",
+										"collection",
+										"location"
+									],
+									"additionalProperties": false
+								}
+							}
+						},
+						"required": [
+							"type",
+							"code"
+						],
+						"additionalProperties": false
+					}
+				},
+				"settings": {
+					"type": "object",
+					"properties": {
+						"protocolVersion": {
+							"type": "string",
+							"enum": [
+								"auto",
+								"http1",
+								"http2"
+							]
+						},
+						"strictSSL": {
+							"type": "boolean"
+						},
+						"followRedirects": {
+							"type": "boolean"
+						},
+						"maxRedirects": {
+							"type": "number"
+						},
+						"followOriginalHttpMethod": {
+							"type": "boolean"
+						},
+						"followAuthorizationHeader": {
+							"type": "boolean"
+						},
+						"removeRefererHeaderOnRedirect": {
+							"type": "boolean"
+						},
+						"insecureHTTPParser": {
+							"type": "boolean"
+						},
+						"disableUrlEncoding": {
+							"type": "boolean"
+						},
+						"disableCookies": {
+							"type": "boolean"
+						},
+						"maxResponseSize": {
+							"type": "number"
+						},
+						"maxHeaderSize": {
+							"type": "number"
+						},
+						"disabledSystemHeaders": {
+							"type": "array",
+							"items": {
+								"type": "string",
+								"enum": [
+									"cache-control",
+									"postman-token",
+									"content-type",
+									"content-length",
+									"accept-encoding",
+									"user-agent",
+									"connection",
+									"accept",
+									"host",
+									"x-amz-date",
+									"x-amz-security-token",
+									"x-amz-content-sha256"
+								]
+							}
+						},
+						"tlsPreferServerCiphers": {
+							"type": "boolean"
+						},
+						"tlsDisabledProtocols": {
+							"type": "array",
+							"items": {
+								"type": "string",
+								"enum": [
+									"TLSv1",
+									"TLSv1_1",
+									"TLSv1_2",
+									"TLSv1_3"
+								]
+							}
+						},
+						"tlsCipherSelection": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						}
+					},
+					"additionalProperties": false
+				},
+				"examples": {
+					"type": "string"
+				},
+				"order": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"$kind"
+			],
+			"additionalProperties": false
+		},
+		{
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"name": {
+					"type": "string"
+				},
+				"description": {
+					"type": "string"
+				},
+				"url": {
+					"type": "string"
+				},
+				"query": {
+					"type": "string"
+				},
+				"variables": {
+					"type": "string"
+				},
+				"headers": {
+					"oneOf": [
+						{
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"key": {
+										"type": "string"
+									},
+									"value": {
+										"type": "string"
+									},
+									"disabled": {
+										"type": "boolean"
+									},
+									"description": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"key",
+									"value"
+								],
+								"additionalProperties": false
+							}
+						},
+						{
+							"type": "object",
+							"propertyNames": {
+								"type": "string"
+							},
+							"additionalProperties": {
+								"type": "string"
+							}
+						}
+					]
+				},
+				"settings": {
+					"type": "object",
+					"properties": {
+						"disabledSystemHeaders": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						}
+					},
+					"additionalProperties": false
+				},
+				"auth": {
+					"oneOf": [
+						{
+							"type": "object",
+							"properties": {
+								"id": {
+									"type": "string"
+								},
+								"name": {
+									"type": "string"
+								},
+								"description": {
+									"type": "string"
+								},
+								"type": {
+									"type": "string",
+									"const": "noauth"
+								}
+							},
+							"required": [
+								"type"
+							],
+							"additionalProperties": false
+						},
+						{
+							"type": "object",
+							"properties": {
+								"name": {
+									"type": "string"
+								},
+								"description": {
+									"type": "string"
+								},
+								"credentials": {
+									"oneOf": [
+										{
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"key": {
+														"type": "string"
+													},
+													"value": {}
+												},
+												"required": [
+													"key",
+													"value"
+												],
+												"additionalProperties": false
+											}
+										},
+										{
+											"type": "object",
+											"propertyNames": {
+												"type": "string"
+											},
+											"additionalProperties": {}
+										}
+									]
+								},
+								"type": {
+									"type": "string",
+									"enum": [
+										"awsv4",
+										"basic",
+										"bearer",
+										"hawk",
+										"oauth1",
+										"oauth2",
+										"apikey",
+										"edgegrid",
+										"jwt",
+										"digest",
+										"ntlm",
+										"asap",
+										"azure",
+										"sasl",
+										"inherit"
+									]
+								}
+							},
+							"required": [
+								"type"
+							],
+							"additionalProperties": false
+						}
+					]
+				},
+				"schema": {
+					"oneOf": [
+						{
+							"type": "object",
+							"properties": {
+								"source": {
+									"type": "string",
+									"const": "none"
+								}
+							},
+							"required": [
+								"source"
+							],
+							"additionalProperties": false
+						},
+						{
+							"type": "object",
+							"properties": {
+								"source": {
+									"type": "string",
+									"const": "auto"
+								}
+							},
+							"required": [
+								"source"
+							],
+							"additionalProperties": false
+						},
+						{
+							"type": "object",
+							"properties": {
+								"source": {
+									"type": "string",
+									"const": "file"
+								},
+								"location": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"source",
+								"location"
+							],
+							"additionalProperties": false
+						},
+						{
+							"type": "object",
+							"properties": {
+								"source": {
+									"type": "string",
+									"const": "api"
+								},
+								"apiId": {
+									"type": "string"
+								},
+								"versionId": {
+									"type": "string"
+								},
+								"releaseId": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"source",
+								"apiId",
+								"versionId"
+							],
+							"additionalProperties": false
+						},
+						{
+							"type": "object",
+							"properties": {
+								"source": {
+									"type": "string",
+									"const": "specification"
+								},
+								"specificationId": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"source",
+								"specificationId"
+							],
+							"additionalProperties": false
+						},
+						{
+							"type": "object",
+							"properties": {
+								"source": {
+									"type": "string",
+									"const": "url"
+								},
+								"url": {
+									"type": "string"
+								},
+								"auth": {
+									"oneOf": [
+										{
+											"oneOf": [
+												{
+													"type": "object",
+													"properties": {
+														"id": {
+															"type": "string"
+														},
+														"name": {
+															"type": "string"
+														},
+														"description": {
+															"type": "string"
+														},
+														"type": {
+															"type": "string",
+															"const": "noauth"
+														}
+													},
+													"required": [
+														"type"
+													],
+													"additionalProperties": false
+												},
+												{
+													"type": "object",
+													"properties": {
+														"name": {
+															"type": "string"
+														},
+														"description": {
+															"type": "string"
+														},
+														"credentials": {
+															"oneOf": [
+																{
+																	"type": "array",
+																	"items": {
+																		"type": "object",
+																		"properties": {
+																			"key": {
+																				"type": "string"
+																			},
+																			"value": {}
+																		},
+																		"required": [
+																			"key",
+																			"value"
+																		],
+																		"additionalProperties": false
+																	}
+																},
+																{
+																	"type": "object",
+																	"propertyNames": {
+																		"type": "string"
+																	},
+																	"additionalProperties": {}
+																}
+															]
+														},
+														"type": {
+															"type": "string",
+															"enum": [
+																"awsv4",
+																"basic",
+																"bearer",
+																"hawk",
+																"oauth1",
+																"oauth2",
+																"apikey",
+																"edgegrid",
+																"jwt",
+																"digest",
+																"ntlm",
+																"asap",
+																"azure",
+																"sasl",
+																"inherit"
+															]
+														}
+													},
+													"required": [
+														"type"
+													],
+													"additionalProperties": false
+												}
+											]
+										},
+										{
+											"type": "array",
+											"items": {
+												"oneOf": [
+													{
+														"type": "object",
+														"properties": {
+															"id": {
+																"type": "string"
+															},
+															"name": {
+																"type": "string"
+															},
+															"description": {
+																"type": "string"
+															},
+															"rules": {
+																"oneOf": [
+																	{
+																		"type": "array",
+																		"items": {
+																			"type": "object",
+																			"properties": {
+																				"key": {
+																					"type": "string",
+																					"enum": [
+																						"url"
+																					]
+																				},
+																				"value": {
+																					"type": "string"
+																				}
+																			},
+																			"required": [
+																				"key",
+																				"value"
+																			],
+																			"additionalProperties": false
+																		}
+																	},
+																	{
+																		"type": "object",
+																		"properties": {
+																			"url": {
+																				"type": "string"
+																			}
+																		},
+																		"required": [
+																			"url"
+																		],
+																		"additionalProperties": false
+																	}
+																]
+															},
+															"type": {
+																"type": "string",
+																"const": "noauth"
+															}
+														},
+														"required": [
+															"id",
+															"name",
+															"type"
+														],
+														"additionalProperties": false
+													},
+													{
+														"type": "object",
+														"properties": {
+															"id": {
+																"type": "string"
+															},
+															"name": {
+																"type": "string"
+															},
+															"description": {
+																"type": "string"
+															},
+															"rules": {
+																"oneOf": [
+																	{
+																		"type": "array",
+																		"items": {
+																			"type": "object",
+																			"properties": {
+																				"key": {
+																					"type": "string",
+																					"enum": [
+																						"url"
+																					]
+																				},
+																				"value": {
+																					"type": "string"
+																				}
+																			},
+																			"required": [
+																				"key",
+																				"value"
+																			],
+																			"additionalProperties": false
+																		}
+																	},
+																	{
+																		"type": "object",
+																		"properties": {
+																			"url": {
+																				"type": "string"
+																			}
+																		},
+																		"required": [
+																			"url"
+																		],
+																		"additionalProperties": false
+																	}
+																]
+															},
+															"credentials": {
+																"oneOf": [
+																	{
+																		"type": "array",
+																		"items": {
+																			"type": "object",
+																			"properties": {
+																				"key": {
+																					"type": "string"
+																				},
+																				"value": {}
+																			},
+																			"required": [
+																				"key",
+																				"value"
+																			],
+																			"additionalProperties": false
+																		}
+																	},
+																	{
+																		"type": "object",
+																		"propertyNames": {
+																			"type": "string"
+																		},
+																		"additionalProperties": {}
+																	}
+																]
+															},
+															"type": {
+																"type": "string",
+																"enum": [
+																	"awsv4",
+																	"basic",
+																	"bearer",
+																	"hawk",
+																	"oauth1",
+																	"oauth2",
+																	"apikey",
+																	"edgegrid",
+																	"jwt",
+																	"digest",
+																	"ntlm",
+																	"asap",
+																	"azure",
+																	"sasl"
+																]
+															}
+														},
+														"required": [
+															"id",
+															"name",
+															"type"
+														],
+														"additionalProperties": false
+													}
+												]
+											}
+										}
+									]
+								}
+							},
+							"required": [
+								"source",
+								"url"
+							],
+							"additionalProperties": false
+						}
+					]
+				},
+				"scripts": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"type": {
+								"type": "string"
+							},
+							"code": {
+								"type": "string"
+							},
+							"language": {
+								"type": "string",
+								"enum": [
+									"text/javascript"
+								]
+							},
+							"packages": {
+								"type": "object",
+								"propertyNames": {
+									"type": "string"
+								},
+								"additionalProperties": {
+									"type": "object",
+									"properties": {
+										"id": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"id"
+									],
+									"additionalProperties": false
+								}
+							},
+							"requests": {
+								"type": "object",
+								"propertyNames": {
+									"type": "string"
+								},
+								"additionalProperties": {
+									"type": "object",
+									"properties": {
+										"workspace": {
+											"type": "string"
+										},
+										"collection": {
+											"type": "string"
+										},
+										"location": {
+											"type": "array",
+											"items": {
+												"type": "string"
+											}
+										}
+									},
+									"required": [
+										"workspace",
+										"collection",
+										"location"
+									],
+									"additionalProperties": false
+								}
+							}
+						},
+						"required": [
+							"type",
+							"code"
+						],
+						"additionalProperties": false
+					}
+				},
+				"examples": {
+					"type": "string"
+				},
+				"order": {
+					"type": "number"
+				},
+				"$kind": {
+					"type": "string",
+					"const": "graphql-request"
+				}
+			},
+			"required": [
+				"$kind"
+			],
+			"additionalProperties": false
+		},
+		{
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"name": {
+					"type": "string"
+				},
+				"description": {
+					"type": "string"
+				},
+				"url": {
+					"type": "string"
+				},
+				"methodPath": {
+					"type": "string"
+				},
+				"methodDescriptor": {
+					"type": "string"
+				},
+				"message": {
+					"type": "object",
+					"properties": {
+						"content": {
+							"type": "string"
+						}
+					},
+					"additionalProperties": false
+				},
+				"metadata": {
+					"oneOf": [
+						{
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"key": {
+										"type": "string"
+									},
+									"value": {
+										"type": "string"
+									},
+									"disabled": {
+										"type": "boolean"
+									},
+									"description": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"key",
+									"value"
+								],
+								"additionalProperties": false
+							}
+						},
+						{
+							"type": "object",
+							"propertyNames": {
+								"type": "string"
+							},
+							"additionalProperties": {
+								"type": "string"
+							}
+						}
+					]
+				},
+				"settings": {
+					"type": "object",
+					"properties": {
+						"secureConnection": {
+							"type": "boolean"
+						},
+						"strictSSL": {
+							"type": "boolean"
+						},
+						"serverNameOverride": {
+							"type": "string"
+						},
+						"maxResponseMessageSize": {
+							"type": "number"
+						},
+						"includeDefaultFields": {
+							"type": "boolean"
+						},
+						"connectionTimeout": {
+							"type": "number"
+						}
+					},
+					"additionalProperties": false
+				},
+				"auth": {
+					"oneOf": [
+						{
+							"type": "object",
+							"properties": {
+								"id": {
+									"type": "string"
+								},
+								"name": {
+									"type": "string"
+								},
+								"description": {
+									"type": "string"
+								},
+								"type": {
+									"type": "string",
+									"const": "noauth"
+								}
+							},
+							"required": [
+								"type"
+							],
+							"additionalProperties": false
+						},
+						{
+							"type": "object",
+							"properties": {
+								"name": {
+									"type": "string"
+								},
+								"description": {
+									"type": "string"
+								},
+								"credentials": {
+									"oneOf": [
+										{
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"key": {
+														"type": "string"
+													},
+													"value": {}
+												},
+												"required": [
+													"key",
+													"value"
+												],
+												"additionalProperties": false
+											}
+										},
+										{
+											"type": "object",
+											"propertyNames": {
+												"type": "string"
+											},
+											"additionalProperties": {}
+										}
+									]
+								},
+								"type": {
+									"type": "string",
+									"enum": [
+										"awsv4",
+										"basic",
+										"bearer",
+										"hawk",
+										"oauth1",
+										"oauth2",
+										"apikey",
+										"edgegrid",
+										"jwt",
+										"digest",
+										"ntlm",
+										"asap",
+										"azure",
+										"sasl",
+										"inherit"
+									]
+								}
+							},
+							"required": [
+								"type"
+							],
+							"additionalProperties": false
+						}
+					]
+				},
+				"schema": {
+					"oneOf": [
+						{
+							"type": "object",
+							"properties": {
+								"source": {
+									"type": "string",
+									"const": "none"
+								}
+							},
+							"required": [
+								"source"
+							],
+							"additionalProperties": false
+						},
+						{
+							"type": "object",
+							"properties": {
+								"source": {
+									"type": "string",
+									"const": "auto"
+								}
+							},
+							"required": [
+								"source"
+							],
+							"additionalProperties": false
+						},
+						{
+							"type": "object",
+							"properties": {
+								"source": {
+									"type": "string",
+									"const": "file"
+								},
+								"location": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"source",
+								"location"
+							],
+							"additionalProperties": false
+						},
+						{
+							"type": "object",
+							"properties": {
+								"source": {
+									"type": "string",
+									"const": "api"
+								},
+								"apiId": {
+									"type": "string"
+								},
+								"versionId": {
+									"type": "string"
+								},
+								"releaseId": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"source",
+								"apiId",
+								"versionId"
+							],
+							"additionalProperties": false
+						},
+						{
+							"type": "object",
+							"properties": {
+								"source": {
+									"type": "string",
+									"const": "specification"
+								},
+								"specificationId": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"source",
+								"specificationId"
+							],
+							"additionalProperties": false
+						},
+						{
+							"type": "object",
+							"properties": {
+								"source": {
+									"type": "string",
+									"const": "url"
+								},
+								"url": {
+									"type": "string"
+								},
+								"auth": {
+									"oneOf": [
+										{
+											"oneOf": [
+												{
+													"type": "object",
+													"properties": {
+														"id": {
+															"type": "string"
+														},
+														"name": {
+															"type": "string"
+														},
+														"description": {
+															"type": "string"
+														},
+														"type": {
+															"type": "string",
+															"const": "noauth"
+														}
+													},
+													"required": [
+														"type"
+													],
+													"additionalProperties": false
+												},
+												{
+													"type": "object",
+													"properties": {
+														"name": {
+															"type": "string"
+														},
+														"description": {
+															"type": "string"
+														},
+														"credentials": {
+															"oneOf": [
+																{
+																	"type": "array",
+																	"items": {
+																		"type": "object",
+																		"properties": {
+																			"key": {
+																				"type": "string"
+																			},
+																			"value": {}
+																		},
+																		"required": [
+																			"key",
+																			"value"
+																		],
+																		"additionalProperties": false
+																	}
+																},
+																{
+																	"type": "object",
+																	"propertyNames": {
+																		"type": "string"
+																	},
+																	"additionalProperties": {}
+																}
+															]
+														},
+														"type": {
+															"type": "string",
+															"enum": [
+																"awsv4",
+																"basic",
+																"bearer",
+																"hawk",
+																"oauth1",
+																"oauth2",
+																"apikey",
+																"edgegrid",
+																"jwt",
+																"digest",
+																"ntlm",
+																"asap",
+																"azure",
+																"sasl",
+																"inherit"
+															]
+														}
+													},
+													"required": [
+														"type"
+													],
+													"additionalProperties": false
+												}
+											]
+										},
+										{
+											"type": "array",
+											"items": {
+												"oneOf": [
+													{
+														"type": "object",
+														"properties": {
+															"id": {
+																"type": "string"
+															},
+															"name": {
+																"type": "string"
+															},
+															"description": {
+																"type": "string"
+															},
+															"rules": {
+																"oneOf": [
+																	{
+																		"type": "array",
+																		"items": {
+																			"type": "object",
+																			"properties": {
+																				"key": {
+																					"type": "string",
+																					"enum": [
+																						"url"
+																					]
+																				},
+																				"value": {
+																					"type": "string"
+																				}
+																			},
+																			"required": [
+																				"key",
+																				"value"
+																			],
+																			"additionalProperties": false
+																		}
+																	},
+																	{
+																		"type": "object",
+																		"properties": {
+																			"url": {
+																				"type": "string"
+																			}
+																		},
+																		"required": [
+																			"url"
+																		],
+																		"additionalProperties": false
+																	}
+																]
+															},
+															"type": {
+																"type": "string",
+																"const": "noauth"
+															}
+														},
+														"required": [
+															"id",
+															"name",
+															"type"
+														],
+														"additionalProperties": false
+													},
+													{
+														"type": "object",
+														"properties": {
+															"id": {
+																"type": "string"
+															},
+															"name": {
+																"type": "string"
+															},
+															"description": {
+																"type": "string"
+															},
+															"rules": {
+																"oneOf": [
+																	{
+																		"type": "array",
+																		"items": {
+																			"type": "object",
+																			"properties": {
+																				"key": {
+																					"type": "string",
+																					"enum": [
+																						"url"
+																					]
+																				},
+																				"value": {
+																					"type": "string"
+																				}
+																			},
+																			"required": [
+																				"key",
+																				"value"
+																			],
+																			"additionalProperties": false
+																		}
+																	},
+																	{
+																		"type": "object",
+																		"properties": {
+																			"url": {
+																				"type": "string"
+																			}
+																		},
+																		"required": [
+																			"url"
+																		],
+																		"additionalProperties": false
+																	}
+																]
+															},
+															"credentials": {
+																"oneOf": [
+																	{
+																		"type": "array",
+																		"items": {
+																			"type": "object",
+																			"properties": {
+																				"key": {
+																					"type": "string"
+																				},
+																				"value": {}
+																			},
+																			"required": [
+																				"key",
+																				"value"
+																			],
+																			"additionalProperties": false
+																		}
+																	},
+																	{
+																		"type": "object",
+																		"propertyNames": {
+																			"type": "string"
+																		},
+																		"additionalProperties": {}
+																	}
+																]
+															},
+															"type": {
+																"type": "string",
+																"enum": [
+																	"awsv4",
+																	"basic",
+																	"bearer",
+																	"hawk",
+																	"oauth1",
+																	"oauth2",
+																	"apikey",
+																	"edgegrid",
+																	"jwt",
+																	"digest",
+																	"ntlm",
+																	"asap",
+																	"azure",
+																	"sasl"
+																]
+															}
+														},
+														"required": [
+															"id",
+															"name",
+															"type"
+														],
+														"additionalProperties": false
+													}
+												]
+											}
+										}
+									]
+								}
+							},
+							"required": [
+								"source",
+								"url"
+							],
+							"additionalProperties": false
+						}
+					]
+				},
+				"scripts": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"type": {
+								"type": "string"
+							},
+							"code": {
+								"type": "string"
+							},
+							"language": {
+								"type": "string",
+								"enum": [
+									"text/javascript"
+								]
+							},
+							"packages": {
+								"type": "object",
+								"propertyNames": {
+									"type": "string"
+								},
+								"additionalProperties": {
+									"type": "object",
+									"properties": {
+										"id": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"id"
+									],
+									"additionalProperties": false
+								}
+							},
+							"requests": {
+								"type": "object",
+								"propertyNames": {
+									"type": "string"
+								},
+								"additionalProperties": {
+									"type": "object",
+									"properties": {
+										"workspace": {
+											"type": "string"
+										},
+										"collection": {
+											"type": "string"
+										},
+										"location": {
+											"type": "array",
+											"items": {
+												"type": "string"
+											}
+										}
+									},
+									"required": [
+										"workspace",
+										"collection",
+										"location"
+									],
+									"additionalProperties": false
+								}
+							}
+						},
+						"required": [
+							"type",
+							"code"
+						],
+						"additionalProperties": false
+					}
+				},
+				"examples": {
+					"type": "string"
+				},
+				"order": {
+					"type": "number"
+				},
+				"$kind": {
+					"type": "string",
+					"const": "grpc-request"
+				}
+			},
+			"required": [
+				"$kind"
+			],
+			"additionalProperties": false
+		},
+		{
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"name": {
+					"type": "string"
+				},
+				"description": {
+					"type": "string"
+				},
+				"$kind": {
+					"type": "string",
+					"const": "websocket-request"
+				},
+				"url": {
+					"type": "string"
+				},
+				"headers": {
+					"oneOf": [
+						{
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"key": {
+										"type": "string"
+									},
+									"value": {
+										"type": "string"
+									},
+									"disabled": {
+										"type": "boolean"
+									},
+									"description": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"key",
+									"value"
+								],
+								"additionalProperties": false
+							}
+						},
+						{
+							"type": "object",
+							"propertyNames": {
+								"type": "string"
+							},
+							"additionalProperties": {
+								"type": "string"
+							}
+						}
+					]
+				},
+				"queryParams": {
+					"oneOf": [
+						{
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"key": {
+										"oneOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"value": {
+										"oneOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"disabled": {
+										"type": "boolean"
+									},
+									"description": {
+										"type": "string"
+									}
+								},
+								"additionalProperties": false
+							}
+						},
+						{
+							"type": "object",
+							"propertyNames": {
+								"type": "string"
+							},
+							"additionalProperties": {
+								"oneOf": [
+									{
+										"type": "string"
+									},
+									{
+										"type": "null"
+									}
+								]
+							}
+						}
+					]
+				},
+				"settings": {
+					"type": "object",
+					"properties": {
+						"handshakeTimeout": {
+							"type": "integer",
+							"minimum": 0,
+							"maximum": 9007199254740991
+						},
+						"retryCount": {
+							"type": "integer",
+							"minimum": 0,
+							"maximum": 9007199254740991
+						},
+						"maxPayload": {
+							"type": "integer",
+							"minimum": 0,
+							"maximum": 9007199254740991
+						},
+						"retryDelay": {
+							"type": "integer",
+							"minimum": 0,
+							"maximum": 9007199254740991
+						},
+						"strictSSL": {
+							"type": "boolean"
+						}
+					},
+					"additionalProperties": false
+				},
+				"examples": {
+					"type": "string"
+				},
+				"messages": {
+					"type": "string"
+				},
+				"order": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"$kind"
+			],
+			"additionalProperties": false
+		},
+		{
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"name": {
+					"type": "string"
+				},
+				"description": {
+					"type": "string"
+				},
+				"$kind": {
+					"type": "string",
+					"const": "socket.io-request"
+				},
+				"url": {
+					"type": "string"
+				},
+				"headers": {
+					"oneOf": [
+						{
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"key": {
+										"type": "string"
+									},
+									"value": {
+										"type": "string"
+									},
+									"disabled": {
+										"type": "boolean"
+									},
+									"description": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"key",
+									"value"
+								],
+								"additionalProperties": false
+							}
+						},
+						{
+							"type": "object",
+							"propertyNames": {
+								"type": "string"
+							},
+							"additionalProperties": {
+								"type": "string"
+							}
+						}
+					]
+				},
+				"queryParams": {
+					"oneOf": [
+						{
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"key": {
+										"oneOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"value": {
+										"oneOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"disabled": {
+										"type": "boolean"
+									},
+									"description": {
+										"type": "string"
+									}
+								},
+								"additionalProperties": false
+							}
+						},
+						{
+							"type": "object",
+							"propertyNames": {
+								"type": "string"
+							},
+							"additionalProperties": {
+								"oneOf": [
+									{
+										"type": "string"
+									},
+									{
+										"type": "null"
+									}
+								]
+							}
+						}
+					]
+				},
+				"events": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"name": {
+								"type": "string"
+							},
+							"description": {
+								"type": "string"
+							},
+							"subscribeOnConnect": {
+								"type": "boolean"
+							}
+						},
+						"required": [
+							"name"
+						],
+						"additionalProperties": false
+					}
+				},
+				"settings": {
+					"type": "object",
+					"properties": {
+						"version": {
+							"type": "string",
+							"enum": [
+								"2",
+								"3",
+								"4"
+							]
+						},
+						"path": {
+							"type": "string"
+						},
+						"handshakeTimeout": {
+							"type": "integer",
+							"minimum": 0,
+							"maximum": 9007199254740991
+						},
+						"retryCount": {
+							"type": "integer",
+							"minimum": 0,
+							"maximum": 9007199254740991
+						},
+						"retryDelay": {
+							"type": "integer",
+							"minimum": 0,
+							"maximum": 9007199254740991
+						},
+						"strictSSL": {
+							"type": "boolean"
+						}
+					},
+					"additionalProperties": false
+				},
+				"examples": {
+					"type": "string"
+				},
+				"messages": {
+					"type": "string"
+				},
+				"order": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"$kind"
+			],
+			"additionalProperties": false
+		},
+		{
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"name": {
+					"type": "string"
+				},
+				"description": {
+					"type": "string"
+				},
+				"$kind": {
+					"type": "string",
+					"const": "mqtt-request"
+				},
+				"url": {
+					"type": "string"
+				},
+				"clientId": {
+					"type": "string"
+				},
+				"version": {
+					"oneOf": [
+						{
+							"type": "number",
+							"const": 4
+						},
+						{
+							"type": "number",
+							"const": 5
+						}
+					]
+				},
+				"topics": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"name": {
+								"type": "string"
+							},
+							"qos": {
+								"type": "number",
+								"enum": [
+									0,
+									1,
+									2
+								]
+							},
+							"subscribe": {
+								"type": "boolean"
+							},
+							"description": {
+								"type": "string"
+							},
+							"settings": {
+								"oneOf": [
+									{
+										"type": "object",
+										"properties": {
+											"noLocal": {
+												"type": "boolean"
+											},
+											"retainAsPublished": {
+												"type": "boolean"
+											},
+											"retainHandling": {
+												"type": "number",
+												"enum": [
+													0,
+													1,
+													2
+												]
+											},
+											"subscriptionIdentifier": {
+												"type": "integer",
+												"minimum": -9007199254740991,
+												"maximum": 9007199254740991
+											}
+										},
+										"additionalProperties": false
+									},
+									{
+										"type": "number",
+										"const": 0
+									}
+								]
+							},
+							"userProperties": {
+								"oneOf": [
+									{
+										"type": "array",
+										"items": {
+											"type": "object",
+											"properties": {
+												"key": {
+													"type": "string"
+												},
+												"value": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"key",
+												"value"
+											],
+											"additionalProperties": false
+										}
+									},
+									{
+										"type": "object",
+										"propertyNames": {
+											"type": "string"
+										},
+										"additionalProperties": {
+											"type": "string"
+										}
+									}
+								]
+							}
+						},
+						"required": [
+							"name"
+						],
+						"additionalProperties": false
+					}
+				},
+				"lastWill": {
+					"type": "object",
+					"properties": {
+						"payload": {
+							"type": "string"
+						},
+						"topic": {
+							"type": "string"
+						},
+						"qos": {
+							"type": "number",
+							"enum": [
+								0,
+								1,
+								2
+							]
+						},
+						"retain": {
+							"type": "boolean"
+						},
+						"type": {
+							"type": "string",
+							"enum": [
+								"text",
+								"json",
+								"hex",
+								"base64"
+							]
+						},
+						"properties": {
+							"type": "object",
+							"properties": {
+								"payloadFormatIndicator": {
+									"type": "boolean"
+								},
+								"messageExpiryInterval": {
+									"type": "integer",
+									"minimum": 0,
+									"maximum": 9007199254740991
+								},
+								"willDelayInterval": {
+									"type": "integer",
+									"minimum": 0,
+									"maximum": 9007199254740991
+								},
+								"responseTopic": {
+									"type": "string"
+								},
+								"correlationData": {
+									"type": "string"
+								},
+								"contentType": {
+									"type": "string"
+								},
+								"userProperties": {
+									"oneOf": [
+										{
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"key": {
+														"type": "string"
+													},
+													"value": {
+														"type": "string"
+													}
+												},
+												"required": [
+													"key",
+													"value"
+												],
+												"additionalProperties": false
+											}
+										},
+										{
+											"type": "object",
+											"propertyNames": {
+												"type": "string"
+											},
+											"additionalProperties": {
+												"type": "string"
+											}
+										}
+									]
+								}
+							},
+							"additionalProperties": false
+						}
+					},
+					"additionalProperties": false
+				},
+				"properties": {
+					"type": "object",
+					"properties": {
+						"sessionExpiryInterval": {
+							"type": "integer",
+							"minimum": 0,
+							"maximum": 9007199254740991
+						},
+						"receiveMaximum": {
+							"type": "integer",
+							"minimum": 0,
+							"maximum": 9007199254740991
+						},
+						"maximumPacketSize": {
+							"type": "integer",
+							"minimum": 0,
+							"maximum": 9007199254740991
+						},
+						"requestResponseInformation": {
+							"type": "boolean"
+						},
+						"userProperties": {
+							"oneOf": [
+								{
+									"type": "array",
+									"items": {
+										"type": "object",
+										"properties": {
+											"key": {
+												"type": "string"
+											},
+											"value": {
+												"type": "string"
+											},
+											"disabled": {
+												"type": "boolean"
+											},
+											"description": {
+												"type": "string"
+											}
+										},
+										"required": [
+											"key",
+											"value"
+										],
+										"additionalProperties": false
+									}
+								},
+								{
+									"type": "object",
+									"propertyNames": {
+										"type": "string"
+									},
+									"additionalProperties": {
+										"type": "string"
+									}
+								}
+							]
+						}
+					},
+					"additionalProperties": false
+				},
+				"auth": {
+					"oneOf": [
+						{
+							"type": "object",
+							"properties": {
+								"id": {
+									"type": "string"
+								},
+								"name": {
+									"type": "string"
+								},
+								"description": {
+									"type": "string"
+								},
+								"type": {
+									"type": "string",
+									"const": "noauth"
+								}
+							},
+							"required": [
+								"type"
+							],
+							"additionalProperties": false
+						},
+						{
+							"type": "object",
+							"properties": {
+								"name": {
+									"type": "string"
+								},
+								"description": {
+									"type": "string"
+								},
+								"credentials": {
+									"oneOf": [
+										{
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"key": {
+														"type": "string"
+													},
+													"value": {}
+												},
+												"required": [
+													"key",
+													"value"
+												],
+												"additionalProperties": false
+											}
+										},
+										{
+											"type": "object",
+											"propertyNames": {
+												"type": "string"
+											},
+											"additionalProperties": {}
+										}
+									]
+								},
+								"type": {
+									"type": "string",
+									"enum": [
+										"awsv4",
+										"basic",
+										"bearer",
+										"hawk",
+										"oauth1",
+										"oauth2",
+										"apikey",
+										"edgegrid",
+										"jwt",
+										"digest",
+										"ntlm",
+										"asap",
+										"azure",
+										"sasl",
+										"inherit"
+									]
+								}
+							},
+							"required": [
+								"type"
+							],
+							"additionalProperties": false
+						}
+					]
+				},
+				"settings": {
+					"type": "object",
+					"properties": {
+						"cleanSession": {
+							"type": "boolean"
+						},
+						"keepAlive": {
+							"type": "integer",
+							"minimum": 0,
+							"maximum": 9007199254740991
+						},
+						"autoReconnect": {
+							"type": "boolean"
+						},
+						"connectionTimeout": {
+							"type": "integer",
+							"minimum": 0,
+							"maximum": 9007199254740991
+						},
+						"strictSSL": {
+							"type": "boolean"
+						}
+					},
+					"additionalProperties": false
+				},
+				"examples": {
+					"type": "string"
+				},
+				"messages": {
+					"type": "string"
+				},
+				"order": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"$kind"
+			],
+			"additionalProperties": false
+		},
+		{
+			"oneOf": [
+				{
+					"type": "object",
+					"properties": {
+						"id": {
+							"type": "string"
+						},
+						"name": {
+							"type": "string"
+						},
+						"description": {
+							"type": "string"
+						},
+						"$kind": {
+							"type": "string",
+							"const": "mcp-request"
+						},
+						"message": {
+							"type": "string"
+						},
+						"auth": {
+							"oneOf": [
+								{
+									"type": "object",
+									"properties": {
+										"id": {
+											"type": "string"
+										},
+										"name": {
+											"type": "string"
+										},
+										"description": {
+											"type": "string"
+										},
+										"type": {
+											"type": "string",
+											"const": "noauth"
+										}
+									},
+									"required": [
+										"type"
+									],
+									"additionalProperties": false
+								},
+								{
+									"type": "object",
+									"properties": {
+										"name": {
+											"type": "string"
+										},
+										"description": {
+											"type": "string"
+										},
+										"credentials": {
+											"oneOf": [
+												{
+													"type": "array",
+													"items": {
+														"type": "object",
+														"properties": {
+															"key": {
+																"type": "string"
+															},
+															"value": {}
+														},
+														"required": [
+															"key",
+															"value"
+														],
+														"additionalProperties": false
+													}
+												},
+												{
+													"type": "object",
+													"propertyNames": {
+														"type": "string"
+													},
+													"additionalProperties": {}
+												}
+											]
+										},
+										"type": {
+											"type": "string",
+											"enum": [
+												"awsv4",
+												"basic",
+												"bearer",
+												"hawk",
+												"oauth1",
+												"oauth2",
+												"apikey",
+												"edgegrid",
+												"jwt",
+												"digest",
+												"ntlm",
+												"asap",
+												"azure",
+												"sasl",
+												"inherit"
+											]
+										}
+									},
+									"required": [
+										"type"
+									],
+									"additionalProperties": false
+								}
+							]
+						},
+						"scripts": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"type": {
+										"type": "string"
+									},
+									"code": {
+										"type": "string"
+									},
+									"language": {
+										"type": "string",
+										"enum": [
+											"text/javascript"
+										]
+									},
+									"packages": {
+										"type": "object",
+										"propertyNames": {
+											"type": "string"
+										},
+										"additionalProperties": {
+											"type": "object",
+											"properties": {
+												"id": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"id"
+											],
+											"additionalProperties": false
+										}
+									},
+									"requests": {
+										"type": "object",
+										"propertyNames": {
+											"type": "string"
+										},
+										"additionalProperties": {
+											"type": "object",
+											"properties": {
+												"workspace": {
+													"type": "string"
+												},
+												"collection": {
+													"type": "string"
+												},
+												"location": {
+													"type": "array",
+													"items": {
+														"type": "string"
+													}
+												}
+											},
+											"required": [
+												"workspace",
+												"collection",
+												"location"
+											],
+											"additionalProperties": false
+										}
+									}
+								},
+								"required": [
+									"type",
+									"code"
+								],
+								"additionalProperties": false
+							}
+						},
+						"order": {
+							"type": "number"
+						},
+						"transport": {
+							"type": "string",
+							"const": "sse"
+						},
+						"url": {
+							"type": "string"
+						},
+						"headers": {
+							"oneOf": [
+								{
+									"type": "array",
+									"items": {
+										"type": "object",
+										"properties": {
+											"key": {
+												"type": "string"
+											},
+											"value": {
+												"type": "string"
+											},
+											"disabled": {
+												"type": "boolean"
+											},
+											"description": {
+												"type": "string"
+											}
+										},
+										"required": [
+											"key",
+											"value"
+										],
+										"additionalProperties": false
+									}
+								},
+								{
+									"type": "object",
+									"propertyNames": {
+										"type": "string"
+									},
+									"additionalProperties": {
+										"type": "string"
+									}
+								}
+							]
+						},
+						"settings": {
+							"type": "object",
+							"properties": {
+								"version": {
+									"type": "string",
+									"enum": [
+										"auto",
+										"legacy",
+										"2026-07-28"
+									]
+								},
+								"strictSSL": {
+									"type": "boolean"
+								},
+								"requestTimeout": {
+									"type": "number"
+								},
+								"sessionTimeout": {
+									"type": "number"
+								}
+							},
+							"additionalProperties": false
+						}
+					},
+					"required": [
+						"$kind",
+						"transport"
+					],
+					"additionalProperties": false
+				},
+				{
+					"type": "object",
+					"properties": {
+						"id": {
+							"type": "string"
+						},
+						"name": {
+							"type": "string"
+						},
+						"description": {
+							"type": "string"
+						},
+						"$kind": {
+							"type": "string",
+							"const": "mcp-request"
+						},
+						"message": {
+							"type": "string"
+						},
+						"auth": {
+							"oneOf": [
+								{
+									"type": "object",
+									"properties": {
+										"id": {
+											"type": "string"
+										},
+										"name": {
+											"type": "string"
+										},
+										"description": {
+											"type": "string"
+										},
+										"type": {
+											"type": "string",
+											"const": "noauth"
+										}
+									},
+									"required": [
+										"type"
+									],
+									"additionalProperties": false
+								},
+								{
+									"type": "object",
+									"properties": {
+										"name": {
+											"type": "string"
+										},
+										"description": {
+											"type": "string"
+										},
+										"credentials": {
+											"oneOf": [
+												{
+													"type": "array",
+													"items": {
+														"type": "object",
+														"properties": {
+															"key": {
+																"type": "string"
+															},
+															"value": {}
+														},
+														"required": [
+															"key",
+															"value"
+														],
+														"additionalProperties": false
+													}
+												},
+												{
+													"type": "object",
+													"propertyNames": {
+														"type": "string"
+													},
+													"additionalProperties": {}
+												}
+											]
+										},
+										"type": {
+											"type": "string",
+											"enum": [
+												"awsv4",
+												"basic",
+												"bearer",
+												"hawk",
+												"oauth1",
+												"oauth2",
+												"apikey",
+												"edgegrid",
+												"jwt",
+												"digest",
+												"ntlm",
+												"asap",
+												"azure",
+												"sasl",
+												"inherit"
+											]
+										}
+									},
+									"required": [
+										"type"
+									],
+									"additionalProperties": false
+								}
+							]
+						},
+						"scripts": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"type": {
+										"type": "string"
+									},
+									"code": {
+										"type": "string"
+									},
+									"language": {
+										"type": "string",
+										"enum": [
+											"text/javascript"
+										]
+									},
+									"packages": {
+										"type": "object",
+										"propertyNames": {
+											"type": "string"
+										},
+										"additionalProperties": {
+											"type": "object",
+											"properties": {
+												"id": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"id"
+											],
+											"additionalProperties": false
+										}
+									},
+									"requests": {
+										"type": "object",
+										"propertyNames": {
+											"type": "string"
+										},
+										"additionalProperties": {
+											"type": "object",
+											"properties": {
+												"workspace": {
+													"type": "string"
+												},
+												"collection": {
+													"type": "string"
+												},
+												"location": {
+													"type": "array",
+													"items": {
+														"type": "string"
+													}
+												}
+											},
+											"required": [
+												"workspace",
+												"collection",
+												"location"
+											],
+											"additionalProperties": false
+										}
+									}
+								},
+								"required": [
+									"type",
+									"code"
+								],
+								"additionalProperties": false
+							}
+						},
+						"order": {
+							"type": "number"
+						},
+						"transport": {
+							"type": "string",
+							"const": "stdio"
+						},
+						"command": {
+							"type": "string"
+						},
+						"env": {
+							"oneOf": [
+								{
+									"type": "array",
+									"items": {
+										"type": "object",
+										"properties": {
+											"key": {
+												"type": "string"
+											},
+											"value": {
+												"type": "string"
+											},
+											"disabled": {
+												"type": "boolean"
+											},
+											"description": {
+												"type": "string"
+											}
+										},
+										"required": [
+											"key",
+											"value"
+										],
+										"additionalProperties": false
+									}
+								},
+								{
+									"type": "object",
+									"propertyNames": {
+										"type": "string"
+									},
+									"additionalProperties": {
+										"type": "string"
+									}
+								}
+							]
+						},
+						"settings": {
+							"type": "object",
+							"properties": {
+								"version": {
+									"type": "string",
+									"enum": [
+										"auto",
+										"legacy",
+										"2026-07-28"
+									]
+								},
+								"requestTimeout": {
+									"type": "number"
+								}
+							},
+							"additionalProperties": false
+						}
+					},
+					"required": [
+						"$kind",
+						"transport"
+					],
+					"additionalProperties": false
+				}
+			]
+		},
+		{
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"name": {
+					"type": "string"
+				},
+				"description": {
+					"type": "string"
+				},
+				"$kind": {
+					"type": "string",
+					"const": "llm-request"
+				},
+				"url": {
+					"type": "string"
+				},
+				"config": {
+					"type": "object",
+					"properties": {
+						"model": {
+							"type": "string"
+						},
+						"provider": {
+							"type": "string"
+						}
+					},
+					"required": [
+						"model",
+						"provider"
+					],
+					"additionalProperties": false
+				},
+				"settings": {
+					"type": "object",
+					"properties": {
+						"temperature": {
+							"type": "number"
+						},
+						"presencePenalty": {
+							"type": "number"
+						},
+						"frequencyPenalty": {
+							"type": "number"
+						},
+						"maxToken": {
+							"type": "number"
+						},
+						"streamResponse": {
+							"type": "boolean"
+						},
+						"responseFormatJSON": {
+							"type": "boolean"
+						},
+						"topP": {
+							"type": "number"
+						},
+						"topK": {
+							"type": "number"
+						},
+						"repetitionPenalty": {
+							"type": "number"
+						},
+						"contextWindow": {
+							"type": "number"
+						},
+						"seed": {
+							"type": "number"
+						},
+						"maxSteps": {
+							"type": "number"
+						},
+						"streamTools": {
+							"type": "boolean"
+						}
+					},
+					"additionalProperties": false
+				},
+				"userPrompts": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "string"
+							},
+							"value": {
+								"type": "string"
+							},
+							"timestamp": {
+								"type": "number"
+							},
+							"active": {
+								"type": "boolean"
+							},
+							"contentType": {
+								"type": "string",
+								"enum": [
+									"text",
+									"image",
+									"audio",
+									"video",
+									"postman_json",
+									"json",
+									"xml",
+									"html",
+									"binary",
+									"hexdump"
+								]
+							}
+						},
+						"additionalProperties": false
+					}
+				},
+				"systemPrompts": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "string"
+							},
+							"value": {
+								"type": "string"
+							},
+							"timestamp": {
+								"type": "number"
+							},
+							"active": {
+								"type": "boolean"
+							},
+							"contentType": {
+								"type": "string",
+								"enum": [
+									"text",
+									"image",
+									"audio",
+									"video",
+									"postman_json",
+									"json",
+									"xml",
+									"html",
+									"binary",
+									"hexdump"
+								]
+							}
+						},
+						"additionalProperties": false
+					}
+				},
+				"mcpConfig": {
+					"type": "string"
+				},
+				"enabledTools": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"clientTools": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "string"
+							},
+							"tools": {
+								"type": "array",
+								"items": {
+									"type": "object",
+									"properties": {
+										"id": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"id"
+									],
+									"additionalProperties": false
+								}
+							}
+						},
+						"required": [
+							"id",
+							"tools"
+						],
+						"additionalProperties": false
+					}
+				},
+				"auth": {
+					"oneOf": [
+						{
+							"type": "object",
+							"properties": {
+								"id": {
+									"type": "string"
+								},
+								"name": {
+									"type": "string"
+								},
+								"description": {
+									"type": "string"
+								},
+								"type": {
+									"type": "string",
+									"const": "noauth"
+								}
+							},
+							"required": [
+								"type"
+							],
+							"additionalProperties": false
+						},
+						{
+							"type": "object",
+							"properties": {
+								"name": {
+									"type": "string"
+								},
+								"description": {
+									"type": "string"
+								},
+								"credentials": {
+									"oneOf": [
+										{
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"key": {
+														"type": "string"
+													},
+													"value": {}
+												},
+												"required": [
+													"key",
+													"value"
+												],
+												"additionalProperties": false
+											}
+										},
+										{
+											"type": "object",
+											"propertyNames": {
+												"type": "string"
+											},
+											"additionalProperties": {}
+										}
+									]
+								},
+								"type": {
+									"type": "string",
+									"enum": [
+										"awsv4",
+										"basic",
+										"bearer",
+										"hawk",
+										"oauth1",
+										"oauth2",
+										"apikey",
+										"edgegrid",
+										"jwt",
+										"digest",
+										"ntlm",
+										"asap",
+										"azure",
+										"sasl",
+										"inherit"
+									]
+								}
+							},
+							"required": [
+								"type"
+							],
+							"additionalProperties": false
+						}
+					]
+				},
+				"order": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"$kind"
+			],
+			"additionalProperties": false
+		},
+		{
+			"oneOf": [
+				{
+					"type": "object",
+					"properties": {
+						"id": {
+							"type": "string"
+						},
+						"name": {
+							"type": "string"
+						},
+						"description": {
+							"type": "string"
+						},
+						"$kind": {
+							"type": "string",
+							"const": "data-request"
+						},
+						"url": {
+							"type": "string"
+						},
+						"query": {
+							"type": "string"
+						},
+						"auth": {
+							"oneOf": [
+								{
+									"type": "object",
+									"properties": {
+										"id": {
+											"type": "string"
+										},
+										"name": {
+											"type": "string"
+										},
+										"description": {
+											"type": "string"
+										},
+										"type": {
+											"type": "string",
+											"const": "noauth"
+										}
+									},
+									"required": [
+										"type"
+									],
+									"additionalProperties": false
+								},
+								{
+									"type": "object",
+									"properties": {
+										"name": {
+											"type": "string"
+										},
+										"description": {
+											"type": "string"
+										},
+										"credentials": {
+											"oneOf": [
+												{
+													"type": "array",
+													"items": {
+														"type": "object",
+														"properties": {
+															"key": {
+																"type": "string"
+															},
+															"value": {}
+														},
+														"required": [
+															"key",
+															"value"
+														],
+														"additionalProperties": false
+													}
+												},
+												{
+													"type": "object",
+													"propertyNames": {
+														"type": "string"
+													},
+													"additionalProperties": {}
+												}
+											]
+										},
+										"type": {
+											"type": "string",
+											"enum": [
+												"awsv4",
+												"basic",
+												"bearer",
+												"hawk",
+												"oauth1",
+												"oauth2",
+												"apikey",
+												"edgegrid",
+												"jwt",
+												"digest",
+												"ntlm",
+												"asap",
+												"azure",
+												"sasl",
+												"inherit"
+											]
+										}
+									},
+									"required": [
+										"type"
+									],
+									"additionalProperties": false
+								}
+							]
+						},
+						"visualizations": {
+							"type": "array",
+							"items": {
+								"oneOf": [
+									{
+										"$ref": "#/definitions/v3-data-visualization"
+									},
+									{
+										"type": "object",
+										"properties": {},
+										"additionalProperties": {},
+										"title": "Chart from a later version",
+										"description": "A chart of a kind this version does not know, kept as written.",
+										"not": {
+											"required": [
+												"type"
+											],
+											"properties": {
+												"type": {
+													"enum": [
+														"bar",
+														"line",
+														"area",
+														"radar",
+														"pie",
+														"polar",
+														"scatter",
+														"heatmap",
+														"counter"
+													],
+													"type": "string"
+												}
+											}
+										}
+									}
+								]
+							}
+						},
+						"order": {
+							"type": "number"
+						},
+						"type": {
+							"type": "string",
+							"const": "postgres"
+						},
+						"settings": {
+							"type": "object",
+							"properties": {
+								"rowLimit": {
+									"description": "Largest number of rows returned by a query.",
+									"type": "integer",
+									"minimum": 0,
+									"maximum": 9007199254740991
+								},
+								"queryTimeoutMs": {
+									"description": "How long a query may run, in milliseconds.",
+									"type": "integer",
+									"minimum": 0,
+									"maximum": 9007199254740991
+								},
+								"mutationsEnabled": {
+									"description": "Whether statements that change data are allowed.",
+									"type": "boolean"
+								},
+								"schema": {
+									"description": "Schema queries resolve unqualified names against.",
+									"type": "string"
+								}
+							},
+							"additionalProperties": false
+						}
+					},
+					"required": [
+						"$kind",
+						"type"
+					],
+					"additionalProperties": false
+				},
+				{
+					"type": "object",
+					"properties": {
+						"id": {
+							"type": "string"
+						},
+						"name": {
+							"type": "string"
+						},
+						"description": {
+							"type": "string"
+						},
+						"$kind": {
+							"type": "string",
+							"const": "data-request"
+						},
+						"url": {
+							"type": "string"
+						},
+						"query": {
+							"type": "string"
+						},
+						"auth": {
+							"oneOf": [
+								{
+									"type": "object",
+									"properties": {
+										"id": {
+											"type": "string"
+										},
+										"name": {
+											"type": "string"
+										},
+										"description": {
+											"type": "string"
+										},
+										"type": {
+											"type": "string",
+											"const": "noauth"
+										}
+									},
+									"required": [
+										"type"
+									],
+									"additionalProperties": false
+								},
+								{
+									"type": "object",
+									"properties": {
+										"name": {
+											"type": "string"
+										},
+										"description": {
+											"type": "string"
+										},
+										"credentials": {
+											"oneOf": [
+												{
+													"type": "array",
+													"items": {
+														"type": "object",
+														"properties": {
+															"key": {
+																"type": "string"
+															},
+															"value": {}
+														},
+														"required": [
+															"key",
+															"value"
+														],
+														"additionalProperties": false
+													}
+												},
+												{
+													"type": "object",
+													"propertyNames": {
+														"type": "string"
+													},
+													"additionalProperties": {}
+												}
+											]
+										},
+										"type": {
+											"type": "string",
+											"enum": [
+												"awsv4",
+												"basic",
+												"bearer",
+												"hawk",
+												"oauth1",
+												"oauth2",
+												"apikey",
+												"edgegrid",
+												"jwt",
+												"digest",
+												"ntlm",
+												"asap",
+												"azure",
+												"sasl",
+												"inherit"
+											]
+										}
+									},
+									"required": [
+										"type"
+									],
+									"additionalProperties": false
+								}
+							]
+						},
+						"visualizations": {
+							"type": "array",
+							"items": {
+								"oneOf": [
+									{
+										"$ref": "#/definitions/v3-data-visualization"
+									},
+									{
+										"type": "object",
+										"properties": {},
+										"additionalProperties": {},
+										"title": "Chart from a later version",
+										"description": "A chart of a kind this version does not know, kept as written.",
+										"not": {
+											"required": [
+												"type"
+											],
+											"properties": {
+												"type": {
+													"enum": [
+														"bar",
+														"line",
+														"area",
+														"radar",
+														"pie",
+														"polar",
+														"scatter",
+														"heatmap",
+														"counter"
+													],
+													"type": "string"
+												}
+											}
+										}
+									}
+								]
+							}
+						},
+						"order": {
+							"type": "number"
+						},
+						"type": {
+							"type": "string",
+							"const": "mysql"
+						},
+						"settings": {
+							"type": "object",
+							"properties": {
+								"rowLimit": {
+									"description": "Largest number of rows returned by a query.",
+									"type": "integer",
+									"minimum": 0,
+									"maximum": 9007199254740991
+								},
+								"queryTimeoutMs": {
+									"description": "How long a query may run, in milliseconds.",
+									"type": "integer",
+									"minimum": 0,
+									"maximum": 9007199254740991
+								},
+								"mutationsEnabled": {
+									"description": "Whether statements that change data are allowed.",
+									"type": "boolean"
+								}
+							},
+							"additionalProperties": false
+						}
+					},
+					"required": [
+						"$kind",
+						"type"
+					],
+					"additionalProperties": false
+				},
+				{
+					"type": "object",
+					"properties": {
+						"id": {
+							"type": "string"
+						},
+						"name": {
+							"type": "string"
+						},
+						"description": {
+							"type": "string"
+						},
+						"$kind": {
+							"type": "string",
+							"const": "data-request"
+						},
+						"url": {
+							"type": "string"
+						},
+						"query": {
+							"type": "string"
+						},
+						"auth": {
+							"oneOf": [
+								{
+									"type": "object",
+									"properties": {
+										"id": {
+											"type": "string"
+										},
+										"name": {
+											"type": "string"
+										},
+										"description": {
+											"type": "string"
+										},
+										"type": {
+											"type": "string",
+											"const": "noauth"
+										}
+									},
+									"required": [
+										"type"
+									],
+									"additionalProperties": false
+								},
+								{
+									"type": "object",
+									"properties": {
+										"name": {
+											"type": "string"
+										},
+										"description": {
+											"type": "string"
+										},
+										"credentials": {
+											"oneOf": [
+												{
+													"type": "array",
+													"items": {
+														"type": "object",
+														"properties": {
+															"key": {
+																"type": "string"
+															},
+															"value": {}
+														},
+														"required": [
+															"key",
+															"value"
+														],
+														"additionalProperties": false
+													}
+												},
+												{
+													"type": "object",
+													"propertyNames": {
+														"type": "string"
+													},
+													"additionalProperties": {}
+												}
+											]
+										},
+										"type": {
+											"type": "string",
+											"enum": [
+												"awsv4",
+												"basic",
+												"bearer",
+												"hawk",
+												"oauth1",
+												"oauth2",
+												"apikey",
+												"edgegrid",
+												"jwt",
+												"digest",
+												"ntlm",
+												"asap",
+												"azure",
+												"sasl",
+												"inherit"
+											]
+										}
+									},
+									"required": [
+										"type"
+									],
+									"additionalProperties": false
+								}
+							]
+						},
+						"visualizations": {
+							"type": "array",
+							"items": {
+								"oneOf": [
+									{
+										"$ref": "#/definitions/v3-data-visualization"
+									},
+									{
+										"type": "object",
+										"properties": {},
+										"additionalProperties": {},
+										"title": "Chart from a later version",
+										"description": "A chart of a kind this version does not know, kept as written.",
+										"not": {
+											"required": [
+												"type"
+											],
+											"properties": {
+												"type": {
+													"enum": [
+														"bar",
+														"line",
+														"area",
+														"radar",
+														"pie",
+														"polar",
+														"scatter",
+														"heatmap",
+														"counter"
+													],
+													"type": "string"
+												}
+											}
+										}
+									}
+								]
+							}
+						},
+						"order": {
+							"type": "number"
+						},
+						"type": {
+							"type": "string",
+							"const": "redis"
+						},
+						"settings": {
+							"type": "object",
+							"properties": {
+								"queryTimeoutMs": {
+									"description": "How long a query may run, in milliseconds.",
+									"type": "integer",
+									"minimum": 0,
+									"maximum": 9007199254740991
+								},
+								"mutationsEnabled": {
+									"description": "Whether statements that change data are allowed.",
+									"type": "boolean"
+								}
+							},
+							"additionalProperties": false
+						}
+					},
+					"required": [
+						"$kind",
+						"type"
+					],
+					"additionalProperties": false
+				},
+				{
+					"type": "object",
+					"properties": {
+						"id": {
+							"type": "string"
+						},
+						"name": {
+							"type": "string"
+						},
+						"description": {
+							"type": "string"
+						},
+						"$kind": {
+							"type": "string",
+							"const": "data-request"
+						},
+						"url": {
+							"type": "string"
+						},
+						"query": {
+							"type": "string"
+						},
+						"auth": {
+							"oneOf": [
+								{
+									"type": "object",
+									"properties": {
+										"id": {
+											"type": "string"
+										},
+										"name": {
+											"type": "string"
+										},
+										"description": {
+											"type": "string"
+										},
+										"type": {
+											"type": "string",
+											"const": "noauth"
+										}
+									},
+									"required": [
+										"type"
+									],
+									"additionalProperties": false
+								},
+								{
+									"type": "object",
+									"properties": {
+										"name": {
+											"type": "string"
+										},
+										"description": {
+											"type": "string"
+										},
+										"credentials": {
+											"oneOf": [
+												{
+													"type": "array",
+													"items": {
+														"type": "object",
+														"properties": {
+															"key": {
+																"type": "string"
+															},
+															"value": {}
+														},
+														"required": [
+															"key",
+															"value"
+														],
+														"additionalProperties": false
+													}
+												},
+												{
+													"type": "object",
+													"propertyNames": {
+														"type": "string"
+													},
+													"additionalProperties": {}
+												}
+											]
+										},
+										"type": {
+											"type": "string",
+											"enum": [
+												"awsv4",
+												"basic",
+												"bearer",
+												"hawk",
+												"oauth1",
+												"oauth2",
+												"apikey",
+												"edgegrid",
+												"jwt",
+												"digest",
+												"ntlm",
+												"asap",
+												"azure",
+												"sasl",
+												"inherit"
+											]
+										}
+									},
+									"required": [
+										"type"
+									],
+									"additionalProperties": false
+								}
+							]
+						},
+						"visualizations": {
+							"type": "array",
+							"items": {
+								"oneOf": [
+									{
+										"$ref": "#/definitions/v3-data-visualization"
+									},
+									{
+										"type": "object",
+										"properties": {},
+										"additionalProperties": {},
+										"title": "Chart from a later version",
+										"description": "A chart of a kind this version does not know, kept as written.",
+										"not": {
+											"required": [
+												"type"
+											],
+											"properties": {
+												"type": {
+													"enum": [
+														"bar",
+														"line",
+														"area",
+														"radar",
+														"pie",
+														"polar",
+														"scatter",
+														"heatmap",
+														"counter"
+													],
+													"type": "string"
+												}
+											}
+										}
+									}
+								]
+							}
+						},
+						"order": {
+							"type": "number"
+						},
+						"type": {
+							"type": "string",
+							"const": "csv"
+						},
+						"settings": {
+							"type": "object",
+							"properties": {
+								"rowLimit": {
+									"description": "Largest number of rows returned by a query.",
+									"type": "integer",
+									"minimum": 0,
+									"maximum": 9007199254740991
+								},
+								"queryTimeoutMs": {
+									"description": "How long a query may run, in milliseconds.",
+									"type": "integer",
+									"minimum": 0,
+									"maximum": 9007199254740991
+								},
+								"encoding": {
+									"description": "Character encoding of the file.",
+									"type": "string"
+								},
+								"delimiter": {
+									"description": "Character separating fields in a row.",
+									"type": "string"
+								},
+								"hasHeader": {
+									"description": "Whether the first row holds column names.",
+									"type": "boolean"
+								}
+							},
+							"additionalProperties": false
+						}
+					},
+					"required": [
+						"$kind",
+						"type"
+					],
+					"additionalProperties": false
+				},
+				{
+					"type": "object",
+					"properties": {
+						"id": {
+							"type": "string"
+						},
+						"name": {
+							"type": "string"
+						},
+						"description": {
+							"type": "string"
+						},
+						"$kind": {
+							"type": "string",
+							"const": "data-request"
+						},
+						"url": {
+							"type": "string"
+						},
+						"query": {
+							"type": "string"
+						},
+						"auth": {
+							"oneOf": [
+								{
+									"type": "object",
+									"properties": {
+										"id": {
+											"type": "string"
+										},
+										"name": {
+											"type": "string"
+										},
+										"description": {
+											"type": "string"
+										},
+										"type": {
+											"type": "string",
+											"const": "noauth"
+										}
+									},
+									"required": [
+										"type"
+									],
+									"additionalProperties": false
+								},
+								{
+									"type": "object",
+									"properties": {
+										"name": {
+											"type": "string"
+										},
+										"description": {
+											"type": "string"
+										},
+										"credentials": {
+											"oneOf": [
+												{
+													"type": "array",
+													"items": {
+														"type": "object",
+														"properties": {
+															"key": {
+																"type": "string"
+															},
+															"value": {}
+														},
+														"required": [
+															"key",
+															"value"
+														],
+														"additionalProperties": false
+													}
+												},
+												{
+													"type": "object",
+													"propertyNames": {
+														"type": "string"
+													},
+													"additionalProperties": {}
+												}
+											]
+										},
+										"type": {
+											"type": "string",
+											"enum": [
+												"awsv4",
+												"basic",
+												"bearer",
+												"hawk",
+												"oauth1",
+												"oauth2",
+												"apikey",
+												"edgegrid",
+												"jwt",
+												"digest",
+												"ntlm",
+												"asap",
+												"azure",
+												"sasl",
+												"inherit"
+											]
+										}
+									},
+									"required": [
+										"type"
+									],
+									"additionalProperties": false
+								}
+							]
+						},
+						"visualizations": {
+							"type": "array",
+							"items": {
+								"oneOf": [
+									{
+										"$ref": "#/definitions/v3-data-visualization"
+									},
+									{
+										"type": "object",
+										"properties": {},
+										"additionalProperties": {},
+										"title": "Chart from a later version",
+										"description": "A chart of a kind this version does not know, kept as written.",
+										"not": {
+											"required": [
+												"type"
+											],
+											"properties": {
+												"type": {
+													"enum": [
+														"bar",
+														"line",
+														"area",
+														"radar",
+														"pie",
+														"polar",
+														"scatter",
+														"heatmap",
+														"counter"
+													],
+													"type": "string"
+												}
+											}
+										}
+									}
+								]
+							}
+						},
+						"order": {
+							"type": "number"
+						},
+						"type": {
+							"type": "string",
+							"const": "json"
+						},
+						"settings": {
+							"type": "object",
+							"properties": {
+								"rowLimit": {
+									"description": "Largest number of rows returned by a query.",
+									"type": "integer",
+									"minimum": 0,
+									"maximum": 9007199254740991
+								},
+								"queryTimeoutMs": {
+									"description": "How long a query may run, in milliseconds.",
+									"type": "integer",
+									"minimum": 0,
+									"maximum": 9007199254740991
+								},
+								"jsonPath": {
+									"description": "JSONPath selecting the array of rows within the file.",
+									"type": "string"
+								}
+							},
+							"additionalProperties": false
+						}
+					},
+					"required": [
+						"$kind",
+						"type"
+					],
+					"additionalProperties": false
+				},
+				{
+					"type": "object",
+					"properties": {
+						"id": {
+							"type": "string"
+						},
+						"name": {
+							"type": "string"
+						},
+						"description": {
+							"type": "string"
+						},
+						"$kind": {
+							"type": "string",
+							"const": "data-request"
+						},
+						"url": {
+							"type": "string"
+						},
+						"query": {
+							"type": "string"
+						},
+						"auth": {
+							"oneOf": [
+								{
+									"type": "object",
+									"properties": {
+										"id": {
+											"type": "string"
+										},
+										"name": {
+											"type": "string"
+										},
+										"description": {
+											"type": "string"
+										},
+										"type": {
+											"type": "string",
+											"const": "noauth"
+										}
+									},
+									"required": [
+										"type"
+									],
+									"additionalProperties": false
+								},
+								{
+									"type": "object",
+									"properties": {
+										"name": {
+											"type": "string"
+										},
+										"description": {
+											"type": "string"
+										},
+										"credentials": {
+											"oneOf": [
+												{
+													"type": "array",
+													"items": {
+														"type": "object",
+														"properties": {
+															"key": {
+																"type": "string"
+															},
+															"value": {}
+														},
+														"required": [
+															"key",
+															"value"
+														],
+														"additionalProperties": false
+													}
+												},
+												{
+													"type": "object",
+													"propertyNames": {
+														"type": "string"
+													},
+													"additionalProperties": {}
+												}
+											]
+										},
+										"type": {
+											"type": "string",
+											"enum": [
+												"awsv4",
+												"basic",
+												"bearer",
+												"hawk",
+												"oauth1",
+												"oauth2",
+												"apikey",
+												"edgegrid",
+												"jwt",
+												"digest",
+												"ntlm",
+												"asap",
+												"azure",
+												"sasl",
+												"inherit"
+											]
+										}
+									},
+									"required": [
+										"type"
+									],
+									"additionalProperties": false
+								}
+							]
+						},
+						"visualizations": {
+							"type": "array",
+							"items": {
+								"oneOf": [
+									{
+										"$ref": "#/definitions/v3-data-visualization"
+									},
+									{
+										"type": "object",
+										"properties": {},
+										"additionalProperties": {},
+										"title": "Chart from a later version",
+										"description": "A chart of a kind this version does not know, kept as written.",
+										"not": {
+											"required": [
+												"type"
+											],
+											"properties": {
+												"type": {
+													"enum": [
+														"bar",
+														"line",
+														"area",
+														"radar",
+														"pie",
+														"polar",
+														"scatter",
+														"heatmap",
+														"counter"
+													],
+													"type": "string"
+												}
+											}
+										}
+									}
+								]
+							}
+						},
+						"order": {
+							"type": "number"
+						},
+						"type": {
+							"type": "string",
+							"const": "xlsx"
+						},
+						"settings": {
+							"type": "object",
+							"properties": {
+								"rowLimit": {
+									"description": "Largest number of rows returned by a query.",
+									"type": "integer",
+									"minimum": 0,
+									"maximum": 9007199254740991
+								},
+								"queryTimeoutMs": {
+									"description": "How long a query may run, in milliseconds.",
+									"type": "integer",
+									"minimum": 0,
+									"maximum": 9007199254740991
+								},
+								"sheetName": {
+									"description": "Sheet the rows are read from.",
+									"type": "string"
+								}
+							},
+							"additionalProperties": false
+						}
+					},
+					"required": [
+						"$kind",
+						"type"
+					],
+					"additionalProperties": false
+				},
+				{
+					"type": "object",
+					"properties": {
+						"id": {
+							"type": "string"
+						},
+						"name": {
+							"type": "string"
+						},
+						"description": {
+							"type": "string"
+						},
+						"$kind": {
+							"type": "string",
+							"const": "data-request"
+						},
+						"url": {
+							"type": "string"
+						},
+						"query": {
+							"type": "string"
+						},
+						"auth": {
+							"oneOf": [
+								{
+									"type": "object",
+									"properties": {
+										"id": {
+											"type": "string"
+										},
+										"name": {
+											"type": "string"
+										},
+										"description": {
+											"type": "string"
+										},
+										"type": {
+											"type": "string",
+											"const": "noauth"
+										}
+									},
+									"required": [
+										"type"
+									],
+									"additionalProperties": false
+								},
+								{
+									"type": "object",
+									"properties": {
+										"name": {
+											"type": "string"
+										},
+										"description": {
+											"type": "string"
+										},
+										"credentials": {
+											"oneOf": [
+												{
+													"type": "array",
+													"items": {
+														"type": "object",
+														"properties": {
+															"key": {
+																"type": "string"
+															},
+															"value": {}
+														},
+														"required": [
+															"key",
+															"value"
+														],
+														"additionalProperties": false
+													}
+												},
+												{
+													"type": "object",
+													"propertyNames": {
+														"type": "string"
+													},
+													"additionalProperties": {}
+												}
+											]
+										},
+										"type": {
+											"type": "string",
+											"enum": [
+												"awsv4",
+												"basic",
+												"bearer",
+												"hawk",
+												"oauth1",
+												"oauth2",
+												"apikey",
+												"edgegrid",
+												"jwt",
+												"digest",
+												"ntlm",
+												"asap",
+												"azure",
+												"sasl",
+												"inherit"
+											]
+										}
+									},
+									"required": [
+										"type"
+									],
+									"additionalProperties": false
+								}
+							]
+						},
+						"visualizations": {
+							"type": "array",
+							"items": {
+								"oneOf": [
+									{
+										"$ref": "#/definitions/v3-data-visualization"
+									},
+									{
+										"type": "object",
+										"properties": {},
+										"additionalProperties": {},
+										"title": "Chart from a later version",
+										"description": "A chart of a kind this version does not know, kept as written.",
+										"not": {
+											"required": [
+												"type"
+											],
+											"properties": {
+												"type": {
+													"enum": [
+														"bar",
+														"line",
+														"area",
+														"radar",
+														"pie",
+														"polar",
+														"scatter",
+														"heatmap",
+														"counter"
+													],
+													"type": "string"
+												}
+											}
+										}
+									}
+								]
+							}
+						},
+						"order": {
+							"type": "number"
+						},
+						"type": {
+							"type": "null"
+						}
+					},
+					"required": [
+						"$kind"
+					],
+					"additionalProperties": false
+				}
+			]
+		},
+		{
+			"oneOf": [
+				{
+					"type": "object",
+					"properties": {
+						"id": {
+							"type": "string"
+						},
+						"name": {
+							"type": "string"
+						},
+						"description": {
+							"type": "string"
+						},
+						"$kind": {
+							"type": "string",
+							"const": "kafka-request"
+						},
+						"url": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"auth": {
+							"oneOf": [
+								{
+									"type": "object",
+									"properties": {
+										"id": {
+											"type": "string"
+										},
+										"name": {
+											"type": "string"
+										},
+										"description": {
+											"type": "string"
+										},
+										"type": {
+											"type": "string",
+											"const": "noauth"
+										}
+									},
+									"required": [
+										"type"
+									],
+									"additionalProperties": false
+								},
+								{
+									"type": "object",
+									"properties": {
+										"name": {
+											"type": "string"
+										},
+										"description": {
+											"type": "string"
+										},
+										"credentials": {
+											"oneOf": [
+												{
+													"type": "array",
+													"items": {
+														"type": "object",
+														"properties": {
+															"key": {
+																"type": "string"
+															},
+															"value": {}
+														},
+														"required": [
+															"key",
+															"value"
+														],
+														"additionalProperties": false
+													}
+												},
+												{
+													"type": "object",
+													"propertyNames": {
+														"type": "string"
+													},
+													"additionalProperties": {}
+												}
+											]
+										},
+										"type": {
+											"type": "string",
+											"enum": [
+												"awsv4",
+												"basic",
+												"bearer",
+												"hawk",
+												"oauth1",
+												"oauth2",
+												"apikey",
+												"edgegrid",
+												"jwt",
+												"digest",
+												"ntlm",
+												"asap",
+												"azure",
+												"sasl",
+												"inherit"
+											]
+										}
+									},
+									"required": [
+										"type"
+									],
+									"additionalProperties": false
+								}
+							]
+						},
+						"settings": {
+							"type": "object",
+							"properties": {
+								"secureConnection": {
+									"type": "boolean"
+								},
+								"strictSSL": {
+									"type": "boolean"
+								},
+								"compression": {
+									"type": "string",
+									"enum": [
+										"gzip",
+										"lz4",
+										"none",
+										"snappy",
+										"zstd"
+									]
+								}
+							},
+							"additionalProperties": false
+						},
+						"schema": {
+							"oneOf": [
+								{
+									"type": "object",
+									"properties": {
+										"source": {
+											"type": "string",
+											"const": "none"
+										}
+									},
+									"required": [
+										"source"
+									],
+									"additionalProperties": false
+								},
+								{
+									"type": "object",
+									"properties": {
+										"source": {
+											"type": "string",
+											"const": "auto"
+										}
+									},
+									"required": [
+										"source"
+									],
+									"additionalProperties": false
+								},
+								{
+									"type": "object",
+									"properties": {
+										"source": {
+											"type": "string",
+											"const": "file"
+										},
+										"location": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"source",
+										"location"
+									],
+									"additionalProperties": false
+								},
+								{
+									"type": "object",
+									"properties": {
+										"source": {
+											"type": "string",
+											"const": "api"
+										},
+										"apiId": {
+											"type": "string"
+										},
+										"versionId": {
+											"type": "string"
+										},
+										"releaseId": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"source",
+										"apiId",
+										"versionId"
+									],
+									"additionalProperties": false
+								},
+								{
+									"type": "object",
+									"properties": {
+										"source": {
+											"type": "string",
+											"const": "specification"
+										},
+										"specificationId": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"source",
+										"specificationId"
+									],
+									"additionalProperties": false
+								},
+								{
+									"type": "object",
+									"properties": {
+										"source": {
+											"type": "string",
+											"const": "url"
+										},
+										"url": {
+											"type": "string"
+										},
+										"auth": {
+											"oneOf": [
+												{
+													"oneOf": [
+														{
+															"type": "object",
+															"properties": {
+																"id": {
+																	"type": "string"
+																},
+																"name": {
+																	"type": "string"
+																},
+																"description": {
+																	"type": "string"
+																},
+																"type": {
+																	"type": "string",
+																	"const": "noauth"
+																}
+															},
+															"required": [
+																"type"
+															],
+															"additionalProperties": false
+														},
+														{
+															"type": "object",
+															"properties": {
+																"name": {
+																	"type": "string"
+																},
+																"description": {
+																	"type": "string"
+																},
+																"credentials": {
+																	"oneOf": [
+																		{
+																			"type": "array",
+																			"items": {
+																				"type": "object",
+																				"properties": {
+																					"key": {
+																						"type": "string"
+																					},
+																					"value": {}
+																				},
+																				"required": [
+																					"key",
+																					"value"
+																				],
+																				"additionalProperties": false
+																			}
+																		},
+																		{
+																			"type": "object",
+																			"propertyNames": {
+																				"type": "string"
+																			},
+																			"additionalProperties": {}
+																		}
+																	]
+																},
+																"type": {
+																	"type": "string",
+																	"enum": [
+																		"awsv4",
+																		"basic",
+																		"bearer",
+																		"hawk",
+																		"oauth1",
+																		"oauth2",
+																		"apikey",
+																		"edgegrid",
+																		"jwt",
+																		"digest",
+																		"ntlm",
+																		"asap",
+																		"azure",
+																		"sasl",
+																		"inherit"
+																	]
+																}
+															},
+															"required": [
+																"type"
+															],
+															"additionalProperties": false
+														}
+													]
+												},
+												{
+													"type": "array",
+													"items": {
+														"oneOf": [
+															{
+																"type": "object",
+																"properties": {
+																	"id": {
+																		"type": "string"
+																	},
+																	"name": {
+																		"type": "string"
+																	},
+																	"description": {
+																		"type": "string"
+																	},
+																	"rules": {
+																		"oneOf": [
+																			{
+																				"type": "array",
+																				"items": {
+																					"type": "object",
+																					"properties": {
+																						"key": {
+																							"type": "string",
+																							"enum": [
+																								"url"
+																							]
+																						},
+																						"value": {
+																							"type": "string"
+																						}
+																					},
+																					"required": [
+																						"key",
+																						"value"
+																					],
+																					"additionalProperties": false
+																				}
+																			},
+																			{
+																				"type": "object",
+																				"properties": {
+																					"url": {
+																						"type": "string"
+																					}
+																				},
+																				"required": [
+																					"url"
+																				],
+																				"additionalProperties": false
+																			}
+																		]
+																	},
+																	"type": {
+																		"type": "string",
+																		"const": "noauth"
+																	}
+																},
+																"required": [
+																	"id",
+																	"name",
+																	"type"
+																],
+																"additionalProperties": false
+															},
+															{
+																"type": "object",
+																"properties": {
+																	"id": {
+																		"type": "string"
+																	},
+																	"name": {
+																		"type": "string"
+																	},
+																	"description": {
+																		"type": "string"
+																	},
+																	"rules": {
+																		"oneOf": [
+																			{
+																				"type": "array",
+																				"items": {
+																					"type": "object",
+																					"properties": {
+																						"key": {
+																							"type": "string",
+																							"enum": [
+																								"url"
+																							]
+																						},
+																						"value": {
+																							"type": "string"
+																						}
+																					},
+																					"required": [
+																						"key",
+																						"value"
+																					],
+																					"additionalProperties": false
+																				}
+																			},
+																			{
+																				"type": "object",
+																				"properties": {
+																					"url": {
+																						"type": "string"
+																					}
+																				},
+																				"required": [
+																					"url"
+																				],
+																				"additionalProperties": false
+																			}
+																		]
+																	},
+																	"credentials": {
+																		"oneOf": [
+																			{
+																				"type": "array",
+																				"items": {
+																					"type": "object",
+																					"properties": {
+																						"key": {
+																							"type": "string"
+																						},
+																						"value": {}
+																					},
+																					"required": [
+																						"key",
+																						"value"
+																					],
+																					"additionalProperties": false
+																				}
+																			},
+																			{
+																				"type": "object",
+																				"propertyNames": {
+																					"type": "string"
+																				},
+																				"additionalProperties": {}
+																			}
+																		]
+																	},
+																	"type": {
+																		"type": "string",
+																		"enum": [
+																			"awsv4",
+																			"basic",
+																			"bearer",
+																			"hawk",
+																			"oauth1",
+																			"oauth2",
+																			"apikey",
+																			"edgegrid",
+																			"jwt",
+																			"digest",
+																			"ntlm",
+																			"asap",
+																			"azure",
+																			"sasl"
+																		]
+																	}
+																},
+																"required": [
+																	"id",
+																	"name",
+																	"type"
+																],
+																"additionalProperties": false
+															}
+														]
+													}
+												}
+											]
+										}
+									},
+									"required": [
+										"source",
+										"url"
+									],
+									"additionalProperties": false
+								}
+							]
+						},
+						"messages": {
+							"type": "string"
+						},
+						"scripts": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"type": {
+										"type": "string"
+									},
+									"code": {
+										"type": "string"
+									},
+									"language": {
+										"type": "string",
+										"enum": [
+											"text/javascript"
+										]
+									},
+									"packages": {
+										"type": "object",
+										"propertyNames": {
+											"type": "string"
+										},
+										"additionalProperties": {
+											"type": "object",
+											"properties": {
+												"id": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"id"
+											],
+											"additionalProperties": false
+										}
+									},
+									"requests": {
+										"type": "object",
+										"propertyNames": {
+											"type": "string"
+										},
+										"additionalProperties": {
+											"type": "object",
+											"properties": {
+												"workspace": {
+													"type": "string"
+												},
+												"collection": {
+													"type": "string"
+												},
+												"location": {
+													"type": "array",
+													"items": {
+														"type": "string"
+													}
+												}
+											},
+											"required": [
+												"workspace",
+												"collection",
+												"location"
+											],
+											"additionalProperties": false
+										}
+									}
+								},
+								"required": [
+									"type",
+									"code"
+								],
+								"additionalProperties": false
+							}
+						},
+						"order": {
+							"type": "number"
+						},
+						"mode": {
+							"type": "string",
+							"const": "producer"
+						},
+						"acknowledgements": {
+							"type": "string",
+							"enum": [
+								"all",
+								"leader",
+								"none"
+							]
+						}
+					},
+					"required": [
+						"$kind",
+						"mode"
+					],
+					"additionalProperties": false
+				},
+				{
+					"type": "object",
+					"properties": {
+						"id": {
+							"type": "string"
+						},
+						"name": {
+							"type": "string"
+						},
+						"description": {
+							"type": "string"
+						},
+						"$kind": {
+							"type": "string",
+							"const": "kafka-request"
+						},
+						"url": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"auth": {
+							"oneOf": [
+								{
+									"type": "object",
+									"properties": {
+										"id": {
+											"type": "string"
+										},
+										"name": {
+											"type": "string"
+										},
+										"description": {
+											"type": "string"
+										},
+										"type": {
+											"type": "string",
+											"const": "noauth"
+										}
+									},
+									"required": [
+										"type"
+									],
+									"additionalProperties": false
+								},
+								{
+									"type": "object",
+									"properties": {
+										"name": {
+											"type": "string"
+										},
+										"description": {
+											"type": "string"
+										},
+										"credentials": {
+											"oneOf": [
+												{
+													"type": "array",
+													"items": {
+														"type": "object",
+														"properties": {
+															"key": {
+																"type": "string"
+															},
+															"value": {}
+														},
+														"required": [
+															"key",
+															"value"
+														],
+														"additionalProperties": false
+													}
+												},
+												{
+													"type": "object",
+													"propertyNames": {
+														"type": "string"
+													},
+													"additionalProperties": {}
+												}
+											]
+										},
+										"type": {
+											"type": "string",
+											"enum": [
+												"awsv4",
+												"basic",
+												"bearer",
+												"hawk",
+												"oauth1",
+												"oauth2",
+												"apikey",
+												"edgegrid",
+												"jwt",
+												"digest",
+												"ntlm",
+												"asap",
+												"azure",
+												"sasl",
+												"inherit"
+											]
+										}
+									},
+									"required": [
+										"type"
+									],
+									"additionalProperties": false
+								}
+							]
+						},
+						"settings": {
+							"type": "object",
+							"properties": {
+								"secureConnection": {
+									"type": "boolean"
+								},
+								"strictSSL": {
+									"type": "boolean"
+								},
+								"compression": {
+									"type": "string",
+									"enum": [
+										"gzip",
+										"lz4",
+										"none",
+										"snappy",
+										"zstd"
+									]
+								}
+							},
+							"additionalProperties": false
+						},
+						"schema": {
+							"oneOf": [
+								{
+									"type": "object",
+									"properties": {
+										"source": {
+											"type": "string",
+											"const": "none"
+										}
+									},
+									"required": [
+										"source"
+									],
+									"additionalProperties": false
+								},
+								{
+									"type": "object",
+									"properties": {
+										"source": {
+											"type": "string",
+											"const": "auto"
+										}
+									},
+									"required": [
+										"source"
+									],
+									"additionalProperties": false
+								},
+								{
+									"type": "object",
+									"properties": {
+										"source": {
+											"type": "string",
+											"const": "file"
+										},
+										"location": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"source",
+										"location"
+									],
+									"additionalProperties": false
+								},
+								{
+									"type": "object",
+									"properties": {
+										"source": {
+											"type": "string",
+											"const": "api"
+										},
+										"apiId": {
+											"type": "string"
+										},
+										"versionId": {
+											"type": "string"
+										},
+										"releaseId": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"source",
+										"apiId",
+										"versionId"
+									],
+									"additionalProperties": false
+								},
+								{
+									"type": "object",
+									"properties": {
+										"source": {
+											"type": "string",
+											"const": "specification"
+										},
+										"specificationId": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"source",
+										"specificationId"
+									],
+									"additionalProperties": false
+								},
+								{
+									"type": "object",
+									"properties": {
+										"source": {
+											"type": "string",
+											"const": "url"
+										},
+										"url": {
+											"type": "string"
+										},
+										"auth": {
+											"oneOf": [
+												{
+													"oneOf": [
+														{
+															"type": "object",
+															"properties": {
+																"id": {
+																	"type": "string"
+																},
+																"name": {
+																	"type": "string"
+																},
+																"description": {
+																	"type": "string"
+																},
+																"type": {
+																	"type": "string",
+																	"const": "noauth"
+																}
+															},
+															"required": [
+																"type"
+															],
+															"additionalProperties": false
+														},
+														{
+															"type": "object",
+															"properties": {
+																"name": {
+																	"type": "string"
+																},
+																"description": {
+																	"type": "string"
+																},
+																"credentials": {
+																	"oneOf": [
+																		{
+																			"type": "array",
+																			"items": {
+																				"type": "object",
+																				"properties": {
+																					"key": {
+																						"type": "string"
+																					},
+																					"value": {}
+																				},
+																				"required": [
+																					"key",
+																					"value"
+																				],
+																				"additionalProperties": false
+																			}
+																		},
+																		{
+																			"type": "object",
+																			"propertyNames": {
+																				"type": "string"
+																			},
+																			"additionalProperties": {}
+																		}
+																	]
+																},
+																"type": {
+																	"type": "string",
+																	"enum": [
+																		"awsv4",
+																		"basic",
+																		"bearer",
+																		"hawk",
+																		"oauth1",
+																		"oauth2",
+																		"apikey",
+																		"edgegrid",
+																		"jwt",
+																		"digest",
+																		"ntlm",
+																		"asap",
+																		"azure",
+																		"sasl",
+																		"inherit"
+																	]
+																}
+															},
+															"required": [
+																"type"
+															],
+															"additionalProperties": false
+														}
+													]
+												},
+												{
+													"type": "array",
+													"items": {
+														"oneOf": [
+															{
+																"type": "object",
+																"properties": {
+																	"id": {
+																		"type": "string"
+																	},
+																	"name": {
+																		"type": "string"
+																	},
+																	"description": {
+																		"type": "string"
+																	},
+																	"rules": {
+																		"oneOf": [
+																			{
+																				"type": "array",
+																				"items": {
+																					"type": "object",
+																					"properties": {
+																						"key": {
+																							"type": "string",
+																							"enum": [
+																								"url"
+																							]
+																						},
+																						"value": {
+																							"type": "string"
+																						}
+																					},
+																					"required": [
+																						"key",
+																						"value"
+																					],
+																					"additionalProperties": false
+																				}
+																			},
+																			{
+																				"type": "object",
+																				"properties": {
+																					"url": {
+																						"type": "string"
+																					}
+																				},
+																				"required": [
+																					"url"
+																				],
+																				"additionalProperties": false
+																			}
+																		]
+																	},
+																	"type": {
+																		"type": "string",
+																		"const": "noauth"
+																	}
+																},
+																"required": [
+																	"id",
+																	"name",
+																	"type"
+																],
+																"additionalProperties": false
+															},
+															{
+																"type": "object",
+																"properties": {
+																	"id": {
+																		"type": "string"
+																	},
+																	"name": {
+																		"type": "string"
+																	},
+																	"description": {
+																		"type": "string"
+																	},
+																	"rules": {
+																		"oneOf": [
+																			{
+																				"type": "array",
+																				"items": {
+																					"type": "object",
+																					"properties": {
+																						"key": {
+																							"type": "string",
+																							"enum": [
+																								"url"
+																							]
+																						},
+																						"value": {
+																							"type": "string"
+																						}
+																					},
+																					"required": [
+																						"key",
+																						"value"
+																					],
+																					"additionalProperties": false
+																				}
+																			},
+																			{
+																				"type": "object",
+																				"properties": {
+																					"url": {
+																						"type": "string"
+																					}
+																				},
+																				"required": [
+																					"url"
+																				],
+																				"additionalProperties": false
+																			}
+																		]
+																	},
+																	"credentials": {
+																		"oneOf": [
+																			{
+																				"type": "array",
+																				"items": {
+																					"type": "object",
+																					"properties": {
+																						"key": {
+																							"type": "string"
+																						},
+																						"value": {}
+																					},
+																					"required": [
+																						"key",
+																						"value"
+																					],
+																					"additionalProperties": false
+																				}
+																			},
+																			{
+																				"type": "object",
+																				"propertyNames": {
+																					"type": "string"
+																				},
+																				"additionalProperties": {}
+																			}
+																		]
+																	},
+																	"type": {
+																		"type": "string",
+																		"enum": [
+																			"awsv4",
+																			"basic",
+																			"bearer",
+																			"hawk",
+																			"oauth1",
+																			"oauth2",
+																			"apikey",
+																			"edgegrid",
+																			"jwt",
+																			"digest",
+																			"ntlm",
+																			"asap",
+																			"azure",
+																			"sasl"
+																		]
+																	}
+																},
+																"required": [
+																	"id",
+																	"name",
+																	"type"
+																],
+																"additionalProperties": false
+															}
+														]
+													}
+												}
+											]
+										}
+									},
+									"required": [
+										"source",
+										"url"
+									],
+									"additionalProperties": false
+								}
+							]
+						},
+						"messages": {
+							"type": "string"
+						},
+						"scripts": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"type": {
+										"type": "string"
+									},
+									"code": {
+										"type": "string"
+									},
+									"language": {
+										"type": "string",
+										"enum": [
+											"text/javascript"
+										]
+									},
+									"packages": {
+										"type": "object",
+										"propertyNames": {
+											"type": "string"
+										},
+										"additionalProperties": {
+											"type": "object",
+											"properties": {
+												"id": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"id"
+											],
+											"additionalProperties": false
+										}
+									},
+									"requests": {
+										"type": "object",
+										"propertyNames": {
+											"type": "string"
+										},
+										"additionalProperties": {
+											"type": "object",
+											"properties": {
+												"workspace": {
+													"type": "string"
+												},
+												"collection": {
+													"type": "string"
+												},
+												"location": {
+													"type": "array",
+													"items": {
+														"type": "string"
+													}
+												}
+											},
+											"required": [
+												"workspace",
+												"collection",
+												"location"
+											],
+											"additionalProperties": false
+										}
+									}
+								},
+								"required": [
+									"type",
+									"code"
+								],
+								"additionalProperties": false
+							}
+						},
+						"order": {
+							"type": "number"
+						},
+						"mode": {
+							"type": "string",
+							"const": "consumer"
+						},
+						"topics": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"name": {
+										"type": "string"
+									},
+									"disabled": {
+										"type": "boolean"
+									},
+									"description": {
+										"type": "string"
+									},
+									"schema": {
+										"oneOf": [
+											{
+												"type": "object",
+												"properties": {
+													"source": {
+														"type": "string",
+														"const": "none"
+													}
+												},
+												"required": [
+													"source"
+												],
+												"additionalProperties": false
+											},
+											{
+												"type": "object",
+												"properties": {
+													"source": {
+														"type": "string",
+														"const": "auto"
+													}
+												},
+												"required": [
+													"source"
+												],
+												"additionalProperties": false
+											},
+											{
+												"type": "object",
+												"properties": {
+													"source": {
+														"type": "string",
+														"const": "file"
+													},
+													"location": {
+														"type": "string"
+													}
+												},
+												"required": [
+													"source",
+													"location"
+												],
+												"additionalProperties": false
+											},
+											{
+												"type": "object",
+												"properties": {
+													"source": {
+														"type": "string",
+														"const": "api"
+													},
+													"apiId": {
+														"type": "string"
+													},
+													"versionId": {
+														"type": "string"
+													},
+													"releaseId": {
+														"type": "string"
+													}
+												},
+												"required": [
+													"source",
+													"apiId",
+													"versionId"
+												],
+												"additionalProperties": false
+											},
+											{
+												"type": "object",
+												"properties": {
+													"source": {
+														"type": "string",
+														"const": "specification"
+													},
+													"specificationId": {
+														"type": "string"
+													}
+												},
+												"required": [
+													"source",
+													"specificationId"
+												],
+												"additionalProperties": false
+											},
+											{
+												"type": "object",
+												"properties": {
+													"source": {
+														"type": "string",
+														"const": "url"
+													},
+													"url": {
+														"type": "string"
+													},
+													"auth": {
+														"oneOf": [
+															{
+																"oneOf": [
+																	{
+																		"type": "object",
+																		"properties": {
+																			"id": {
+																				"type": "string"
+																			},
+																			"name": {
+																				"type": "string"
+																			},
+																			"description": {
+																				"type": "string"
+																			},
+																			"type": {
+																				"type": "string",
+																				"const": "noauth"
+																			}
+																		},
+																		"required": [
+																			"type"
+																		],
+																		"additionalProperties": false
+																	},
+																	{
+																		"type": "object",
+																		"properties": {
+																			"name": {
+																				"type": "string"
+																			},
+																			"description": {
+																				"type": "string"
+																			},
+																			"credentials": {
+																				"oneOf": [
+																					{
+																						"type": "array",
+																						"items": {
+																							"type": "object",
+																							"properties": {
+																								"key": {
+																									"type": "string"
+																								},
+																								"value": {}
+																							},
+																							"required": [
+																								"key",
+																								"value"
+																							],
+																							"additionalProperties": false
+																						}
+																					},
+																					{
+																						"type": "object",
+																						"propertyNames": {
+																							"type": "string"
+																						},
+																						"additionalProperties": {}
+																					}
+																				]
+																			},
+																			"type": {
+																				"type": "string",
+																				"enum": [
+																					"awsv4",
+																					"basic",
+																					"bearer",
+																					"hawk",
+																					"oauth1",
+																					"oauth2",
+																					"apikey",
+																					"edgegrid",
+																					"jwt",
+																					"digest",
+																					"ntlm",
+																					"asap",
+																					"azure",
+																					"sasl",
+																					"inherit"
+																				]
+																			}
+																		},
+																		"required": [
+																			"type"
+																		],
+																		"additionalProperties": false
+																	}
+																]
+															},
+															{
+																"type": "array",
+																"items": {
+																	"oneOf": [
+																		{
+																			"type": "object",
+																			"properties": {
+																				"id": {
+																					"type": "string"
+																				},
+																				"name": {
+																					"type": "string"
+																				},
+																				"description": {
+																					"type": "string"
+																				},
+																				"rules": {
+																					"oneOf": [
+																						{
+																							"type": "array",
+																							"items": {
+																								"type": "object",
+																								"properties": {
+																									"key": {
+																										"type": "string",
+																										"enum": [
+																											"url"
+																										]
+																									},
+																									"value": {
+																										"type": "string"
+																									}
+																								},
+																								"required": [
+																									"key",
+																									"value"
+																								],
+																								"additionalProperties": false
+																							}
+																						},
+																						{
+																							"type": "object",
+																							"properties": {
+																								"url": {
+																									"type": "string"
+																								}
+																							},
+																							"required": [
+																								"url"
+																							],
+																							"additionalProperties": false
+																						}
+																					]
+																				},
+																				"type": {
+																					"type": "string",
+																					"const": "noauth"
+																				}
+																			},
+																			"required": [
+																				"id",
+																				"name",
+																				"type"
+																			],
+																			"additionalProperties": false
+																		},
+																		{
+																			"type": "object",
+																			"properties": {
+																				"id": {
+																					"type": "string"
+																				},
+																				"name": {
+																					"type": "string"
+																				},
+																				"description": {
+																					"type": "string"
+																				},
+																				"rules": {
+																					"oneOf": [
+																						{
+																							"type": "array",
+																							"items": {
+																								"type": "object",
+																								"properties": {
+																									"key": {
+																										"type": "string",
+																										"enum": [
+																											"url"
+																										]
+																									},
+																									"value": {
+																										"type": "string"
+																									}
+																								},
+																								"required": [
+																									"key",
+																									"value"
+																								],
+																								"additionalProperties": false
+																							}
+																						},
+																						{
+																							"type": "object",
+																							"properties": {
+																								"url": {
+																									"type": "string"
+																								}
+																							},
+																							"required": [
+																								"url"
+																							],
+																							"additionalProperties": false
+																						}
+																					]
+																				},
+																				"credentials": {
+																					"oneOf": [
+																						{
+																							"type": "array",
+																							"items": {
+																								"type": "object",
+																								"properties": {
+																									"key": {
+																										"type": "string"
+																									},
+																									"value": {}
+																								},
+																								"required": [
+																									"key",
+																									"value"
+																								],
+																								"additionalProperties": false
+																							}
+																						},
+																						{
+																							"type": "object",
+																							"propertyNames": {
+																								"type": "string"
+																							},
+																							"additionalProperties": {}
+																						}
+																					]
+																				},
+																				"type": {
+																					"type": "string",
+																					"enum": [
+																						"awsv4",
+																						"basic",
+																						"bearer",
+																						"hawk",
+																						"oauth1",
+																						"oauth2",
+																						"apikey",
+																						"edgegrid",
+																						"jwt",
+																						"digest",
+																						"ntlm",
+																						"asap",
+																						"azure",
+																						"sasl"
+																					]
+																				}
+																			},
+																			"required": [
+																				"id",
+																				"name",
+																				"type"
+																			],
+																			"additionalProperties": false
+																		}
+																	]
+																}
+															}
+														]
+													}
+												},
+												"required": [
+													"source",
+													"url"
+												],
+												"additionalProperties": false
+											}
+										]
+									},
+									"partitions": {
+										"minItems": 1,
+										"type": "array",
+										"items": {
+											"type": "number"
+										}
+									},
+									"startOffset": {
+										"type": "string",
+										"pattern": "^\\d+$"
+									},
+									"endOffset": {
+										"type": "string",
+										"pattern": "^\\d+$"
+									}
+								},
+								"required": [
+									"name"
+								],
+								"additionalProperties": false
+							}
+						},
+						"startPosition": {
+							"oneOf": [
+								{
+									"type": "object",
+									"properties": {
+										"type": {
+											"type": "string",
+											"const": "beginning"
+										}
+									},
+									"required": [
+										"type"
+									],
+									"additionalProperties": false
+								},
+								{
+									"type": "object",
+									"properties": {
+										"type": {
+											"type": "string",
+											"const": "end"
+										}
+									},
+									"required": [
+										"type"
+									],
+									"additionalProperties": false
+								},
+								{
+									"type": "object",
+									"properties": {
+										"type": {
+											"type": "string",
+											"const": "timestamp"
+										},
+										"timestamp": {
+											"type": "number"
+										}
+									},
+									"required": [
+										"type",
+										"timestamp"
+									],
+									"additionalProperties": false
+								}
+							]
+						},
+						"stopAfter": {
+							"type": "object",
+							"properties": {
+								"maxRecords": {
+									"type": "number"
+								},
+								"maxDurationMs": {
+									"type": "number"
+								},
+								"idleMs": {
+									"type": "number"
+								},
+								"endPosition": {
+									"oneOf": [
+										{
+											"type": "object",
+											"properties": {
+												"type": {
+													"type": "string",
+													"const": "timestamp"
+												},
+												"timestamp": {
+													"type": "number"
+												}
+											},
+											"required": [
+												"type",
+												"timestamp"
+											],
+											"additionalProperties": false
+										}
+									]
+								}
+							},
+							"additionalProperties": false
+						}
+					},
+					"required": [
+						"$kind",
+						"mode",
+						"topics",
+						"startPosition"
+					],
+					"additionalProperties": false
+				}
+			]
+		}
+	],
+	"definitions": {
+		"v3-data-visualization": {
+			"oneOf": [
+				{
+					"type": "object",
+					"properties": {
+						"type": {
+							"type": "string",
+							"const": "bar",
+							"description": "Kind of chart."
+						},
+						"title": {
+							"description": "Heading shown with the chart.",
+							"type": "string"
+						},
+						"category": {
+							"description": "The categories the values are plotted against. Absent, each row is a category named by its row number.",
+							"type": "object",
+							"properties": {
+								"column": {
+									"description": "Column whose values name the categories. Absent, each row is a category named by its row number.",
+									"type": "string"
+								},
+								"label": {
+									"description": "Title of the category axis.",
+									"type": "string"
+								},
+								"sort": {
+									"description": "Orders the categories by their total across the series. Absent, they keep the order the query returned.",
+									"type": "string",
+									"enum": [
+										"asc",
+										"desc"
+									]
+								}
+							},
+							"additionalProperties": false,
+							"title": "Category axis",
+							"minProperties": 1
+						},
+						"value": {
+							"type": "object",
+							"properties": {
+								"label": {
+									"description": "Title of the value axis.",
+									"type": "string"
+								},
+								"stacked": {
+									"description": "Whether a category's bars stack into one bar rather than standing side by side.",
+									"type": "boolean"
+								},
+								"series": {
+									"minItems": 1,
+									"type": "array",
+									"items": {
+										"type": "object",
+										"properties": {
+											"column": {
+												"type": "string",
+												"description": "Result column the series plots."
+											},
+											"label": {
+												"description": "Name of the series in the legend and tooltips. Absent, the column name.",
+												"type": "string"
+											},
+											"color": {
+												"description": "Color the series is drawn in. Absent, the next color of the palette.",
+												"oneOf": [
+													{
+														"type": "string",
+														"enum": [
+															"blue",
+															"yellow",
+															"pink",
+															"green",
+															"purple",
+															"red"
+														]
+													},
+													{
+														"type": "string",
+														"pattern": "^#(?:[0-9a-fA-F]{3}){1,2}$"
+													}
+												]
+											},
+											"dataLabels": {
+												"description": "The values printed on the marks. Absent, every value is.",
+												"type": "object",
+												"properties": {
+													"hidden": {
+														"description": "Whether the values are left off the marks.",
+														"type": "boolean"
+													}
+												},
+												"additionalProperties": false,
+												"title": "Data labels",
+												"minProperties": 1
+											}
+										},
+										"required": [
+											"column"
+										],
+										"additionalProperties": false,
+										"title": "Cartesian series"
+									},
+									"description": "Columns plotted against the categories, a set of bars each."
+								}
+							},
+							"required": [
+								"series"
+							],
+							"additionalProperties": false,
+							"title": "Bar values",
+							"description": "The columns the bars plot, and the axis they run along."
+						},
+						"horizontal": {
+							"description": "Whether the bars run left to right, with the categories down the side.",
+							"type": "boolean"
+						},
+						"legend": {
+							"description": "The legend naming each series, or each slice. Absent, it is drawn wherever there is more than one to name.",
+							"type": "object",
+							"properties": {
+								"hidden": {
+									"description": "Whether the legend is left out.",
+									"type": "boolean"
+								}
+							},
+							"additionalProperties": false,
+							"title": "Legend",
+							"minProperties": 1
+						}
+					},
+					"required": [
+						"type",
+						"value"
+					],
+					"additionalProperties": false,
+					"title": "Bar chart"
+				},
+				{
+					"type": "object",
+					"properties": {
+						"type": {
+							"type": "string",
+							"const": "line",
+							"description": "Kind of chart."
+						},
+						"title": {
+							"description": "Heading shown with the chart.",
+							"type": "string"
+						},
+						"category": {
+							"description": "The categories the values are plotted against. Absent, each row is a category named by its row number.",
+							"type": "object",
+							"properties": {
+								"column": {
+									"description": "Column whose values name the categories. Absent, each row is a category named by its row number.",
+									"type": "string"
+								},
+								"label": {
+									"description": "Title of the category axis.",
+									"type": "string"
+								},
+								"sort": {
+									"description": "Orders the categories by their total across the series. Absent, they keep the order the query returned.",
+									"type": "string",
+									"enum": [
+										"asc",
+										"desc"
+									]
+								}
+							},
+							"additionalProperties": false,
+							"title": "Category axis",
+							"minProperties": 1
+						},
+						"value": {
+							"type": "object",
+							"properties": {
+								"label": {
+									"description": "Title of the value axis.",
+									"type": "string"
+								},
+								"series": {
+									"minItems": 1,
+									"type": "array",
+									"items": {
+										"type": "object",
+										"properties": {
+											"column": {
+												"type": "string",
+												"description": "Result column the series plots."
+											},
+											"label": {
+												"description": "Name of the series in the legend and tooltips. Absent, the column name.",
+												"type": "string"
+											},
+											"color": {
+												"description": "Color the series is drawn in. Absent, the next color of the palette.",
+												"oneOf": [
+													{
+														"type": "string",
+														"enum": [
+															"blue",
+															"yellow",
+															"pink",
+															"green",
+															"purple",
+															"red"
+														]
+													},
+													{
+														"type": "string",
+														"pattern": "^#(?:[0-9a-fA-F]{3}){1,2}$"
+													}
+												]
+											},
+											"dataLabels": {
+												"description": "The values printed on the marks. Absent, every value is.",
+												"type": "object",
+												"properties": {
+													"hidden": {
+														"description": "Whether the values are left off the marks.",
+														"type": "boolean"
+													}
+												},
+												"additionalProperties": false,
+												"title": "Data labels",
+												"minProperties": 1
+											}
+										},
+										"required": [
+											"column"
+										],
+										"additionalProperties": false,
+										"title": "Cartesian series"
+									},
+									"description": "Columns plotted against the categories, a line each."
+								}
+							},
+							"required": [
+								"series"
+							],
+							"additionalProperties": false,
+							"title": "Line values",
+							"description": "The columns the lines plot, and the axis they run along."
+						},
+						"legend": {
+							"description": "The legend naming each series, or each slice. Absent, it is drawn wherever there is more than one to name.",
+							"type": "object",
+							"properties": {
+								"hidden": {
+									"description": "Whether the legend is left out.",
+									"type": "boolean"
+								}
+							},
+							"additionalProperties": false,
+							"title": "Legend",
+							"minProperties": 1
+						}
+					},
+					"required": [
+						"type",
+						"value"
+					],
+					"additionalProperties": false,
+					"title": "Line chart"
+				},
+				{
+					"type": "object",
+					"properties": {
+						"type": {
+							"type": "string",
+							"const": "area",
+							"description": "Kind of chart."
+						},
+						"title": {
+							"description": "Heading shown with the chart.",
+							"type": "string"
+						},
+						"category": {
+							"description": "The categories the values are plotted against. Absent, each row is a category named by its row number.",
+							"type": "object",
+							"properties": {
+								"column": {
+									"description": "Column whose values name the categories. Absent, each row is a category named by its row number.",
+									"type": "string"
+								},
+								"label": {
+									"description": "Title of the category axis.",
+									"type": "string"
+								},
+								"sort": {
+									"description": "Orders the categories by their total across the series. Absent, they keep the order the query returned.",
+									"type": "string",
+									"enum": [
+										"asc",
+										"desc"
+									]
+								}
+							},
+							"additionalProperties": false,
+							"title": "Category axis",
+							"minProperties": 1
+						},
+						"value": {
+							"type": "object",
+							"properties": {
+								"label": {
+									"description": "Title of the value axis.",
+									"type": "string"
+								},
+								"stacked": {
+									"description": "Whether each area sits on the one before it rather than rising from zero.",
+									"type": "boolean"
+								},
+								"series": {
+									"minItems": 1,
+									"type": "array",
+									"items": {
+										"type": "object",
+										"properties": {
+											"column": {
+												"type": "string",
+												"description": "Result column the series plots."
+											},
+											"label": {
+												"description": "Name of the series in the legend and tooltips. Absent, the column name.",
+												"type": "string"
+											},
+											"color": {
+												"description": "Color the series is drawn in. Absent, the next color of the palette.",
+												"oneOf": [
+													{
+														"type": "string",
+														"enum": [
+															"blue",
+															"yellow",
+															"pink",
+															"green",
+															"purple",
+															"red"
+														]
+													},
+													{
+														"type": "string",
+														"pattern": "^#(?:[0-9a-fA-F]{3}){1,2}$"
+													}
+												]
+											},
+											"dataLabels": {
+												"description": "The values printed on the marks. Absent, every value is.",
+												"type": "object",
+												"properties": {
+													"hidden": {
+														"description": "Whether the values are left off the marks.",
+														"type": "boolean"
+													}
+												},
+												"additionalProperties": false,
+												"title": "Data labels",
+												"minProperties": 1
+											}
+										},
+										"required": [
+											"column"
+										],
+										"additionalProperties": false,
+										"title": "Cartesian series"
+									},
+									"description": "Columns plotted against the categories, an area each."
+								}
+							},
+							"required": [
+								"series"
+							],
+							"additionalProperties": false,
+							"title": "Area values",
+							"description": "The columns the areas plot, and the axis they run along."
+						},
+						"legend": {
+							"description": "The legend naming each series, or each slice. Absent, it is drawn wherever there is more than one to name.",
+							"type": "object",
+							"properties": {
+								"hidden": {
+									"description": "Whether the legend is left out.",
+									"type": "boolean"
+								}
+							},
+							"additionalProperties": false,
+							"title": "Legend",
+							"minProperties": 1
+						}
+					},
+					"required": [
+						"type",
+						"value"
+					],
+					"additionalProperties": false,
+					"title": "Area chart"
+				},
+				{
+					"type": "object",
+					"properties": {
+						"type": {
+							"type": "string",
+							"const": "radar",
+							"description": "Kind of chart."
+						},
+						"title": {
+							"description": "Heading shown with the chart.",
+							"type": "string"
+						},
+						"category": {
+							"description": "The categories the measure is split across. Absent, each row is a category named by its row number.",
+							"type": "object",
+							"properties": {
+								"column": {
+									"description": "Column whose values name the categories. Absent, each row is a category named by its row number.",
+									"type": "string"
+								},
+								"sort": {
+									"description": "Orders the categories by their total across the series. Absent, they keep the order the query returned.",
+									"type": "string",
+									"enum": [
+										"asc",
+										"desc"
+									]
+								}
+							},
+							"additionalProperties": false,
+							"title": "Categories",
+							"minProperties": 1
+						},
+						"value": {
+							"type": "object",
+							"properties": {
+								"series": {
+									"minItems": 1,
+									"type": "array",
+									"items": {
+										"type": "object",
+										"properties": {
+											"column": {
+												"type": "string",
+												"description": "Result column the series plots."
+											},
+											"label": {
+												"description": "Name of the series in the legend and tooltips. Absent, the column name.",
+												"type": "string"
+											},
+											"color": {
+												"description": "Color the series is drawn in. Absent, the next color of the palette.",
+												"oneOf": [
+													{
+														"type": "string",
+														"enum": [
+															"blue",
+															"yellow",
+															"pink",
+															"green",
+															"purple",
+															"red"
+														]
+													},
+													{
+														"type": "string",
+														"pattern": "^#(?:[0-9a-fA-F]{3}){1,2}$"
+													}
+												]
+											}
+										},
+										"required": [
+											"column"
+										],
+										"additionalProperties": false,
+										"title": "Radar series"
+									},
+									"description": "Columns drawn as polygons over the categories, one each."
+								}
+							},
+							"required": [
+								"series"
+							],
+							"additionalProperties": false,
+							"title": "Radar values",
+							"description": "The columns drawn as polygons."
+						},
+						"legend": {
+							"description": "The legend naming each series, or each slice. Absent, it is drawn wherever there is more than one to name.",
+							"type": "object",
+							"properties": {
+								"hidden": {
+									"description": "Whether the legend is left out.",
+									"type": "boolean"
+								}
+							},
+							"additionalProperties": false,
+							"title": "Legend",
+							"minProperties": 1
+						}
+					},
+					"required": [
+						"type",
+						"value"
+					],
+					"additionalProperties": false,
+					"title": "Radar chart"
+				},
+				{
+					"type": "object",
+					"properties": {
+						"type": {
+							"type": "string",
+							"const": "pie",
+							"description": "Kind of chart."
+						},
+						"title": {
+							"description": "Heading shown with the chart.",
+							"type": "string"
+						},
+						"category": {
+							"description": "The categories the measure is split across. Absent, each row is a category named by its row number.",
+							"type": "object",
+							"properties": {
+								"column": {
+									"description": "Column whose values name the categories. Absent, each row is a category named by its row number.",
+									"type": "string"
+								},
+								"sort": {
+									"description": "Orders the categories by their total across the series. Absent, they keep the order the query returned.",
+									"type": "string",
+									"enum": [
+										"asc",
+										"desc"
+									]
+								}
+							},
+							"additionalProperties": false,
+							"title": "Categories",
+							"minProperties": 1
+						},
+						"value": {
+							"type": "object",
+							"properties": {
+								"column": {
+									"type": "string",
+									"description": "Result column whose values size the slices."
+								},
+								"label": {
+									"description": "Name of the measure in tooltips. Absent, the column name.",
+									"type": "string"
+								},
+								"dataLabels": {
+									"description": "The values printed on the marks. Absent, every value is.",
+									"type": "object",
+									"properties": {
+										"hidden": {
+											"description": "Whether the values are left off the marks.",
+											"type": "boolean"
+										}
+									},
+									"additionalProperties": false,
+									"title": "Data labels",
+									"minProperties": 1
+								}
+							},
+							"required": [
+								"column"
+							],
+							"additionalProperties": false,
+							"title": "Slice measure",
+							"description": "The column whose values size the slices."
+						},
+						"legend": {
+							"description": "The legend naming each series, or each slice. Absent, it is drawn wherever there is more than one to name.",
+							"type": "object",
+							"properties": {
+								"hidden": {
+									"description": "Whether the legend is left out.",
+									"type": "boolean"
+								}
+							},
+							"additionalProperties": false,
+							"title": "Legend",
+							"minProperties": 1
+						}
+					},
+					"required": [
+						"type",
+						"value"
+					],
+					"additionalProperties": false,
+					"title": "Pie chart"
+				},
+				{
+					"type": "object",
+					"properties": {
+						"type": {
+							"type": "string",
+							"const": "polar",
+							"description": "Kind of chart."
+						},
+						"title": {
+							"description": "Heading shown with the chart.",
+							"type": "string"
+						},
+						"category": {
+							"description": "The categories the measure is split across. Absent, each row is a category named by its row number.",
+							"type": "object",
+							"properties": {
+								"column": {
+									"description": "Column whose values name the categories. Absent, each row is a category named by its row number.",
+									"type": "string"
+								},
+								"sort": {
+									"description": "Orders the categories by their total across the series. Absent, they keep the order the query returned.",
+									"type": "string",
+									"enum": [
+										"asc",
+										"desc"
+									]
+								}
+							},
+							"additionalProperties": false,
+							"title": "Categories",
+							"minProperties": 1
+						},
+						"value": {
+							"type": "object",
+							"properties": {
+								"column": {
+									"type": "string",
+									"description": "Result column whose values size the slices."
+								},
+								"label": {
+									"description": "Name of the measure in tooltips. Absent, the column name.",
+									"type": "string"
+								},
+								"dataLabels": {
+									"description": "The values printed on the marks. Absent, every value is.",
+									"type": "object",
+									"properties": {
+										"hidden": {
+											"description": "Whether the values are left off the marks.",
+											"type": "boolean"
+										}
+									},
+									"additionalProperties": false,
+									"title": "Data labels",
+									"minProperties": 1
+								}
+							},
+							"required": [
+								"column"
+							],
+							"additionalProperties": false,
+							"title": "Slice measure",
+							"description": "The column whose values size the slices."
+						},
+						"legend": {
+							"description": "The legend naming each series, or each slice. Absent, it is drawn wherever there is more than one to name.",
+							"type": "object",
+							"properties": {
+								"hidden": {
+									"description": "Whether the legend is left out.",
+									"type": "boolean"
+								}
+							},
+							"additionalProperties": false,
+							"title": "Legend",
+							"minProperties": 1
+						}
+					},
+					"required": [
+						"type",
+						"value"
+					],
+					"additionalProperties": false,
+					"title": "Polar area chart"
+				},
+				{
+					"type": "object",
+					"properties": {
+						"type": {
+							"type": "string",
+							"const": "scatter",
+							"description": "Kind of chart."
+						},
+						"title": {
+							"description": "Heading shown with the chart.",
+							"type": "string"
+						},
+						"category": {
+							"description": "The axis the points are placed along. Absent, each row is placed at its row number.",
+							"type": "object",
+							"properties": {
+								"column": {
+									"description": "Numeric column the points are placed along. Absent, a row's number is its value.",
+									"type": "string"
+								},
+								"label": {
+									"description": "Title of the category axis.",
+									"type": "string"
+								}
+							},
+							"additionalProperties": false,
+							"title": "Category axis",
+							"minProperties": 1
+						},
+						"value": {
+							"type": "object",
+							"properties": {
+								"label": {
+									"description": "Title of the value axis.",
+									"type": "string"
+								},
+								"series": {
+									"minItems": 1,
+									"type": "array",
+									"items": {
+										"type": "object",
+										"properties": {
+											"column": {
+												"type": "string",
+												"description": "Result column the series plots."
+											},
+											"label": {
+												"description": "Name of the series in the legend and tooltips. Absent, the column name.",
+												"type": "string"
+											},
+											"color": {
+												"description": "Color the series is drawn in. Absent, the next color of the palette.",
+												"oneOf": [
+													{
+														"type": "string",
+														"enum": [
+															"blue",
+															"yellow",
+															"pink",
+															"green",
+															"purple",
+															"red"
+														]
+													},
+													{
+														"type": "string",
+														"pattern": "^#(?:[0-9a-fA-F]{3}){1,2}$"
+													}
+												]
+											},
+											"size": {
+												"description": "What sizes the points. Absent, every point has the same size.",
+												"type": "object",
+												"properties": {
+													"column": {
+														"type": "string",
+														"description": "Numeric column whose magnitude sizes each point."
+													}
+												},
+												"required": [
+													"column"
+												],
+												"additionalProperties": false,
+												"title": "Point size"
+											}
+										},
+										"required": [
+											"column"
+										],
+										"additionalProperties": false,
+										"title": "Scatter series"
+									},
+									"description": "Columns plotted as the value of each point, one set of points each."
+								}
+							},
+							"required": [
+								"series"
+							],
+							"additionalProperties": false,
+							"title": "Scatter values",
+							"description": "The columns plotted as the value of each point, and their axis."
+						},
+						"legend": {
+							"description": "The legend naming each series, or each slice. Absent, it is drawn wherever there is more than one to name.",
+							"type": "object",
+							"properties": {
+								"hidden": {
+									"description": "Whether the legend is left out.",
+									"type": "boolean"
+								}
+							},
+							"additionalProperties": false,
+							"title": "Legend",
+							"minProperties": 1
+						}
+					},
+					"required": [
+						"type",
+						"value"
+					],
+					"additionalProperties": false,
+					"title": "Scatter chart"
+				},
+				{
+					"type": "object",
+					"properties": {
+						"type": {
+							"type": "string",
+							"const": "heatmap",
+							"description": "Kind of chart."
+						},
+						"title": {
+							"description": "Heading shown with the chart.",
+							"type": "string"
+						},
+						"category": {
+							"type": "object",
+							"properties": {
+								"column": {
+									"type": "string",
+									"description": "Column whose values name the columns of the grid."
+								},
+								"label": {
+									"description": "Title of the category axis.",
+									"type": "string"
+								}
+							},
+							"required": [
+								"column"
+							],
+							"additionalProperties": false,
+							"title": "Grid columns",
+							"description": "The grid's columns, along the category axis."
+						},
+						"group": {
+							"type": "object",
+							"properties": {
+								"column": {
+									"type": "string",
+									"description": "Column whose values name the rows of the grid."
+								},
+								"label": {
+									"description": "Title of the group axis.",
+									"type": "string"
+								}
+							},
+							"required": [
+								"column"
+							],
+							"additionalProperties": false,
+							"title": "Grid rows",
+							"description": "The grid's rows, along the group axis."
+						},
+						"value": {
+							"type": "object",
+							"properties": {
+								"column": {
+									"type": "string",
+									"description": "Result column whose values color the cells."
+								},
+								"label": {
+									"description": "Title of the color legend, and the name of the measure in tooltips. Absent, the column name.",
+									"type": "string"
+								}
+							},
+							"required": [
+								"column"
+							],
+							"additionalProperties": false,
+							"title": "Heatmap measure",
+							"description": "The column whose values color the cells."
+						},
+						"legend": {
+							"description": "The legend naming each series, or each slice. Absent, it is drawn wherever there is more than one to name.",
+							"type": "object",
+							"properties": {
+								"hidden": {
+									"description": "Whether the legend is left out.",
+									"type": "boolean"
+								}
+							},
+							"additionalProperties": false,
+							"title": "Legend",
+							"minProperties": 1
+						}
+					},
+					"required": [
+						"type",
+						"category",
+						"group",
+						"value"
+					],
+					"additionalProperties": false,
+					"title": "Heatmap"
+				},
+				{
+					"type": "object",
+					"properties": {
+						"type": {
+							"type": "string",
+							"const": "counter",
+							"description": "Kind of chart."
+						},
+						"title": {
+							"description": "Heading shown with the chart.",
+							"type": "string"
+						},
+						"value": {
+							"description": "The column the counter adds up. Absent, it counts the rows.",
+							"type": "object",
+							"properties": {
+								"column": {
+									"type": "string",
+									"description": "Result column the counter adds up."
+								}
+							},
+							"required": [
+								"column"
+							],
+							"additionalProperties": false,
+							"title": "Counter measure"
+						}
+					},
+					"required": [
+						"type"
+					],
+					"additionalProperties": false,
+					"title": "Counter"
+				}
+			],
+			"title": "Visualization"
+		}
+	}
+}

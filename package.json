@@ -36,6 +36,7 @@
     ]
   },
   "scripts": {
+    "sync:fs-schemas": "node scripts/sync-fs-schemas.mjs",
     "generate:schemas": "node scripts/generate-schemas.mjs",
     "generate:favicon": "node scripts/generate-favicon.mjs",
     "generate": "pnpm generate:schemas && pnpm generate:favicon",
