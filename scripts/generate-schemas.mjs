@@ -16,6 +16,7 @@
  *   public/{resource}/{version}/{resource}.json               (raw download, viewer draft, next to the docs page)
  *   public/json/...                                           (legacy raw URLs, see legacy-urls.ts)
  *   public/collection/v3.0.0/fs/{kind}.json                   (FS schemas, built from vendor/@postman/v3.schemas, see fs-schemas.ts)
+ *   public/_headers                                           (static rules + canonical Links, see legacy-urls.ts)
  *   public/_redirects                                         (old docs URL 301s, see legacy-urls.ts)
  *
  * Run as a script to regenerate everything; import `writeSchemas` to write the
@@ -25,7 +26,7 @@ import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import fs from 'node:fs';
-import { VIEWER_DRAFT, legacyRedirectsFile, legacyUrls } from './legacy-urls.ts';
+import { VIEWER_DRAFT, headersFile, legacyRedirectsFile, legacyUrls } from './legacy-urls.ts';
 import { FS_PACKAGE, fsSchemas } from './fs-schemas.ts';
 
 const require = createRequire(import.meta.url);
@@ -155,6 +156,7 @@ export function writeSchemas({ publicDir = PUBLIC_DIR, schemaOutDir = SCHEMA_OUT
   }
 
   writeFile(path.join(publicDir, '_redirects'), legacyRedirectsFile(versionsByDraft));
+  writeFile(path.join(publicDir, '_headers'), headersFile(versionsByDraft));
 
   return { entries, rawPaths: [...raw.map((f) => f.path), ...fsFiles.map((f) => f.path)] };
 }
