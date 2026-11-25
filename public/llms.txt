@@ -4,8 +4,17 @@
 
 ## Schemas
 
-- [Collection v3.0.0 JSON Schema](https://schema.postman.com/collection/json/v3.0.0/draft-07/collection.json): The current collection format. Each item has a `$kind`: HTTP, GraphQL, gRPC, WebSocket, Socket.IO, MQTT, Kafka, MCP, LLM and data requests, or a folder (`$kind: "collection"`).
-- [Collection v2.1.0 JSON Schema](https://schema.postman.com/collection/json/v2.1.0/draft-07/collection.json): The previous collection format, used by Postman app exports and Newman. Requires `info` and `item`.
+- [Collection v3.0.0 JSON Schema](https://schema.postman.com/collection/v3.0.0/collection.json): The current collection format. Each item has a `$kind`: HTTP, GraphQL, gRPC, WebSocket, Socket.IO, MQTT, Kafka, MCP, LLM and data requests, or a folder (`$kind: "collection"`).
+- [Collection v2.1.0 JSON Schema](https://schema.postman.com/collection/v2.1.0/collection.json): The previous collection format, used by Postman app exports and Newman. Requires `info` and `item`.
+
+## On-disk (filesystem) v3 schemas
+
+On disk, a v3.0.0 collection is a tree of YAML files: one per request, example, message, and collection or folder definition. Each file kind has its own schema.
+
+- [Definition file](https://schema.postman.com/collection/v3.0.0/fs/definition.json) (*glob:* `**/.resources/definition.{yaml,yml}`): A collection or folder. Both have `$kind: "collection"`. `variables` is collection-only. `order` is folder-only.
+- [Request file](https://schema.postman.com/collection/v3.0.0/fs/request.json) (*glob:* `**/*.request.{yaml,yml}`): A `oneOf` of 10 protocol request kinds (http, graphql, grpc, websocket, socket.io, mqtt, kafka, mcp, llm, data).
+- [Example file](https://schema.postman.com/collection/v3.0.0/fs/example.json) (*glob:* `**/.resources/*.resources/examples/*.example.{yaml,yml}`): Saved responses. A `oneOf` of 6 example kinds.
+- [Message file](https://schema.postman.com/collection/v3.0.0/fs/message.json) (*glob:* `**/.resources/*.resources/messages/*.message.{yaml,yml}`): Saved WebSocket, Socket.IO, MQTT, or Kafka messages. A `oneOf` of 4 message kinds.
 
 ## Postman Learning Center
 
@@ -99,12 +108,14 @@ Migrating from v2.1.0 to v3.0.0:
 
 ## Notes for agents
 
-- The v3.0.0 JSON Schema describes a whole collection as one JSON document. It is not the schema of the on-disk v3 format, where Postman splits a collection into many YAML files (`*.request.yaml`, `definition.yaml`, `.resources/`). Don't validate those files against it; see the Learning Center links above.
-- Pin a version. Don't use the `/latest/` URLs: they move between releases and differ by draft (`/collection/json/latest/draft-04/` is v2.1.0, `/collection/json/latest/draft-07/` is v3.0.0).
+- The v3.0.0 JSON Schema describes a whole collection as one JSON document. On-disk v3 YAML files have their own schemas. Validate each file with its FS schema; the whole-collection schema is for single-document JSON.
+- Definitions and requests require only `$kind`. Examples also require `response`. Messages also require their payload fields, for example `content` and `contentType` for WebSocket. `name` defaults to the file name. Parse the YAML, then validate. Use the modeline (`# yaml-language-server: $schema=…`), not a `$schema:` key in the file (rejected by `additionalProperties: false`).
+- `order` sets sibling order. Examples and messages live in `.resources/<Request>.resources/{examples,messages}/`.
+- Pin a version. Don't use `/latest/` URLs; they move between releases.
 - The raw schemas can be fetched from any origin (CORS allows all). Internal `$ref`s are kept, not dereferenced. Every v3 definition is under `#/definitions/`, named `v3-<protocol>-<part>` (for example `v3-http-request`, `v3-grpc-auth`).
 
 ## Optional
 
-- [Collection v3.0.0 documentation](https://schema.postman.com/collection/json/v3.0.0/draft-07/docs/index.html): Browsable HTML view of the v3.0.0 schema, for people.
-- [Collection v2.1.0 documentation](https://schema.postman.com/collection/json/v2.1.0/draft-07/docs/index.html): Browsable HTML view of the v2.1.0 schema, for people.
+- [Collection v3.0.0 documentation](https://schema.postman.com/collection/v3.0.0): Browsable HTML view of the v3.0.0 schema, for people.
+- [Collection v2.1.0 documentation](https://schema.postman.com/collection/v2.1.0): Browsable HTML view of the v2.1.0 schema, for people.
 - [Postman Learning Center llms.txt](https://learning.postman.com/llms.txt): Index of all Postman documentation.

@@ -52,6 +52,52 @@ The draft-04 files are still served at their old paths, `/collection/json/<versi
 
 They can be used with any JSON Schema validator, as shown below.
 
+### Filesystem (YAML) schemas
+
+The v3.0.0 on-disk YAML format has one schema per file kind:
+
+| Kind | URL | Glob |
+|---|---|---|
+| definition | `/collection/v3.0.0/fs/definition.json` | `**/.resources/definition.{yaml,yml}` |
+| request | `/collection/v3.0.0/fs/request.json` | `**/*.request.{yaml,yml}` |
+| example | `/collection/v3.0.0/fs/example.json` | `**/.resources/*.resources/examples/*.example.{yaml,yml}` |
+| message | `/collection/v3.0.0/fs/message.json` | `**/.resources/*.resources/messages/*.message.{yaml,yml}` |
+
+VS Code (yaml-language-server):
+
+```json
+"yaml.schemas": {
+  "https://schema.postman.com/collection/v3.0.0/fs/definition.json": "**/.resources/definition.{yaml,yml}",
+  "https://schema.postman.com/collection/v3.0.0/fs/request.json": "**/*.request.{yaml,yml}",
+  "https://schema.postman.com/collection/v3.0.0/fs/example.json": "**/.resources/*.resources/examples/*.example.{yaml,yml}",
+  "https://schema.postman.com/collection/v3.0.0/fs/message.json": "**/.resources/*.resources/messages/*.message.{yaml,yml}"
+}
+```
+
+Per-file modeline (the first line of the YAML file):
+
+```yaml
+# yaml-language-server: $schema=https://schema.postman.com/collection/v3.0.0/fs/request.json
+$kind: http-request
+method: POST
+url: "{{baseUrl}}/users"
+```
+
+Ajv + js-yaml (`npm install ajv js-yaml`):
+
+```js
+import Ajv from 'ajv';
+import { load } from 'js-yaml';
+import { glob, readFile } from 'node:fs/promises';
+
+const schema = await (await fetch('https://schema.postman.com/collection/v3.0.0/fs/request.json')).json();
+const validate = new Ajv({ strict: false }).compile(schema);
+
+for await (const file of glob('postman/collections/**/*.request.{yaml,yml}')) {
+  if (!validate(load(await readFile(file, 'utf8')))) console.error(file, validate.errors);
+}
+```
+
 ### Example: JavaScript
 
 With [Ajv](https://ajv.js.org) 8 (`npm install ajv`) on Node.js 18+ (global `fetch`), as an ES module:
@@ -93,3 +139,15 @@ except ValidationError:
 else:
     print('It is a valid collection!')
 ```
+
+### Maintainers
+
+Updating the filesystem schemas requires npm access to `@postman` (the package is restricted).
+
+```
+pnpm sync:fs-schemas @postman/v3.schemas@<version>
+pnpm test
+git add vendor && git commit -m "Vendor @postman/v3.schemas <version>"
+```
+
+`vendor/@postman/v3.schemas/provenance.json` records the package name, version and integrity hash. Re-running with the same input leaves `git status` clean.
