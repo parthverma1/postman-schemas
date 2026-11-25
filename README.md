@@ -139,15 +139,3 @@ except ValidationError:
 else:
     print('It is a valid collection!')
 ```
-
-### Maintainers
-
-Updating the filesystem schemas requires npm access to `@postman` (the package is restricted).
-
-```
-pnpm sync:fs-schemas @postman/v3.schemas@<version>
-pnpm test
-git add vendor && git commit -m "Vendor @postman/v3.schemas <version>"
-```
-
-`vendor/@postman/v3.schemas/provenance.json` records the package name, version and integrity hash. Re-running with the same input leaves `git status` clean.
