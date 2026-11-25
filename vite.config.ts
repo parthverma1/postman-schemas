@@ -53,6 +53,11 @@ export default defineConfig({
         { path: '/' },
         ...(versionsByDraft[VIEWER_DRAFT] ?? []).map((v) => ({ path: viewerPage(v) })),
       ],
+      // dist/client/sitemap.xml, built from `pages` above after prerendering.
+      sitemap: {
+        enabled: true,
+        host: 'https://schema.postman.com',
+      },
     }),
     viteReact(),
   ],
