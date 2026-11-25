@@ -11,8 +11,11 @@ import {
   viewerPage,
   viewerRawPath,
   VIEWER_DRAFT,
-} from '../scripts/legacy-urls';
+} from '../scripts/legacy-urls.ts';
+import { FS_KINDS, fsSchemaPath, type FsKind } from '../scripts/fs-schemas.ts';
 import { writeSchemas } from '../scripts/generate-schemas.mjs';
+
+const KINDS = Object.keys(FS_KINDS) as FsKind[];
 
 const versions = schemaVersions();
 const versionsByDraft: Record<string, string[]> = {};
@@ -142,7 +145,7 @@ it('serves pages via html_handling, with no rewrite (200) lines in _redirects', 
 });
 
 it('writes exactly the listed raw files', () => {
-  expect([...written].sort()).toEqual(raw.map((f) => f.path).sort());
+  expect([...written].sort()).toEqual([...raw.map((f) => f.path), ...KINDS.map(fsSchemaPath)].sort());
 });
 
 describe.each(raw.map((f) => ({ ...f, label: `${f.path} = ${f.draft}/${f.version}` })))(

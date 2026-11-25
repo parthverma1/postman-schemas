@@ -15,6 +15,7 @@
  *   public/{resource}/json/{version}/{draft}/{resource}.json  (raw download, every draft)
  *   public/{resource}/{version}/{resource}.json               (raw download, viewer draft, next to the docs page)
  *   public/json/...                                           (legacy raw URLs, see legacy-urls.ts)
+ *   public/collection/v3.0.0/fs/{kind}.json                   (FS schemas, built from vendor/@postman/v3.schemas, see fs-schemas.ts)
  *   public/_redirects                                         (old docs URL 301s, see legacy-urls.ts)
  *
  * Run as a script to regenerate everything; import `writeSchemas` to write the
@@ -25,6 +26,7 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import fs from 'node:fs';
 import { VIEWER_DRAFT, legacyRedirectsFile, legacyUrls } from './legacy-urls.ts';
+import { FS_PACKAGE, fsSchemas } from './fs-schemas.ts';
 
 const require = createRequire(import.meta.url);
 const semver = require('semver');
@@ -45,6 +47,7 @@ const SCHEMA_DIR = path.join(ROOT, 'schemas');
 const OUT_DIR = path.join(ROOT, 'src', 'generated');
 const SCHEMA_OUT_DIR = path.join(OUT_DIR, 'schemas');
 const PUBLIC_DIR = path.join(ROOT, 'public');
+const VENDOR_DIR = path.join(ROOT, FS_PACKAGE.dir);
 
 /** @param {string} p */
 const isDir = (p) => fs.statSync(p).isDirectory();
@@ -145,10 +148,15 @@ export function writeSchemas({ publicDir = PUBLIC_DIR, schemaOutDir = SCHEMA_OUT
     writeFile(path.join(publicDir, file.path), serialized.get(`${file.draft}/${file.version}`));
   }
 
-  // Old docs URLs → 301, applied by Cloudflare before the assets and the Worker.
+  const fsFiles = fsSchemas((file) => JSON.parse(fs.readFileSync(path.join(VENDOR_DIR, file), 'utf8')));
+
+  for (const file of fsFiles) {
+    writeFile(path.join(publicDir, file.path), file.content);
+  }
+
   writeFile(path.join(publicDir, '_redirects'), legacyRedirectsFile(versionsByDraft));
 
-  return { entries, rawPaths: raw.map((f) => f.path) };
+  return { entries, rawPaths: [...raw.map((f) => f.path), ...fsFiles.map((f) => f.path)] };
 }
 
 function main() {
@@ -156,7 +164,7 @@ function main() {
   fs.rmSync(SCHEMA_OUT_DIR, { recursive: true, force: true });
   fs.mkdirSync(SCHEMA_OUT_DIR, { recursive: true });
   for (const resource of RESOURCE_ORDER) {
-    fs.rmSync(path.join(PUBLIC_DIR, resource, 'json'), { recursive: true, force: true });
+    fs.rmSync(path.join(PUBLIC_DIR, resource), { recursive: true, force: true });
   }
   // Legacy /json/... layout.
   fs.rmSync(path.join(PUBLIC_DIR, 'json'), { recursive: true, force: true });

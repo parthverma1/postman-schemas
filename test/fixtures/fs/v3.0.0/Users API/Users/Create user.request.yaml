@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=https://schema.postman.com/collection/v3.0.0/fs/request.json
+$kind: http-request
+name: Create user
+method: POST
+url: "{{baseUrl}}/users"
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: '{"name":"Ada"}'
