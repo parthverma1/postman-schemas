@@ -1,0 +1,648 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"type": "object",
+	"properties": {
+		"id": {
+			"type": "string"
+		},
+		"name": {
+			"type": "string"
+		},
+		"description": {
+			"type": "string"
+		},
+		"variables": {
+			"oneOf": [
+				{
+					"type": "array",
+					"items": {
+						"oneOf": [
+							{
+								"type": "object",
+								"properties": {
+									"key": {
+										"type": "string"
+									},
+									"secret": {
+										"type": "boolean",
+										"const": true
+									},
+									"disabled": {
+										"type": "boolean"
+									},
+									"source": {
+										"oneOf": [
+											{
+												"type": "object",
+												"properties": {
+													"provider": {
+														"type": "string",
+														"const": "postman"
+													},
+													"postman": {
+														"oneOf": [
+															{
+																"type": "object",
+																"properties": {
+																	"type": {
+																		"type": "string",
+																		"const": "local"
+																	},
+																	"secretId": {
+																		"type": "string"
+																	},
+																	"vaultId": {
+																		"type": "string"
+																	}
+																},
+																"required": [
+																	"type",
+																	"secretId"
+																],
+																"additionalProperties": false
+															},
+															{
+																"type": "object",
+																"properties": {
+																	"type": {
+																		"type": "string",
+																		"const": "cloud"
+																	},
+																	"secretId": {
+																		"type": "string"
+																	},
+																	"vaultId": {
+																		"type": "string"
+																	}
+																},
+																"required": [
+																	"type",
+																	"secretId",
+																	"vaultId"
+																],
+																"additionalProperties": false
+															}
+														]
+													}
+												},
+												"required": [
+													"provider",
+													"postman"
+												],
+												"additionalProperties": false
+											},
+											{
+												"type": "object",
+												"properties": {
+													"provider": {
+														"type": "string",
+														"const": "azure"
+													},
+													"azure": {
+														"type": "object",
+														"properties": {
+															"secretId": {
+																"type": "string"
+															}
+														},
+														"required": [
+															"secretId"
+														],
+														"additionalProperties": false
+													}
+												},
+												"required": [
+													"provider",
+													"azure"
+												],
+												"additionalProperties": false
+											},
+											{
+												"type": "object",
+												"properties": {
+													"provider": {
+														"type": "string",
+														"const": "1password"
+													},
+													"1password": {
+														"type": "object",
+														"properties": {
+															"secretReference": {
+																"type": "string"
+															}
+														},
+														"required": [
+															"secretReference"
+														],
+														"additionalProperties": false
+													}
+												},
+												"required": [
+													"provider",
+													"1password"
+												],
+												"additionalProperties": false
+											},
+											{
+												"type": "object",
+												"properties": {
+													"provider": {
+														"type": "string",
+														"const": "aws"
+													},
+													"aws": {
+														"type": "object",
+														"properties": {
+															"secretArn": {
+																"type": "string"
+															},
+															"roleArn": {
+																"type": "string"
+															},
+															"version": {
+																"type": "string"
+															},
+															"format": {
+																"type": "string",
+																"enum": [
+																	"json",
+																	"plaintext"
+																]
+															}
+														},
+														"required": [
+															"secretArn"
+														],
+														"additionalProperties": false
+													}
+												},
+												"required": [
+													"provider",
+													"aws"
+												],
+												"additionalProperties": false
+											},
+											{
+												"type": "object",
+												"properties": {
+													"provider": {
+														"type": "string",
+														"const": "hashicorp"
+													},
+													"hashicorp": {
+														"type": "object",
+														"properties": {
+															"engine": {
+																"type": "string"
+															},
+															"path": {
+																"type": "string"
+															},
+															"key": {
+																"type": "string"
+															},
+															"version": {
+																"type": "string"
+															}
+														},
+														"required": [
+															"engine",
+															"path",
+															"key"
+														],
+														"additionalProperties": false
+													}
+												},
+												"required": [
+													"provider",
+													"hashicorp"
+												],
+												"additionalProperties": false
+											},
+											{
+												"type": "object",
+												"properties": {
+													"provider": {
+														"type": "string",
+														"const": "passport"
+													},
+													"passport": {
+														"type": "object",
+														"properties": {
+															"provider": {
+																"type": "string"
+															},
+															"proxyId": {
+																"type": "string"
+															},
+															"pointer": {
+																"type": "string"
+															},
+															"namespaceId": {
+																"type": "string"
+															}
+														},
+														"required": [
+															"provider",
+															"proxyId",
+															"pointer"
+														],
+														"additionalProperties": false
+													}
+												},
+												"required": [
+													"provider",
+													"passport"
+												],
+												"additionalProperties": false
+											}
+										]
+									}
+								},
+								"required": [
+									"key",
+									"secret"
+								],
+								"additionalProperties": false
+							},
+							{
+								"type": "object",
+								"properties": {
+									"key": {
+										"type": "string"
+									},
+									"value": {},
+									"disabled": {
+										"type": "boolean"
+									},
+									"secret": {
+										"type": "boolean",
+										"const": false
+									}
+								},
+								"required": [
+									"key"
+								],
+								"additionalProperties": false
+							}
+						]
+					}
+				},
+				{
+					"type": "object",
+					"propertyNames": {
+						"type": "string"
+					},
+					"additionalProperties": {}
+				}
+			]
+		},
+		"scripts": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"type": {
+						"type": "string"
+					},
+					"code": {
+						"type": "string"
+					},
+					"language": {
+						"type": "string",
+						"enum": [
+							"text/javascript"
+						]
+					},
+					"packages": {
+						"type": "object",
+						"propertyNames": {
+							"type": "string"
+						},
+						"additionalProperties": {
+							"type": "object",
+							"properties": {
+								"id": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"id"
+							],
+							"additionalProperties": false
+						}
+					},
+					"requests": {
+						"type": "object",
+						"propertyNames": {
+							"type": "string"
+						},
+						"additionalProperties": {
+							"type": "object",
+							"properties": {
+								"workspace": {
+									"type": "string"
+								},
+								"collection": {
+									"type": "string"
+								},
+								"location": {
+									"type": "array",
+									"items": {
+										"type": "string"
+									}
+								}
+							},
+							"required": [
+								"workspace",
+								"collection",
+								"location"
+							],
+							"additionalProperties": false
+						}
+					}
+				},
+				"required": [
+					"type",
+					"code"
+				],
+				"additionalProperties": false
+			}
+		},
+		"auth": {
+			"oneOf": [
+				{
+					"oneOf": [
+						{
+							"type": "object",
+							"properties": {
+								"id": {
+									"type": "string"
+								},
+								"name": {
+									"type": "string"
+								},
+								"description": {
+									"type": "string"
+								},
+								"type": {
+									"type": "string",
+									"const": "noauth"
+								}
+							},
+							"required": [
+								"type"
+							],
+							"additionalProperties": false
+						},
+						{
+							"type": "object",
+							"properties": {
+								"name": {
+									"type": "string"
+								},
+								"description": {
+									"type": "string"
+								},
+								"credentials": {
+									"oneOf": [
+										{
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"key": {
+														"type": "string"
+													},
+													"value": {}
+												},
+												"required": [
+													"key",
+													"value"
+												],
+												"additionalProperties": false
+											}
+										},
+										{
+											"type": "object",
+											"propertyNames": {
+												"type": "string"
+											},
+											"additionalProperties": {}
+										}
+									]
+								},
+								"type": {
+									"type": "string",
+									"enum": [
+										"awsv4",
+										"basic",
+										"bearer",
+										"hawk",
+										"oauth1",
+										"oauth2",
+										"apikey",
+										"edgegrid",
+										"jwt",
+										"digest",
+										"ntlm",
+										"asap",
+										"azure",
+										"sasl",
+										"inherit"
+									]
+								}
+							},
+							"required": [
+								"type"
+							],
+							"additionalProperties": false
+						}
+					]
+				},
+				{
+					"type": "array",
+					"items": {
+						"oneOf": [
+							{
+								"type": "object",
+								"properties": {
+									"id": {
+										"type": "string"
+									},
+									"name": {
+										"type": "string"
+									},
+									"description": {
+										"type": "string"
+									},
+									"rules": {
+										"oneOf": [
+											{
+												"type": "array",
+												"items": {
+													"type": "object",
+													"properties": {
+														"key": {
+															"type": "string",
+															"enum": [
+																"url"
+															]
+														},
+														"value": {
+															"type": "string"
+														}
+													},
+													"required": [
+														"key",
+														"value"
+													],
+													"additionalProperties": false
+												}
+											},
+											{
+												"type": "object",
+												"properties": {
+													"url": {
+														"type": "string"
+													}
+												},
+												"required": [
+													"url"
+												],
+												"additionalProperties": false
+											}
+										]
+									},
+									"type": {
+										"type": "string",
+										"const": "noauth"
+									}
+								},
+								"required": [
+									"id",
+									"name",
+									"type"
+								],
+								"additionalProperties": false
+							},
+							{
+								"type": "object",
+								"properties": {
+									"id": {
+										"type": "string"
+									},
+									"name": {
+										"type": "string"
+									},
+									"description": {
+										"type": "string"
+									},
+									"rules": {
+										"oneOf": [
+											{
+												"type": "array",
+												"items": {
+													"type": "object",
+													"properties": {
+														"key": {
+															"type": "string",
+															"enum": [
+																"url"
+															]
+														},
+														"value": {
+															"type": "string"
+														}
+													},
+													"required": [
+														"key",
+														"value"
+													],
+													"additionalProperties": false
+												}
+											},
+											{
+												"type": "object",
+												"properties": {
+													"url": {
+														"type": "string"
+													}
+												},
+												"required": [
+													"url"
+												],
+												"additionalProperties": false
+											}
+										]
+									},
+									"credentials": {
+										"oneOf": [
+											{
+												"type": "array",
+												"items": {
+													"type": "object",
+													"properties": {
+														"key": {
+															"type": "string"
+														},
+														"value": {}
+													},
+													"required": [
+														"key",
+														"value"
+													],
+													"additionalProperties": false
+												}
+											},
+											{
+												"type": "object",
+												"propertyNames": {
+													"type": "string"
+												},
+												"additionalProperties": {}
+											}
+										]
+									},
+									"type": {
+										"type": "string",
+										"enum": [
+											"awsv4",
+											"basic",
+											"bearer",
+											"hawk",
+											"oauth1",
+											"oauth2",
+											"apikey",
+											"edgegrid",
+											"jwt",
+											"digest",
+											"ntlm",
+											"asap",
+											"azure",
+											"sasl"
+										]
+									}
+								},
+								"required": [
+									"id",
+									"name",
+									"type"
+								],
+								"additionalProperties": false
+							}
+						]
+					}
+				}
+			]
+		},
+		"$kind": {
+			"type": "string",
+			"const": "collection"
+		}
+	},
+	"required": [
+		"$kind"
+	],
+	"additionalProperties": false
+}

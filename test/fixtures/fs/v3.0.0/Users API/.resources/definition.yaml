@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=https://schema.postman.com/collection/v3.0.0/fs/definition.json
+$kind: collection
+name: Users API
+variables:
+  - key: baseUrl
+    value: https://api.example.com
+  - key: token
+    secret: true

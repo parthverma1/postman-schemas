@@ -144,6 +144,7 @@ src/generated/
 public/collection/
 public/json/
 public/_redirects
+public/_headers
 
 # Generated favicon assets (from src/assets/postman-logo-orange.svg)
 public/favicon.ico

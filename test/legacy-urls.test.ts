@@ -4,6 +4,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { lib, ROOT, schemaVersions } from './helpers';
 import {
+  headersFile,
   legacyRedirectsFile,
   legacyUrls,
   latestStable,
@@ -11,8 +12,11 @@ import {
   viewerPage,
   viewerRawPath,
   VIEWER_DRAFT,
-} from '../scripts/legacy-urls';
+} from '../scripts/legacy-urls.ts';
+import { FS_KINDS, fsSchemaPath, type FsKind } from '../scripts/fs-schemas.ts';
 import { writeSchemas } from '../scripts/generate-schemas.mjs';
+
+const KINDS = Object.keys(FS_KINDS) as FsKind[];
 
 const versions = schemaVersions();
 const versionsByDraft: Record<string, string[]> = {};
@@ -142,7 +146,7 @@ it('serves pages via html_handling, with no rewrite (200) lines in _redirects', 
 });
 
 it('writes exactly the listed raw files', () => {
-  expect([...written].sort()).toEqual(raw.map((f) => f.path).sort());
+  expect([...written].sort()).toEqual([...raw.map((f) => f.path), ...KINDS.map(fsSchemaPath)].sort());
 });
 
 describe.each(raw.map((f) => ({ ...f, label: `${f.path} = ${f.draft}/${f.version}` })))(
@@ -165,4 +169,81 @@ describe.each(Object.entries(redirects).map(([from, to]) => ({ from, to })))('$f
     expect(viewerPages.has(from)).toBe(false);
     expect(to).not.toMatch(/\/docs\/index\.html$/);
   });
+});
+
+function parseHeaders(text: string): Map<string, Record<string, string>> {
+  const rules = new Map<string, Record<string, string>>();
+  let currentPath: string | null = null;
+  let currentHeaders: Record<string, string> = {};
+
+  for (const line of text.split('\n')) {
+    if (!line.trim() || line.startsWith('#')) {
+      if (currentPath) {
+        rules.set(currentPath, currentHeaders);
+        currentPath = null;
+        currentHeaders = {};
+      }
+      continue;
+    }
+    if (!line.startsWith('  ')) {
+      if (currentPath) {
+        rules.set(currentPath, currentHeaders);
+      }
+      currentPath = line.trim();
+      currentHeaders = {};
+    } else {
+      const [name, value] = line.trim().split(': ', 2);
+      currentHeaders[name] = value;
+    }
+  }
+  if (currentPath) {
+    rules.set(currentPath, currentHeaders);
+  }
+  return rules;
+}
+
+it('keeps the static _headers rules (asset cache, CORS on /*.json, llms.txt)', () => {
+  const file = fs.readFileSync(path.join(tmp, 'public', '_headers'), 'utf8');
+  const rules = parseHeaders(file);
+  expect(rules.get('/assets/*')).toEqual({ 'Cache-Control': 'public, max-age=31536000, immutable' });
+  expect(rules.get('/*.json')).toEqual({ 'Access-Control-Allow-Origin': '*' });
+  expect(rules.get('/llms.txt')).toEqual({ 'Access-Control-Allow-Origin': '*', 'Content-Type': 'text/markdown; charset=utf-8' });
+});
+
+it('gives every duplicate draft-07 raw URL a canonical Link to /collection/{v}/collection.json', () => {
+  const file = fs.readFileSync(path.join(tmp, 'public', '_headers'), 'utf8');
+  const rules = parseHeaders(file);
+
+  for (const f of raw) {
+    if (f.draft !== VIEWER_DRAFT) continue;
+    if (f.path === viewerRawPath(f.version)) continue;
+    expect(rules.get(f.path)?.Link).toBe(`<https://schema.postman.com${viewerRawPath(f.version)}>; rel="canonical"`);
+  }
+
+  expect(rules.get('/collection/json/v2.1.0/draft-07/collection.json')?.Link).toBe('<https://schema.postman.com/collection/v2.1.0/collection.json>; rel="canonical"');
+  expect(rules.get('/json/draft-07/collection/latest/collection.json')?.Link).toBe('<https://schema.postman.com/collection/v3.0.0/collection.json>; rel="canonical"');
+});
+
+it('gives draft-04 URLs, the canonical URLs and the FS URLs no canonical Link', () => {
+  const file = fs.readFileSync(path.join(tmp, 'public', '_headers'), 'utf8');
+  const rules = parseHeaders(file);
+
+  const noLink = ['/json/collection/v2.1.0/collection.json', '/collection/json/latest/draft-04/collection.json', '/collection/v2.1.0/collection.json', ...KINDS.map(fsSchemaPath)];
+  for (const path of noLink) {
+    expect(rules.get(path)?.Link).toBeUndefined();
+  }
+});
+
+it('emits 10 Link rules (4 draft-07 versions + latest, x 2 layouts)', () => {
+  const file = fs.readFileSync(path.join(tmp, 'public', '_headers'), 'utf8');
+  const linkCount = file.split('\n').filter((l) => l.includes('Link:')).length;
+  expect(linkCount).toBe(10);
+});
+
+it("stays within Cloudflare's limits: 100 _headers rules, 2000 _redirects lines", () => {
+  const headersFile = fs.readFileSync(path.join(tmp, 'public', '_headers'), 'utf8');
+  const redirectsFile = fs.readFileSync(path.join(tmp, 'public', '_redirects'), 'utf8');
+  const headerRules = headersFile.split('\n').filter((l) => l.trim() && !l.trim().startsWith('#') && !l.startsWith('  ')).length;
+  expect(headerRules).toBeLessThan(100);
+  expect(redirectsFile.trimEnd().split('\n').length).toBeLessThan(2000);
 });

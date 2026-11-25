@@ -34,7 +34,7 @@ export const Route = createRootRoute({
       {
         name: 'description',
         content:
-          "Browse Postman's JSON Schemas",
+          'Docs and raw JSON Schemas (draft-07) for every version of the Postman Collection Format.',
       },
     ],
     links: [

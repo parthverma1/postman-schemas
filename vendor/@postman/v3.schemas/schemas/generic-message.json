@@ -1,0 +1,707 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"oneOf": [
+		{
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"name": {
+					"type": "string"
+				},
+				"content": {
+					"type": "string"
+				},
+				"contentType": {
+					"type": "string",
+					"enum": [
+						"text",
+						"json",
+						"xml",
+						"html",
+						"hex",
+						"base64"
+					]
+				},
+				"order": {
+					"type": "number"
+				},
+				"$kind": {
+					"type": "string",
+					"const": "websocket-message"
+				}
+			},
+			"required": [
+				"content",
+				"contentType",
+				"$kind"
+			],
+			"additionalProperties": false
+		},
+		{
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"name": {
+					"type": "string"
+				},
+				"description": {
+					"type": "string"
+				},
+				"eventName": {
+					"type": "string"
+				},
+				"acknowledgement": {
+					"type": "boolean"
+				},
+				"args": {
+					"minItems": 1,
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"content": {
+								"type": "string"
+							},
+							"contentType": {
+								"type": "string",
+								"enum": [
+									"text",
+									"json",
+									"hex",
+									"base64"
+								]
+							}
+						},
+						"required": [
+							"content",
+							"contentType"
+						],
+						"additionalProperties": false
+					}
+				},
+				"order": {
+					"type": "number"
+				},
+				"$kind": {
+					"type": "string",
+					"const": "socket.io-message"
+				}
+			},
+			"required": [
+				"eventName",
+				"args",
+				"$kind"
+			],
+			"additionalProperties": false
+		},
+		{
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"name": {
+					"type": "string"
+				},
+				"description": {
+					"type": "string"
+				},
+				"content": {
+					"type": "string"
+				},
+				"topic": {
+					"type": "string"
+				},
+				"qos": {
+					"type": "number",
+					"enum": [
+						0,
+						1,
+						2
+					]
+				},
+				"retain": {
+					"type": "boolean"
+				},
+				"contentType": {
+					"type": "string",
+					"enum": [
+						"text",
+						"json",
+						"hex",
+						"base64"
+					]
+				},
+				"properties": {
+					"type": "object",
+					"properties": {
+						"payloadFormatIndicator": {
+							"type": "boolean"
+						},
+						"messageExpiryInterval": {
+							"type": "integer",
+							"minimum": 0,
+							"maximum": 9007199254740991
+						},
+						"topicAlias": {
+							"type": "integer",
+							"minimum": -9007199254740991,
+							"maximum": 9007199254740991
+						},
+						"responseTopic": {
+							"type": "string"
+						},
+						"correlationData": {
+							"type": "string"
+						},
+						"subscriptionIdentifier": {
+							"type": "integer",
+							"minimum": -9007199254740991,
+							"maximum": 9007199254740991
+						},
+						"contentType": {
+							"type": "string"
+						},
+						"userProperties": {
+							"oneOf": [
+								{
+									"type": "array",
+									"items": {
+										"type": "object",
+										"properties": {
+											"key": {
+												"type": "string"
+											},
+											"value": {
+												"type": "string"
+											}
+										},
+										"required": [
+											"key",
+											"value"
+										],
+										"additionalProperties": false
+									}
+								},
+								{
+									"type": "object",
+									"propertyNames": {
+										"type": "string"
+									},
+									"additionalProperties": {
+										"type": "string"
+									}
+								}
+							]
+						}
+					},
+					"additionalProperties": false
+				},
+				"order": {
+					"type": "number"
+				},
+				"$kind": {
+					"type": "string",
+					"const": "mqtt-message"
+				}
+			},
+			"required": [
+				"content",
+				"topic",
+				"contentType",
+				"$kind"
+			],
+			"additionalProperties": false
+		},
+		{
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"name": {
+					"type": "string"
+				},
+				"topic": {
+					"type": "string"
+				},
+				"key": {
+					"type": "object",
+					"properties": {
+						"contentType": {
+							"type": "string",
+							"enum": [
+								"base64",
+								"hex",
+								"json",
+								"text"
+							]
+						},
+						"content": {
+							"type": "string"
+						}
+					},
+					"required": [
+						"contentType",
+						"content"
+					],
+					"additionalProperties": false
+				},
+				"value": {
+					"type": "object",
+					"properties": {
+						"contentType": {
+							"type": "string",
+							"enum": [
+								"base64",
+								"hex",
+								"json",
+								"text"
+							]
+						},
+						"content": {
+							"type": "string"
+						}
+					},
+					"required": [
+						"contentType",
+						"content"
+					],
+					"additionalProperties": false
+				},
+				"headers": {
+					"oneOf": [
+						{
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"key": {
+										"type": "string"
+									},
+									"value": {
+										"type": "string"
+									},
+									"disabled": {
+										"type": "boolean"
+									},
+									"description": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"key",
+									"value"
+								],
+								"additionalProperties": false
+							}
+						},
+						{
+							"type": "object",
+							"propertyNames": {
+								"type": "string"
+							},
+							"additionalProperties": {
+								"type": "string"
+							}
+						}
+					]
+				},
+				"schema": {
+					"oneOf": [
+						{
+							"type": "object",
+							"properties": {
+								"source": {
+									"type": "string",
+									"const": "none"
+								}
+							},
+							"required": [
+								"source"
+							],
+							"additionalProperties": false
+						},
+						{
+							"type": "object",
+							"properties": {
+								"source": {
+									"type": "string",
+									"const": "auto"
+								}
+							},
+							"required": [
+								"source"
+							],
+							"additionalProperties": false
+						},
+						{
+							"type": "object",
+							"properties": {
+								"source": {
+									"type": "string",
+									"const": "file"
+								},
+								"location": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"source",
+								"location"
+							],
+							"additionalProperties": false
+						},
+						{
+							"type": "object",
+							"properties": {
+								"source": {
+									"type": "string",
+									"const": "api"
+								},
+								"apiId": {
+									"type": "string"
+								},
+								"versionId": {
+									"type": "string"
+								},
+								"releaseId": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"source",
+								"apiId",
+								"versionId"
+							],
+							"additionalProperties": false
+						},
+						{
+							"type": "object",
+							"properties": {
+								"source": {
+									"type": "string",
+									"const": "specification"
+								},
+								"specificationId": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"source",
+								"specificationId"
+							],
+							"additionalProperties": false
+						},
+						{
+							"type": "object",
+							"properties": {
+								"source": {
+									"type": "string",
+									"const": "url"
+								},
+								"url": {
+									"type": "string"
+								},
+								"auth": {
+									"oneOf": [
+										{
+											"oneOf": [
+												{
+													"type": "object",
+													"properties": {
+														"id": {
+															"type": "string"
+														},
+														"name": {
+															"type": "string"
+														},
+														"description": {
+															"type": "string"
+														},
+														"type": {
+															"type": "string",
+															"const": "noauth"
+														}
+													},
+													"required": [
+														"type"
+													],
+													"additionalProperties": false
+												},
+												{
+													"type": "object",
+													"properties": {
+														"name": {
+															"type": "string"
+														},
+														"description": {
+															"type": "string"
+														},
+														"credentials": {
+															"oneOf": [
+																{
+																	"type": "array",
+																	"items": {
+																		"type": "object",
+																		"properties": {
+																			"key": {
+																				"type": "string"
+																			},
+																			"value": {}
+																		},
+																		"required": [
+																			"key",
+																			"value"
+																		],
+																		"additionalProperties": false
+																	}
+																},
+																{
+																	"type": "object",
+																	"propertyNames": {
+																		"type": "string"
+																	},
+																	"additionalProperties": {}
+																}
+															]
+														},
+														"type": {
+															"type": "string",
+															"enum": [
+																"awsv4",
+																"basic",
+																"bearer",
+																"hawk",
+																"oauth1",
+																"oauth2",
+																"apikey",
+																"edgegrid",
+																"jwt",
+																"digest",
+																"ntlm",
+																"asap",
+																"azure",
+																"sasl",
+																"inherit"
+															]
+														}
+													},
+													"required": [
+														"type"
+													],
+													"additionalProperties": false
+												}
+											]
+										},
+										{
+											"type": "array",
+											"items": {
+												"oneOf": [
+													{
+														"type": "object",
+														"properties": {
+															"id": {
+																"type": "string"
+															},
+															"name": {
+																"type": "string"
+															},
+															"description": {
+																"type": "string"
+															},
+															"rules": {
+																"oneOf": [
+																	{
+																		"type": "array",
+																		"items": {
+																			"type": "object",
+																			"properties": {
+																				"key": {
+																					"type": "string",
+																					"enum": [
+																						"url"
+																					]
+																				},
+																				"value": {
+																					"type": "string"
+																				}
+																			},
+																			"required": [
+																				"key",
+																				"value"
+																			],
+																			"additionalProperties": false
+																		}
+																	},
+																	{
+																		"type": "object",
+																		"properties": {
+																			"url": {
+																				"type": "string"
+																			}
+																		},
+																		"required": [
+																			"url"
+																		],
+																		"additionalProperties": false
+																	}
+																]
+															},
+															"type": {
+																"type": "string",
+																"const": "noauth"
+															}
+														},
+														"required": [
+															"id",
+															"name",
+															"type"
+														],
+														"additionalProperties": false
+													},
+													{
+														"type": "object",
+														"properties": {
+															"id": {
+																"type": "string"
+															},
+															"name": {
+																"type": "string"
+															},
+															"description": {
+																"type": "string"
+															},
+															"rules": {
+																"oneOf": [
+																	{
+																		"type": "array",
+																		"items": {
+																			"type": "object",
+																			"properties": {
+																				"key": {
+																					"type": "string",
+																					"enum": [
+																						"url"
+																					]
+																				},
+																				"value": {
+																					"type": "string"
+																				}
+																			},
+																			"required": [
+																				"key",
+																				"value"
+																			],
+																			"additionalProperties": false
+																		}
+																	},
+																	{
+																		"type": "object",
+																		"properties": {
+																			"url": {
+																				"type": "string"
+																			}
+																		},
+																		"required": [
+																			"url"
+																		],
+																		"additionalProperties": false
+																	}
+																]
+															},
+															"credentials": {
+																"oneOf": [
+																	{
+																		"type": "array",
+																		"items": {
+																			"type": "object",
+																			"properties": {
+																				"key": {
+																					"type": "string"
+																				},
+																				"value": {}
+																			},
+																			"required": [
+																				"key",
+																				"value"
+																			],
+																			"additionalProperties": false
+																		}
+																	},
+																	{
+																		"type": "object",
+																		"propertyNames": {
+																			"type": "string"
+																		},
+																		"additionalProperties": {}
+																	}
+																]
+															},
+															"type": {
+																"type": "string",
+																"enum": [
+																	"awsv4",
+																	"basic",
+																	"bearer",
+																	"hawk",
+																	"oauth1",
+																	"oauth2",
+																	"apikey",
+																	"edgegrid",
+																	"jwt",
+																	"digest",
+																	"ntlm",
+																	"asap",
+																	"azure",
+																	"sasl"
+																]
+															}
+														},
+														"required": [
+															"id",
+															"name",
+															"type"
+														],
+														"additionalProperties": false
+													}
+												]
+											}
+										}
+									]
+								}
+							},
+							"required": [
+								"source",
+								"url"
+							],
+							"additionalProperties": false
+						}
+					]
+				},
+				"partition": {
+					"type": "number"
+				},
+				"timestamp": {
+					"type": "number"
+				},
+				"order": {
+					"type": "number"
+				},
+				"$kind": {
+					"type": "string",
+					"const": "kafka-message"
+				}
+			},
+			"required": [
+				"topic",
+				"$kind"
+			],
+			"additionalProperties": false
+		}
+	]
+}
